@@ -1,0 +1,49 @@
+{
+  "hero": {
+    "title": "Kelola Usahamu,",
+    "subtitle": "Gak Pake Ribet",
+    "description": "Tinggalkan cara manual, beralihlah ke KelolaAja software ERP Akuntansi untuk mengelola faktur, pembelian, laporan, hingga analisis bisnis dengan lebih mudah dan gak pake ribet. Semua bisa diakses kapan saja dan di mana saja, membuat pengelolaan bisnis jadi lebih efisien!",
+    "ctaText": "Coba Gratis Sekarang",
+    "image": "/images/hero-image.jpg"
+  },
+  "features": [
+    {
+      "title": "Mudah Digunakan",
+      "description": "Interface yang intuitif dan user-friendly untuk semua pengguna.",
+      "icon": "🎯"
+    },
+    {
+      "title": "Terintegrasi",
+      "description": "Terhubung dengan berbagai platform dan layanan yang Anda butuhkan.",
+      "icon": "🔗"
+    },
+    {
+      "title": "Aman & Terpercaya",
+      "description": "Keamanan data adalah prioritas utama kami.",
+      "icon": "🔒"
+    }
+  ],
+  "about": {
+    "title": "Tentang Kami",
+    "description": "Kami adalah tim profesional yang berdedikasi untuk memberikan solusi terbaik bagi bisnis Anda. Dengan pengalaman bertahun-tahun, kami siap membantu Anda mencapai tujuan bisnis.",
+    "image": "/images/about-image.jpg"
+  },
+  "footer": {
+    "copyright": "© 2024 KelolaAja. All rights reserved.",
+    "links": [
+      {
+        "label": "Tentang",
+        "url": "#about"
+      },
+      {
+        "label": "Fitur",
+        "url": "#features"
+      },
+      {
+        "label": "Kontak",
+        "url": "#contact"
+      }
+    ]
+  }
+}
+
