@@ -223,7 +223,7 @@ export default function FnBPage() {
                 {
                   title: 'Multi cabang & multi gudang',
                   description: 'Pantau dan buat laporan keuangan dengan praktis dan buat keputusan bisnis lebih cepat dalam satu klik. Anda juga akan mendapatkan grafik dari operasional dalam bisnis dengan tampilan yang mudah dipahami.',
-                  image: '/images/common/feature-warehouse.jpg',
+                  image: '/images/inventory/feature-warehouse.jpg',
                 },
                 {
                   title: 'KelolaAja Purchasing Anti Ribet',
