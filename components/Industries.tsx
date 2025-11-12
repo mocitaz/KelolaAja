@@ -57,7 +57,7 @@ export default function Industries({ industries = defaultIndustries }: Industrie
         <div className="mb-16 max-w-6xl mx-auto">
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-xl">
             <Image
-              src="/images/industries.jpg"
+              src="/images/home/industries.jpg"
               alt="Industri yang Kami Layani"
               fill
               className="object-cover"

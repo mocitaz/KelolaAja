@@ -82,7 +82,7 @@ export default function Pricing({ plans = defaultPlans }: PricingProps) {
         <div className="mb-16 max-w-6xl mx-auto">
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-xl">
             <Image
-              src="/images/pricing.jpg"
+              src="/images/home/pricing.jpg"
               alt="Paket Harga KelolaAja"
               fill
               className="object-cover"

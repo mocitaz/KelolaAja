@@ -119,7 +119,7 @@ export default function Navbar() {
               className="flex items-center transition-opacity duration-200 hover:opacity-80 z-10"
             >
               <Image
-                src="/images/logo.png"
+                src="/images/common/logo.png"
                 alt="KelolaAja"
                 width={140}
                 height={40}

@@ -90,7 +90,7 @@ export default function ContractorPage() {
               <ScrollAnimation direction="left" delay={200} duration={600}>
                 <div className="relative w-full aspect-square lg:aspect-[4/3] overflow-hidden group">
                   <Image
-                    src="/images/kontraktor.png"
+                    src="/images/industries/contractor/kontraktor.png"
                     alt="Kontraktor"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -182,22 +182,22 @@ export default function ContractorPage() {
                 {
                   title: 'KelolaAja aja multi proyek dengan satu Klik',
                   description: 'Bisnis kontraktor membutuhkan pengelolaan proyek yang efisien. Dengan KelolaAja, Anda dapat dengan mudah mengelola banyak proyek sekaligus, memantau anggaran, dan menjadikan manajemen proyek Anda lebih terstruktur dan terorganisir.',
-                  image: '/images/contractor-multi-project.jpg',
+                  image: '/images/industries/contractor/contractor-multi-project.jpg',
                 },
                 {
                   title: 'Perhitungan aset tetap otomatis dan akurat',
                   description: 'Berhenti menghitung nilai aset tetap secara manual. Dengan KelolaAja, penyusutan setiap aset dihitung otomatis dan jurnal penyesuaian tersedia setiap bulan tanpa perlu usaha tambahan.',
-                  image: '/images/contractor-fixed-asset.jpg',
+                  image: '/images/industries/contractor/contractor-fixed-asset.jpg',
                 },
                 {
                   title: 'Catat seluruh biaya operasional dengan mudah',
                   description: 'Dengan KelolaAja, Anda dapat dengan mudah mencatat dan mengelola biaya kapan saja dan di mana saja, memastikan efisiensi yang lebih baik, mengurangi pemborosan, dan meningkatkan profitabilitas proyek Anda.',
-                  image: '/images/contractor-operational-cost.jpg',
+                  image: '/images/industries/contractor/contractor-operational-cost.jpg',
                 },
                 {
                   title: 'Real-time, di mana saja dan kapan saja',
                   description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha kontraktor Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan dengan detail.',
-                  image: '/images/contractor-realtime.jpg',
+                  image: '/images/industries/contractor/contractor-realtime.jpg',
                 }
               ].map((benefit, index) => (
                 <ScrollAnimation
@@ -263,15 +263,15 @@ export default function ContractorPage() {
               {[
                 {
                   name: 'Sri',
-                  image: '/images/sri.png',
+                  image: '/images/common/sri.png',
                 },
                 {
                   name: 'Sriendo Foods',
-                  image: '/images/sriendofoods.png',
+                  image: '/images/common/sriendofoods.png',
                 },
                 {
                   name: 'Aura Food',
-                  image: '/images/aurafood.png',
+                  image: '/images/common/aurafood.png',
                 }
               ].map((partner, index) => (
                 <ScrollAnimation

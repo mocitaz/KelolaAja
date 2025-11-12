@@ -97,7 +97,7 @@ export default function Company({ content = defaultContent }: CompanyProps) {
             <div className="max-w-6xl mx-auto mb-12">
               <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-xl">
                 <Image
-                  src="/images/company.jpg"
+                  src="/images/home/company.jpg"
                   alt={content.about.title}
                   fill
                   className="object-cover"

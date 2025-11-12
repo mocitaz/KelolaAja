@@ -11,7 +11,7 @@ export default function ERPBenefits() {
     {
       title: t.erpBenefits?.benefits?.purchasing?.title || 'Purchasing',
       description: t.erpBenefits?.benefits?.purchasing?.description || 'Buat purchase order dan faktur dalam satu langkah mudah.',
-      image: '/images/purchasing.jpg',
+      image: '/images/home/purchasing.jpg',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -21,7 +21,7 @@ export default function ERPBenefits() {
     {
       title: t.erpBenefits?.benefits?.multiWarehouse?.title || 'Multi Gudang',
       description: t.erpBenefits?.benefits?.multiWarehouse?.description || 'KelolaAja stok produkmu dibanyak tempat dengan mudah dan pantau stok pergudang secara realtime.',
-      image: '/images/multi-gudang.jpg',
+      image: '/images/home/multi-gudang.jpg',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -31,7 +31,7 @@ export default function ERPBenefits() {
     {
       title: t.erpBenefits?.benefits?.importExcel?.title || 'Import dari Excel',
       description: t.erpBenefits?.benefits?.importExcel?.description || 'Tidak perlu lagi repot memasukkan data produk dan stok secara manual, cukup ketik di Excel dan unggah. Semua informasi akan otomatis terintegrasi ke dalam sistem KelolaAja.',
-      image: '/images/import-excel.jpg',
+      image: '/images/inventory/import-excel.jpg',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />

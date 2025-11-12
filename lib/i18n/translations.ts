@@ -959,7 +959,7 @@ export const translations: Record<Locale, Translations> = {
       testimonial: {
         name: 'Ayu Panduwinata',
         quote: 'Business processes are now twice as efficient. In addition, service is also one of KelolaAja\'s advantages. Every time we have a problem, the KelolaAja team is very responsive.',
-        image: '/images/default-profile.png',
+        image: '/images/common/default-profile.png',
       },
       title: 'Get Free Consultation For Your Business Process Problems',
       benefits: [

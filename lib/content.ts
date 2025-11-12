@@ -41,7 +41,7 @@ export const defaultContent: LandingPageContent = {
     subtitle: 'Gak Pake Ribet',
     description: 'Tinggalkan cara manual, beralihlah ke KelolaAja software ERP Akuntansi untuk mengelola faktur, pembelian, laporan, hingga analisis bisnis dengan lebih mudah dan gak pake ribet. Semua bisa diakses kapan saja dan di mana saja, membuat pengelolaan bisnis jadi lebih efisien!',
     ctaText: 'Coba Gratis Sekarang',
-    image: '/images/hero-image.jpg',
+    image: '/images/home/hero-image.jpg',
   },
   features: [
     {
@@ -63,7 +63,7 @@ export const defaultContent: LandingPageContent = {
   about: {
     title: 'Tentang Kami',
     description: 'Kami adalah tim profesional yang berdedikasi untuk memberikan solusi terbaik bagi bisnis Anda. Dengan pengalaman bertahun-tahun, kami siap membantu Anda mencapai tujuan bisnis.',
-    image: '/images/about-image.jpg',
+    image: '/images/home/about-image.jpg',
   },
   footer: {
     copyright: '© 2024 KelolaAja. All rights reserved.',

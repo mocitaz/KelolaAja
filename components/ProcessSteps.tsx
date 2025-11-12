@@ -64,7 +64,7 @@ export default function ProcessSteps() {
               {/* Image */}
               <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-lg border border-gray-200 group">
                 <Image
-                  src="/images/process-steps-image.jpg"
+                  src="/images/home/process-steps-image.jpg"
                   alt="Kelola Usahamu"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"

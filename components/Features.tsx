@@ -67,7 +67,7 @@ export default function Features({ features }: FeaturesProps) {
         <div className="mb-16 max-w-6xl mx-auto">
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-xl">
             <Image
-              src="/images/features.jpg"
+              src="/images/home/features.jpg"
               alt="Fitur Unggulan KelolaAja"
               fill
               className="object-cover"

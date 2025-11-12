@@ -15,7 +15,7 @@ export default function ContactPage() {
     testimonial: {
       name: 'Ayu Panduwinata',
       quote: 'Proses bisnis sekarang jadi dua kali lebih efisien. Selain itu, pelayanan juga salah satu kelebihan KelolaAja. Setiap kali kami ada kendala, tim KelolaAja sangat responsif.',
-      image: '/images/ayu.png',
+      image: '/images/common/ayu.png',
     },
     title: 'Dapatkan Konsultasi Gratis Untuk Masalah Proses Bisnis Anda',
     benefits: [

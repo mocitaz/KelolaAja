@@ -116,7 +116,7 @@ export default function FnBPage() {
               <ScrollAnimation direction="left" delay={200} duration={600}>
                 <div className="relative w-full aspect-square lg:aspect-[4/3] overflow-hidden group">
                   <Image
-                    src="/images/food.png"
+                    src="/images/industries/fnb/food.png"
                     alt="Food & Beverage"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -208,32 +208,32 @@ export default function FnBPage() {
                 {
                   title: 'Mudah digunakan',
                   description: 'Sekalipun Anda awam akuntansi, Anda akan mudah menggunakan KelolaAja. Jika merasa tetap kesulitan, kami menjanjikan training gratis.',
-                  image: '/images/feature-easy.jpg',
+                  image: '/images/common/feature-easy.jpg',
                 },
                 {
                   title: 'Support Barcode Scanner',
                   description: 'Tingkatkan kecepatan dalam proses pencatatan penjualan dan stok opname pada bisnis dengan bantuan barcode scanner yang juga didukung di sistem KelolaAja.',
-                  image: '/images/feature-barcode.jpg',
+                  image: '/images/common/feature-barcode.jpg',
                 },
                 {
                   title: 'Real-time, di mana saja dan kapan saja',
                   description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha restoran Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan pengeluaran dengan detail.',
-                  image: '/images/feature-realtime.jpg',
+                  image: '/images/common/feature-realtime.jpg',
                 },
                 {
                   title: 'Multi cabang & multi gudang',
                   description: 'Pantau dan buat laporan keuangan dengan praktis dan buat keputusan bisnis lebih cepat dalam satu klik. Anda juga akan mendapatkan grafik dari operasional dalam bisnis dengan tampilan yang mudah dipahami.',
-                  image: '/images/feature-warehouse.jpg',
+                  image: '/images/common/feature-warehouse.jpg',
                 },
                 {
                   title: 'KelolaAja Purchasing Anti Ribet',
                   description: 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
-                  image: '/images/feature-purchasing.jpg',
+                  image: '/images/common/feature-purchasing.jpg',
                 },
                 {
                   title: 'Laporan diakses hitungan detik',
                   description: 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
-                  image: '/images/feature-reports.jpg',
+                  image: '/images/common/feature-reports.jpg',
                 }
               ].map((benefit, index) => (
                 <ScrollAnimation
@@ -299,15 +299,15 @@ export default function FnBPage() {
               {[
                 {
                   name: 'Sri',
-                  image: '/images/sri.png',
+                  image: '/images/common/sri.png',
                 },
                 {
                   name: 'Sriendo Foods',
-                  image: '/images/sriendofoods.png',
+                  image: '/images/common/sriendofoods.png',
                 },
                 {
                   name: 'Aura Food',
-                  image: '/images/aurafood.png',
+                  image: '/images/common/aurafood.png',
                 }
               ].map((partner, index) => (
                 <ScrollAnimation

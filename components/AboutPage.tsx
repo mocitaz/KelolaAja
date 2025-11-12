@@ -58,7 +58,7 @@ export default function AboutPage() {
             <ScrollAnimation direction="right" delay={0} duration={600}>
               <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-xl border border-gray-200 group">
                 <Image
-                  src="/images/about-image-1.jpg"
+                  src="/images/home/about-image-1.jpg"
                   alt="About KelolaAja"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -109,7 +109,7 @@ export default function AboutPage() {
             <ScrollAnimation direction="left" delay={100} duration={600}>
               <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-xl border border-gray-200 group">
                 <Image
-                  src="/images/about-image-2.jpg"
+                  src="/images/home/about-image-2.jpg"
                   alt="About KelolaAja"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"

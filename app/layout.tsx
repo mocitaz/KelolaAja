@@ -21,9 +21,9 @@ export const metadata: Metadata = {
   description: 'Platform modern yang membantu Anda mengelola bisnis dengan lebih efisien dan efektif.',
   keywords: 'landing page, bisnis, solusi, kelola aja',
   icons: {
-    icon: '/images/iconweb.png',
-    shortcut: '/images/iconweb.png',
-    apple: '/images/iconweb.png',
+    icon: '/images/common/iconweb.png',
+    shortcut: '/images/common/iconweb.png',
+    apple: '/images/common/iconweb.png',
   },
 }
 

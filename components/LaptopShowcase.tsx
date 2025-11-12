@@ -12,7 +12,7 @@ export default function LaptopShowcase() {
           <div className="relative w-full max-w-[98%] mx-auto">
             <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="/images/laptop-besar.png"
+                src="/images/home/laptop-besar.png"
                 alt="KelolaAja - Bisa diakses dari Android, Windows, iOS, Mac atau gadget apapun"
                 width={1920}
                 height={1080}

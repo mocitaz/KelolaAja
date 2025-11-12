@@ -89,7 +89,7 @@ export default function ManufakturPage() {
               <ScrollAnimation direction="left" delay={200} duration={600}>
                 <div className="relative w-full aspect-square lg:aspect-[4/3] overflow-hidden group">
                   <Image
-                    src="/images/manu.png"
+                    src="/images/manufacturing/manu.png"
                     alt="Manufaktur"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -181,32 +181,32 @@ export default function ManufakturPage() {
                 {
                   title: 'KelolaAja aja multi proyek dengan satu Klik',
                   description: 'Bisnis kontraktor membutuhkan pengelolaan proyek yang efisien. Dengan KelolaAja, Anda dapat dengan mudah mengelola banyak proyek sekaligus, memantau anggaran, dan menjadikan manajemen proyek Anda lebih terstruktur dan terorganisir.',
-                  image: '/images/manufacturing-multi-project.jpg',
+                  image: '/images/manufacturing/manufacturing-multi-project.jpg',
                 },
                 {
                   title: 'Perhitungan aset tetap otomatis dan akurat',
                   description: 'Berhenti menghitung nilai aset tetap secara manual. Dengan KelolaAja, penyusutan setiap aset dihitung otomatis dan jurnal penyesuaian tersedia setiap bulan tanpa perlu usaha tambahan.',
-                  image: '/images/manufacturing-fixed-asset.jpg',
+                  image: '/images/manufacturing/manufacturing-fixed-asset.jpg',
                 },
                 {
                   title: 'Catat seluruh biaya operasional dengan mudah',
                   description: 'Dengan KelolaAja, Anda dapat dengan mudah mencatat dan mengelola biaya kapan saja dan di mana saja, memastikan efisiensi yang lebih baik, mengurangi pemborosan, dan meningkatkan profitabilitas proyek Anda.',
-                  image: '/images/manufacturing-operational-cost.jpg',
+                  image: '/images/manufacturing/manufacturing-operational-cost.jpg',
                 },
                 {
                   title: 'Real-time, di mana saja dan kapan saja',
                   description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha restoran Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan dengan detail.',
-                  image: '/images/manufacturing-realtime.jpg',
+                  image: '/images/manufacturing/manufacturing-realtime.jpg',
                 },
                 {
                   title: 'KelolaAja Purchasing Anti Ribet',
                   description: 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
-                  image: '/images/manufacturing-purchasing.jpg',
+                  image: '/images/manufacturing/manufacturing-purchasing.jpg',
                 },
                 {
                   title: 'Laporan diakses hitungan detik',
                   description: 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
-                  image: '/images/manufacturing-reports.jpg',
+                  image: '/images/manufacturing/manufacturing-reports.jpg',
                 }
               ].map((benefit, index) => (
                 <ScrollAnimation
@@ -272,15 +272,15 @@ export default function ManufakturPage() {
               {[
                 {
                   name: 'Sri',
-                  image: '/images/sri.png',
+                  image: '/images/common/sri.png',
                 },
                 {
                   name: 'Sriendo Foods',
-                  image: '/images/sriendofoods.png',
+                  image: '/images/common/sriendofoods.png',
                 },
                 {
                   name: 'Aura Food',
-                  image: '/images/aurafood.png',
+                  image: '/images/common/aurafood.png',
                 }
               ].map((partner, index) => (
                 <ScrollAnimation

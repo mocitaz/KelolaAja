@@ -12,7 +12,7 @@ export default function IndustriesPage() {
     {
       title: t.navDropdown.industries.fnb,
       description: 'Untuk restoran, kafe, dan bisnis kuliner',
-      image: '/images/industry-fnb.jpg',
+      image: '/images/industries/fnb/industry-fnb.jpg',
       href: '/industries/fnb',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,7 +23,7 @@ export default function IndustriesPage() {
     {
       title: t.navDropdown.industries.contractor,
       description: 'Manajemen proyek konstruksi terintegrasi',
-      image: '/images/industry-contractor.jpg',
+      image: '/images/industries/contractor/industry-contractor.jpg',
       href: '/industries/contractor',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +34,7 @@ export default function IndustriesPage() {
     {
       title: t.navDropdown.industries.manufacturing,
       description: 'Produksi dan inventory management',
-      image: '/images/industry-manufacturing.jpg',
+      image: '/images/industries/manufacturing/industry-manufacturing.jpg',
       href: '/industries/manufaktur',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +45,7 @@ export default function IndustriesPage() {
     {
       title: t.navDropdown.industries.retail,
       description: 'Untuk toko retail dan e-commerce',
-      image: '/images/industry-retail.jpg',
+      image: '/images/industries/retail/industry-retail.jpg',
       href: '/industries/retail',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

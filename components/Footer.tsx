@@ -164,7 +164,7 @@ export default function Footer() {
             <div className="flex flex-col items-center md:items-start gap-2">
               <Link href="/" className="inline-block">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/common/logo.png"
                   alt="KelolaAja"
                   width={120}
                   height={35}
