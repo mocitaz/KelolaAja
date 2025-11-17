@@ -112,6 +112,14 @@ export default function Footer() {
                   {t.navDropdown.features.inventory}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/features/hr"
+                  className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
+                >
+                  {t.navDropdown.features.hr}
+                </Link>
+              </li>
             </ul>
           </div>
 

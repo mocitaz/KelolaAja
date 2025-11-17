@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import { createWhatsAppLink } from '@/lib/whatsapp'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import Image from 'next/image'
+import Partners from '@/components/Partners'
 
 export default function RetailPage() {
   const { t } = useLanguage()
@@ -65,7 +66,16 @@ export default function RetailPage() {
                     href={whatsappLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all duration-200 hover:scale-105"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all duration-200 hover:scale-105"
+                    style={{
+                      backgroundColor: '#0498da',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#0388c2'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#0498da'
+                    }}
                   >
                     <span>Hubungi Kami</span>
                     <svg
@@ -255,59 +265,7 @@ export default function RetailPage() {
       </section>
 
       {/* Partners Section */}
-      <section className="py-8 lg:py-12 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto">
-            {/* Title */}
-            <ScrollAnimation direction="fade" delay={0} duration={500}>
-              <div className="text-center mb-8 lg:mb-10">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-4">
-                  Mitra kami
-                </h2>
-              </div>
-            </ScrollAnimation>
-
-            {/* Partners Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-center justify-items-center">
-              {[
-                {
-                  name: 'Sri',
-                  image: '/images/common/sri.png',
-                },
-                {
-                  name: 'Sriendo Foods',
-                  image: '/images/common/sriendofoods.png',
-                },
-                {
-                  name: 'Aura Food',
-                  image: '/images/common/aurafood.png',
-                }
-              ].map((partner, index) => (
-                <ScrollAnimation
-                  key={index}
-                  direction="up"
-                  delay={index * 100}
-                  duration={500}
-                >
-                  <div className="flex items-center justify-center group">
-                    <Image
-                      src={partner.image}
-                      alt={partner.name}
-                      width={150}
-                      height={96}
-                      className="object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-300 max-w-[150px] w-full h-auto"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.style.display = 'none'
-                      }}
-                    />
-                  </div>
-                </ScrollAnimation>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <Partners />
 
       {/* CTA Section */}
       <section className="py-12 lg:py-20 bg-white">
@@ -326,7 +284,16 @@ export default function RetailPage() {
                     href={whatsappLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105"
+                    className="group inline-flex items-center gap-3 px-8 py-4 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105"
+                    style={{
+                      backgroundColor: '#0498da',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#0388c2'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#0498da'
+                    }}
                   >
                     <span>Konsultasi Gratis Sekarang</span>
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -366,7 +333,16 @@ export default function RetailPage() {
                       href={whatsappLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105"
+                      className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105"
+                      style={{
+                        backgroundColor: '#0498da',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#0388c2'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#0498da'
+                      }}
                     >
                       <span>Coba Gratis Sekarang</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

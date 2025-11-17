@@ -68,7 +68,19 @@ export default function Hero({ content }: HeroProps) {
                   href={whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-bold rounded-xl shadow-lg shadow-primary-500/30 transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary-500/40 overflow-hidden"
+                  className="group relative inline-flex items-center justify-center px-8 py-4 text-white font-bold rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl overflow-hidden"
+                  style={{
+                    backgroundColor: '#0498da',
+                    boxShadow: '0 10px 15px -3px rgba(4, 152, 218, 0.3), 0 4px 6px -2px rgba(4, 152, 218, 0.2)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#0388c2'
+                    e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(4, 152, 218, 0.4), 0 10px 10px -5px rgba(4, 152, 218, 0.2)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#0498da'
+                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(4, 152, 218, 0.3), 0 4px 6px -2px rgba(4, 152, 218, 0.2)'
+                  }}
                 >
                   <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></span>
                   <span className="relative flex items-center gap-2">
@@ -80,7 +92,7 @@ export default function Hero({ content }: HeroProps) {
                 </a>
                 <a
                   href="#contact"
-                  className="group inline-flex items-center justify-center px-8 py-4 bg-white hover:bg-gray-50 text-gray-900 font-bold rounded-xl shadow-lg border-2 border-gray-200 hover:border-primary-300 transform transition-all duration-300 hover:scale-105"
+                  className="group inline-flex items-center justify-center px-8 py-4 bg-secondary-500 hover:bg-secondary-600 text-white font-bold rounded-xl shadow-lg shadow-secondary-500/30 transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-secondary-500/40"
                 >
                   <span className="flex items-center gap-2">
                     {t.hero.demoButton}

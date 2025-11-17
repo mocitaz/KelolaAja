@@ -39,7 +39,16 @@ export default function FinalCTA() {
                   href={whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 px-6 lg:px-8 py-3 lg:py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all duration-200 hover:scale-105 text-sm lg:text-base w-full sm:w-auto justify-center"
+                  className="inline-flex items-center gap-2.5 px-6 lg:px-8 py-3 lg:py-3.5 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all duration-200 hover:scale-105 text-sm lg:text-base w-full sm:w-auto justify-center"
+                  style={{
+                    backgroundColor: '#0498da',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#0388c2'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#0498da'
+                  }}
                 >
                   <svg
                     className="w-4 h-4 lg:w-5 lg:h-5"

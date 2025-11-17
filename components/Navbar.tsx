@@ -74,6 +74,7 @@ export default function Navbar() {
         { label: t.navDropdown.features.manufacturing, href: '/features/manufacturing', description: locale === 'id' ? 'Sistem manufaktur terintegrasi untuk produksi dan supply chain' : 'Integrated manufacturing system for production and supply chain' },
         { label: t.navDropdown.features.sales, href: '/features/sales', description: locale === 'id' ? 'Proses pembelian dan penjualan dari quotation hingga invoice' : 'Purchase and sales process from quotation to invoice' },
         { label: t.navDropdown.features.inventory, href: '/features/inventory', description: locale === 'id' ? 'Manajemen inventory dengan tracking real-time' : 'Inventory management with real-time tracking' },
+        { label: t.navDropdown.features.hr, href: '/features/hr', description: locale === 'id' ? 'Kelola HR dan payroll dengan mudah, mulai dari data karyawan hingga perhitungan gaji' : 'Manage HR and payroll easily, from employee data to salary calculation' },
       ],
     },
   ]
@@ -586,7 +587,16 @@ export default function Navbar() {
               {/* CTA Button - Enhanced */}
               <a
                 href="/contact"
-                className="group relative px-5 py-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-xl transform hover:scale-105 overflow-hidden"
+                className="group relative px-5 py-2 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-xl transform hover:scale-105 overflow-hidden"
+                style={{
+                  backgroundColor: '#0498da',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#0388c2'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#0498da'
+                }}
               >
                 {/* Shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
@@ -828,7 +838,16 @@ export default function Navbar() {
               <a
                 href="/contact"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="mt-4 group relative px-4 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white text-sm font-semibold rounded-lg text-center transition-all duration-200 shadow-md hover:shadow-xl transform hover:scale-105 overflow-hidden"
+                className="mt-4 group relative px-4 py-2.5 text-white text-sm font-semibold rounded-lg text-center transition-all duration-200 shadow-md hover:shadow-xl transform hover:scale-105 overflow-hidden"
+                style={{
+                  backgroundColor: '#0498da',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#0388c2'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#0498da'
+                }}
               >
                 {/* Shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>

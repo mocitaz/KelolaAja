@@ -21,6 +21,7 @@ export interface Translations {
       manufacturing: string
       sales: string
       inventory: string
+      hr: string
     }
     industries: {
       fnb: string
@@ -252,6 +253,7 @@ export const translations: Record<Locale, Translations> = {
         manufacturing: 'Fitur Manufaktur',
         sales: 'Pembelian dan Penjualan',
         inventory: 'Produk dan Inventory',
+        hr: 'HR & Payroll',
       },
       industries: {
         fnb: 'Food & Beverage',
@@ -372,7 +374,7 @@ export const translations: Record<Locale, Translations> = {
         },
         importExcel: {
           title: 'Import dari Excel',
-          description: 'Tidak perlu lagi repot memasukkan data produk dan stok secara manual, cukup ketik di Excel dan unggah. Semua informasi akan otomatis terintegrasi ke dalam sistem KelolaAja.',
+          description: 'Unggah data produk dan stok dari Excel. Semua informasi otomatis terintegrasi ke sistem KelolaAja.',
         },
       },
     },
@@ -601,6 +603,7 @@ export const translations: Record<Locale, Translations> = {
         manufacturing: 'Manufacturing Features',
         sales: 'Purchasing & Sales',
         inventory: 'Products & Inventory',
+        hr: 'HR & Payroll',
       },
       industries: {
         fnb: 'Food & Beverage',
@@ -723,7 +726,7 @@ export const translations: Record<Locale, Translations> = {
         },
         importExcel: {
           title: 'Import from Excel',
-          description: 'No need to bother entering product and stock data manually, just type in Excel and upload. All information will automatically be integrated into the KelolaAja system.',
+          description: 'Upload product and stock data from Excel. All information automatically integrated into KelolaAja system.',
         },
       },
     },

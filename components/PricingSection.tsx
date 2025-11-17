@@ -132,7 +132,16 @@ export default function PricingSection() {
                     href={whatsappLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative inline-flex items-center justify-center gap-2.5 px-6 lg:px-8 py-3.5 lg:py-4 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105 text-sm lg:text-base w-full mt-auto overflow-hidden group/btn"
+                    className="relative inline-flex items-center justify-center gap-2.5 px-6 lg:px-8 py-3.5 lg:py-4 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform transition-all duration-200 hover:scale-105 text-sm lg:text-base w-full mt-auto overflow-hidden group/btn"
+                    style={{
+                      backgroundColor: '#0498da',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#0388c2'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#0498da'
+                    }}
                   >
                     {/* Button Shine Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700"></div>

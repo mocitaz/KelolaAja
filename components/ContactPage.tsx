@@ -393,7 +393,20 @@ export default function ContactPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full px-6 py-3.5 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      style={{
+                        backgroundColor: isSubmitting ? '#0388c2' : '#0498da',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSubmitting) {
+                          e.currentTarget.style.backgroundColor = '#0388c2'
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSubmitting) {
+                          e.currentTarget.style.backgroundColor = '#0498da'
+                        }
+                      }}
                     >
                       {contactData.form.submitButton}
                       <svg
@@ -462,7 +475,16 @@ export default function ContactPage() {
                     href={whatsappLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2"
+                    className="w-full px-6 py-3.5 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2"
+                    style={{
+                      backgroundColor: '#0498da',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#0388c2'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#0498da'
+                    }}
                   >
                     <svg
                       className="w-5 h-5"
@@ -483,7 +505,16 @@ export default function ContactPage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Email</h3>
                   <a
                     href="mailto:support@kelolaaja.com"
-                    className="w-full px-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2"
+                    className="w-full px-6 py-3.5 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2"
+                    style={{
+                      backgroundColor: '#0498da',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#0388c2'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#0498da'
+                    }}
                   >
                     <svg
                       className="w-5 h-5"

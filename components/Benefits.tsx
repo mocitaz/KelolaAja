@@ -74,17 +74,17 @@ export default function Benefits() {
                 delay={index * 100}
                 duration={500}
               >
-                <div className="bg-white rounded-lg p-3 lg:p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-primary-200 transition-all duration-300 group h-full flex flex-col">
+                <div className="bg-white rounded-lg p-3 lg:p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 group h-full flex flex-col" style={{ '--hover-border-color': '#0498da' } as React.CSSProperties} onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#0498da' }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e5e7eb' }}>
                   <div className="flex items-start gap-2 flex-1">
                     <div className="flex-shrink-0 mt-0.5">
-                      <div className="w-5 h-5 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
+                      <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(to bottom right, #0498da, #0388c2)' }}>
                         <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                       </div>
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col">
-                      <div className="text-xl lg:text-2xl font-bold text-primary-600 mb-0.5 group-hover:scale-110 transition-transform duration-300">
+                      <div className="text-xl lg:text-2xl font-bold mb-0.5 group-hover:scale-110 transition-transform duration-300" style={{ color: '#0498da' }}>
                         <AnimatedCounter value={stat.value} duration={2000} />
                       </div>
                       <p className="text-xs lg:text-sm text-gray-600 leading-tight flex-1">
@@ -106,18 +106,18 @@ export default function Benefits() {
               delay={index * 150}
               duration={600}
             >
-              <div className="group bg-white rounded-xl p-4 lg:p-6 shadow-md border border-gray-100 hover:shadow-lg hover:border-primary-300 transition-all duration-300 hover:-translate-y-1">
+              <div className="group bg-white rounded-xl p-4 lg:p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1" onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#0498da' }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e5e7eb' }}>
                 <div className="flex items-start gap-3 lg:gap-4">
                   {/* Icon */}
                   <div className="flex-shrink-0">
-                    <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-md">
+                    <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg flex items-center justify-center text-white group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-md" style={{ background: 'linear-gradient(to bottom right, #0498da, #0388c2)' }}>
                       {feature.icon}
                     </div>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1">
-                    <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors duration-300">
+                    <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2 transition-colors duration-300" onMouseEnter={(e) => { e.currentTarget.style.color = '#0498da' }} onMouseLeave={(e) => { e.currentTarget.style.color = '#111827' }}>
                       {feature.title}
                     </h3>
                     <p className="text-sm lg:text-base text-gray-600 leading-relaxed">
