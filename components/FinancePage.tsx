@@ -357,7 +357,6 @@ export default function FinancePage() {
       {/* Other Features Carousel */}
       <FeaturesCarousel 
         features={otherFeatures}
-        title="Keuntungan Menggunakan Sistem Keuangan KelolaAja"
       />
 
       {/* CTA Section */}

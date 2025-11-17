@@ -357,7 +357,6 @@ export default function ProjectPage() {
       {/* Other Features Carousel */}
       <FeaturesCarousel 
         features={otherFeatures}
-        title="Keuntungan Menggunakan Sistem Manajemen Proyek KelolaAja"
       />
 
       {/* CTA Section */}

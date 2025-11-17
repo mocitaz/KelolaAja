@@ -372,7 +372,6 @@ export default function InventoryPage() {
       {/* Other Features Carousel */}
       <FeaturesCarousel 
         features={otherFeatures}
-        title="Keuntungan Menggunakan Sistem Inventory KelolaAja"
       />
 
       {/* CTA Section */}

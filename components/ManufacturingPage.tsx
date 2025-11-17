@@ -357,7 +357,6 @@ export default function ManufacturingPage() {
       {/* Other Features Carousel */}
       <FeaturesCarousel 
         features={otherFeatures}
-        title="Keuntungan Menggunakan Sistem Manufaktur KelolaAja"
       />
 
       {/* CTA Section */}

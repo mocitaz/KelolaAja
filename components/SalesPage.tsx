@@ -372,7 +372,6 @@ export default function SalesPage() {
       {/* Other Features Carousel */}
       <FeaturesCarousel 
         features={otherFeatures}
-        title="Keuntungan Menggunakan Sistem Pembelian & Penjualan KelolaAja"
       />
 
       {/* CTA Section */}
