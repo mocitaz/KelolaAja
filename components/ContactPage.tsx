@@ -72,27 +72,27 @@ export default function ContactPage() {
     const newErrors: Record<string, string> = {}
 
     if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Nama lengkap wajib diisi'
+      newErrors.fullName = t.contactPage?.errors?.fullNameRequired || 'Nama lengkap wajib diisi'
     }
     if (!formData.companyName.trim()) {
-      newErrors.companyName = 'Nama perusahaan wajib diisi'
+      newErrors.companyName = t.contactPage?.errors?.companyNameRequired || 'Nama perusahaan wajib diisi'
     }
     if (!formData.demoDate) {
-      newErrors.demoDate = 'Tanggal demo wajib diisi'
+      newErrors.demoDate = t.contactPage?.errors?.demoDateRequired || 'Tanggal demo wajib diisi'
     }
     if (!formData.demoSession) {
-      newErrors.demoSession = 'Sesi demo wajib dipilih'
+      newErrors.demoSession = t.contactPage?.errors?.demoSessionRequired || 'Sesi demo wajib dipilih'
     }
     if (!formData.companyEmail.trim()) {
-      newErrors.companyEmail = 'Email perusahaan wajib diisi'
+      newErrors.companyEmail = t.contactPage?.errors?.companyEmailRequired || 'Email perusahaan wajib diisi'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.companyEmail)) {
-      newErrors.companyEmail = 'Format email tidak valid'
+      newErrors.companyEmail = t.contactPage?.errors?.companyEmailInvalid || 'Format email tidak valid'
     }
     if (!formData.companyPhone.trim()) {
-      newErrors.companyPhone = 'Nomor perusahaan wajib diisi'
+      newErrors.companyPhone = t.contactPage?.errors?.companyPhoneRequired || 'Nomor perusahaan wajib diisi'
     }
     if (!formData.message.trim()) {
-      newErrors.message = 'Pesan wajib diisi'
+      newErrors.message = t.contactPage?.errors?.messageRequired || 'Pesan wajib diisi'
     }
 
     setErrors(newErrors)

@@ -217,19 +217,187 @@ export interface Translations {
     }
     title: string
     benefits: string[]
-    form: {
-      fullName: string
-      companyName: string
-      demoDate: string
-      demoSession: string
-      morning: string
-      afternoon: string
-      companyEmail: string
-      companyPhone: string
-      message: string
-      submitButton: string
+      form: {
+        fullName: string
+        companyName: string
+        demoDate: string
+        demoSession: string
+        morning: string
+        afternoon: string
+        companyEmail: string
+        companyPhone: string
+        message: string
+        submitButton: string
+      }
+      errors: {
+        fullNameRequired: string
+        companyNameRequired: string
+        demoDateRequired: string
+        demoSessionRequired: string
+        companyEmailRequired: string
+        companyEmailInvalid: string
+        companyPhoneRequired: string
+        messageRequired: string
+      }
+      notes: string[]
+  }
+  featuresPage?: {
+    hero: {
+      title: string
+      subtitle: string
     }
-    notes: string[]
+    features: Array<{
+      title: string
+      description: string
+      shortDesc: string
+    }>
+    cta: {
+      title: string
+      description: string
+      buttonText: string
+    }
+    about: {
+      title: string
+      subtitle: string
+      description1: string
+      description2: string
+      buttonText: string
+    }
+    faq: {
+      title: string
+      subtitle: string
+      items: Array<{
+        question: string
+        answer: string
+      }>
+    }
+    learnMore: string
+  }
+  industriesPage?: {
+    hero: {
+      badge: string
+      title: string
+      subtitle: string
+    }
+    learnMore: string
+  }
+  industryPages?: {
+    fnb?: {
+      introText: string
+      title: string
+      description: string
+      problems: Array<{
+        title: string
+        description: string
+      }>
+      solutions: Array<{
+        title: string
+        description: string
+      }>
+      cta: {
+        title: string
+        description: string
+        buttonText: string
+      }
+      about: {
+        title: string
+        subtitle: string
+        description1: string
+        description2: string
+        buttonText: string
+      }
+      faq: {
+        question: string
+        answer: string
+      }
+    }
+    contractor?: {
+      introText: string
+      title: string
+      description: string
+      problems: Array<{
+        title: string
+        description: string
+      }>
+      solutions: Array<{
+        title: string
+        description: string
+      }>
+      cta: {
+        title: string
+        description: string
+        buttonText: string
+      }
+      about: {
+        title: string
+        subtitle: string
+        description1: string
+        description2: string
+        buttonText: string
+      }
+      faq: {
+        question: string
+        answer: string
+      }
+    }
+    retail?: {
+      introText: string
+      title: string
+      description: string
+      problems: Array<{
+        title: string
+        description: string
+      }>
+      solutions: Array<{
+        title: string
+        description: string
+      }>
+      cta: {
+        title: string
+        description: string
+        buttonText: string
+      }
+      about: {
+        title: string
+        subtitle: string
+        description1: string
+        description2: string
+        buttonText: string
+      }
+      faq: {
+        question: string
+        answer: string
+      }
+    }
+    manufacturing?: {
+      introText: string
+      title: string
+      description: string
+      problems: Array<{
+        title: string
+        description: string
+      }>
+      solutions: Array<{
+        title: string
+        description: string
+      }>
+      cta: {
+        title: string
+        description: string
+        buttonText: string
+      }
+      about: {
+        title: string
+        subtitle: string
+        description1: string
+        description2: string
+        buttonText: string
+      }
+      faq: {
+        question: string
+        answer: string
+      }
+    }
   }
 }
 
@@ -582,6 +750,129 @@ export const translations: Record<Locale, Translations> = {
           icon: 'import',
         },
       ],
+    },
+    contactPage: {
+      testimonial: {
+        name: 'Ayu Panduwinata',
+        quote: 'Proses bisnis sekarang jadi dua kali lebih efisien. Selain itu, pelayanan juga salah satu kelebihan KelolaAja. Setiap kali kami ada kendala, tim KelolaAja sangat responsif.',
+        image: '/images/common/ayu.png',
+      },
+      title: 'Dapatkan Konsultasi Gratis Untuk Masalah Proses Bisnis Anda',
+      benefits: [
+        'Dilayani tim konsultan spesialis di berbagai industri',
+        'Identifikasi berbagai masalah dalam proses bisnis Anda beserta solusinya',
+        'Konsultasi gratis dilakukan online via Zoom',
+        'Jadwalkan konsultasi sesuai keinginan Anda',
+      ],
+      form: {
+        fullName: 'Nama Lengkap',
+        companyName: 'Nama Perusahaan',
+        demoDate: 'Tanggal Demo',
+        demoSession: 'Sesi Demo',
+        morning: 'Pagi',
+        afternoon: 'Siang',
+        companyEmail: 'Email Perusahaan',
+        companyPhone: 'Nomer Perusahaan',
+        message: 'Pesan',
+        submitButton: 'Daftar Sekarang',
+      },
+      errors: {
+        fullNameRequired: 'Nama lengkap wajib diisi',
+        companyNameRequired: 'Nama perusahaan wajib diisi',
+        demoDateRequired: 'Tanggal demo wajib diisi',
+        demoSessionRequired: 'Sesi demo wajib dipilih',
+        companyEmailRequired: 'Email perusahaan wajib diisi',
+        companyEmailInvalid: 'Format email tidak valid',
+        companyPhoneRequired: 'Nomor perusahaan wajib diisi',
+        messageRequired: 'Pesan wajib diisi',
+      },
+      notes: [
+        'Harap lengkapi data diri Anda dengan benar untuk memudahkan komunikasi dan konfirmasi dengan tim KelolaAja',
+        'Setelah Anda menjadwalkan sesi demo dan konsultasi gratis, kami akan segera mengonfirmasi melalui WhatsApp atau email.',
+        'Pastikan Anda memilih waktu yang sesuai agar sesi demo berjalan lancar dan Anda bisa memperoleh informasi yang diperlukan.',
+        'Anda dapat mengikuti sesi demo atau konsultasi melalui smartphone, laptop, atau PC, pastikan juga koneksi internet Anda stabil.',
+      ],
+    },
+    featuresPage: {
+      hero: {
+        title: 'Fitur KelolaAja',
+        subtitle: 'Solusi ERP lengkap untuk mengelola seluruh aspek bisnis Anda dalam satu platform terintegrasi',
+      },
+      features: [
+        {
+          title: 'Keuangan & Akuntansi',
+          description: 'Buat laporan keuangan seperti laba rugi, neraca, dan arus kas secara real-time. Pemantauan buku besar, serta utang dan piutang, menjadi lebih sederhana. Dapatkan laporan kinerja perusahaan yang selalu terkini dan menyeluruh.',
+          shortDesc: 'Sistem keuangan lengkap untuk arus kas, pembukuan, dan laporan',
+        },
+        {
+          title: 'Manufaktur',
+          description: 'KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis. Rencanakan produksi, Bill of Material, serta hitung biaya bahan baku dan overhead produksi pabrik secara otomatis dengan modul manufaktur.',
+          shortDesc: 'Sistem manufaktur terintegrasi untuk produksi dan supply chain',
+        },
+        {
+          title: 'Manajement Proyek',
+          description: 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim kelolaAja akan selalu membantu sampai Anda bisa.',
+          shortDesc: 'Kelola proyek, track progress, dan monitor timeline',
+        },
+        {
+          title: 'Pembelian & Penjualan',
+          description: 'Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi. Dilengkapi fitur DP dan diskon bertingkat. Pantau pengiriman barang, buat tagihan, hingga dengan mudah dalam satu software.',
+          shortDesc: 'Proses pembelian dan penjualan dari quotation hingga invoice',
+        },
+        {
+          title: 'Produk & Inventory',
+          description: 'KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman. Pantau stok secara real-time, atur harga, dan optimalkan alur distribusi menggunakan satu platform.',
+          shortDesc: 'Manajemen inventory dengan tracking real-time',
+        },
+        {
+          title: 'HR & Payroll',
+          description: 'KelolaAja HR dan payroll dengan mudah, mulai dari pengelolaan data karyawan, absensi, hingga perhitungan gaji. Semua proses otomatis, akurat, dan dapat diakses kapan saja, memudahkan manajemen SDM di perusahaan Anda.',
+          shortDesc: 'Kelola HR dan payroll dengan mudah dan otomatis',
+        },
+      ],
+      cta: {
+        title: 'Siap Mengoptimalkan Bisnis Anda?',
+        description: 'Temukan solusi ERP yang tepat untuk kebutuhan bisnis Anda. Hubungi kami untuk konsultasi gratis.',
+        buttonText: 'Konsultasi Gratis Sekarang',
+      },
+      about: {
+        title: 'Apa Itu KelolaAja?',
+        subtitle: 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia',
+        description1: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.',
+        description2: 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+        buttonText: 'Coba Gratis Sekarang',
+      },
+      faq: {
+        title: 'Pertanyaan Umum',
+        subtitle: 'Temukan jawaban atas pertanyaan umum tentang KelolaAja',
+        items: [
+          {
+            question: 'Apakah ada pelatihan untuk menggunakan KelolaAja?',
+            answer: 'Ada, pelatihan baik secara online maupun langsung, termasuk tutorial, webinar, dan dukungan teknis, agar tim Anda dapat memanfaatkan software tersebut secara optimal.',
+          },
+          {
+            question: 'Apa yang dibutuhkan untuk menggunakan KelolaAja?',
+            answer: 'Tidak ada. Anda hanya memerlukan komputer beserta koneksi internet.',
+          },
+          {
+            question: 'Apa manfaat software ERP akuntansi untuk bisnis?',
+            answer: 'Akuntansi ERP KelolaAja mampu menghemat waktu pekerjaan perusahaan. Selain itu sistem akuntansi ini juga mampu menghindarkan perusahaan Anda dari kesalahan atau kekeliruan dalam perhitungan akuntansi, membuat laporan bisnis pun menjadi lebih aman, cepat dan mudah.',
+          },
+          {
+            question: 'Apakah Aman Menggunakan KelolaAja?',
+            answer: 'KelolaAja bertanggung jawab secara serius atas keamanan yang diperoleh pelanggan. Selain itu, keunggulan dari software, sistem, dan data menjadi prioritas utama kami. Keamanan juga menjadi kunci dari penawaran yang kami berikan. Untuk itu semua informasi yang Anda berikan telah ter-encrypt dan terjaga dengan teknologi dan keamanan yang terkemuka.',
+          },
+        ],
+      },
+      learnMore: 'Pelajari Selengkapnya',
+    },
+    industriesPage: {
+      hero: {
+        badge: 'Solusi ERP untuk Semua Industri',
+        title: 'Industri yang Kami Layani',
+        subtitle: 'KelolaAja hadir dengan solusi ERP yang disesuaikan untuk berbagai industri. Dari restoran hingga manufaktur, kami membantu bisnis Anda tumbuh lebih efisien dan profesional.',
+      },
+      learnMore: 'Pelajari Selengkapnya',
     },
   },
   en: {
@@ -983,12 +1274,103 @@ export const translations: Record<Locale, Translations> = {
         message: 'Message',
         submitButton: 'Register Now',
       },
+      errors: {
+        fullNameRequired: 'Full name is required',
+        companyNameRequired: 'Company name is required',
+        demoDateRequired: 'Demo date is required',
+        demoSessionRequired: 'Demo session is required',
+        companyEmailRequired: 'Company email is required',
+        companyEmailInvalid: 'Invalid email format',
+        companyPhoneRequired: 'Company phone is required',
+        messageRequired: 'Message is required',
+      },
       notes: [
         'Please complete your personal data correctly to facilitate communication and confirmation with the KelolaAja team',
         'After you schedule a demo session and free consultation, we will immediately confirm via WhatsApp or email.',
         'Make sure you choose a suitable time so that the demo session runs smoothly and you can get the necessary information.',
         'You can follow the demo or consultation session via smartphone, laptop, or PC, make sure your internet connection is stable.',
       ],
+    },
+    featuresPage: {
+      hero: {
+        title: 'KelolaAja Features',
+        subtitle: 'Complete ERP solution to manage all aspects of your business in one integrated platform',
+      },
+      features: [
+        {
+          title: 'Finance & Accounting',
+          description: 'Create financial reports such as profit and loss, balance sheet, and cash flow in real-time. Monitoring general ledger, as well as receivables and payables, becomes simpler. Get up-to-date and comprehensive company performance reports.',
+          shortDesc: 'Complete financial system for cash flow, bookkeeping, and reports',
+        },
+        {
+          title: 'Manufacturing',
+          description: 'Manage the manufacturing process easily, automatically calculate the Cost of Goods Sold for products. Plan production, Bill of Material, and automatically calculate raw material costs and factory production overhead with the manufacturing module.',
+          shortDesc: 'Integrated manufacturing system for production and supply chain',
+        },
+        {
+          title: 'Project Management',
+          description: 'KelolaAja is designed for all types & scales of business. Even if you do not understand in depth, you will easily adapt to KelolaAja. In addition, the KelolaAja team will always help until you can.',
+          shortDesc: 'Manage projects, track progress, and monitor timeline',
+        },
+        {
+          title: 'Purchasing & Sales',
+          description: 'More flexible buying and selling processes, you can choose cash sales or consignment. Equipped with DP features and tiered discounts. Monitor goods delivery, create invoices, all easily in one software.',
+          shortDesc: 'Purchase and sales process from quotation to invoice',
+        },
+        {
+          title: 'Products & Inventory',
+          description: 'Manage products and inventory efficiently, from procurement to delivery. Monitor stock in real-time, set prices, and optimize distribution flow using one platform.',
+          shortDesc: 'Inventory management with real-time tracking',
+        },
+        {
+          title: 'HR & Payroll',
+          description: 'Manage HR and payroll easily, from employee data management, attendance, to salary calculation. All processes are automatic, accurate, and accessible anytime, making HR management in your company easier.',
+          shortDesc: 'Manage HR and payroll easily, from employee data to salary calculation',
+        },
+      ],
+      cta: {
+        title: 'Ready to Optimize Your Business?',
+        description: 'Find the right ERP solution for your business needs. Contact us for a free consultation.',
+        buttonText: 'Free Consultation Now',
+      },
+      about: {
+        title: 'What is KelolaAja?',
+        subtitle: 'Leading ERP Accounting Software for Indonesian Business',
+        description1: 'KelolaAja ERP Accounting software, founded in 2024 to answer the challenges of companies in managing management systems efficiently. With KelolaAja business software solutions present to meet the needs of various industries. Designed specifically for ease of use and adapted to the needs of Indonesian companies.',
+        description2: 'KelolaAja is the first ERP software that offers the advantage of financial reporting guidance up to tax reporting.',
+        buttonText: 'Try Free Now',
+      },
+      faq: {
+        title: 'Frequently Asked Questions',
+        subtitle: 'Find answers to common questions about KelolaAja',
+        items: [
+          {
+            question: 'Is there training to use KelolaAja?',
+            answer: 'Yes, training both online and in person, including tutorials, webinars, and technical support, so your team can utilize the software optimally.',
+          },
+          {
+            question: 'What is needed to use KelolaAja?',
+            answer: 'Nothing. You only need a computer and internet connection.',
+          },
+          {
+            question: 'What are the benefits of ERP accounting software for business?',
+            answer: 'KelolaAja ERP Accounting is able to save company work time. In addition, this accounting system is also able to prevent your company from errors or mistakes in accounting calculations, making business reports safer, faster and easier.',
+          },
+          {
+            question: 'Is it Safe to Use KelolaAja?',
+            answer: 'KelolaAja is seriously responsible for the security obtained by customers. In addition, the advantages of software, systems, and data are our top priorities. Security is also the key to the offer we provide. For this reason, all information you provide has been encrypted and protected with leading technology and security.',
+          },
+        ],
+      },
+      learnMore: 'Learn More',
+    },
+    industriesPage: {
+      hero: {
+        badge: 'ERP Solutions for All Industries',
+        title: 'Industries We Serve',
+        subtitle: 'KelolaAja comes with ERP solutions tailored for various industries. From restaurants to manufacturing, we help your business grow more efficiently and professionally.',
+      },
+      learnMore: 'Learn More',
     },
   },
 }

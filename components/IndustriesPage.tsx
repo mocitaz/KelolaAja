@@ -6,12 +6,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export default function IndustriesPage() {
-  const { t } = useLanguage()
-
+  const { t, locale } = useLanguage()
+  
   const industries = [
     {
       title: t.navDropdown.industries.fnb,
-      description: 'Untuk restoran, kafe, dan bisnis kuliner',
+      description: locale === 'id' ? 'Untuk restoran, kafe, dan bisnis kuliner' : 'For restaurants, cafes, and culinary businesses',
       image: '/images/industries/fnb/industry-fnb.jpg',
       href: '/industries/fnb',
       icon: (
@@ -22,7 +22,7 @@ export default function IndustriesPage() {
     },
     {
       title: t.navDropdown.industries.contractor,
-      description: 'Manajemen proyek konstruksi terintegrasi',
+      description: locale === 'id' ? 'Manajemen proyek konstruksi terintegrasi' : 'Integrated construction project management',
       image: '/images/industries/contractor/industry-contractor.jpg',
       href: '/industries/contractor',
       icon: (
@@ -33,7 +33,7 @@ export default function IndustriesPage() {
     },
     {
       title: t.navDropdown.industries.manufacturing,
-      description: 'Produksi dan inventory management',
+      description: locale === 'id' ? 'Produksi dan inventory management' : 'Production and inventory management',
       image: '/images/industries/manufacturing/industry-manufacturing.jpg',
       href: '/industries/manufaktur',
       icon: (
@@ -44,7 +44,7 @@ export default function IndustriesPage() {
     },
     {
       title: t.navDropdown.industries.retail,
-      description: 'Untuk toko retail dan e-commerce',
+      description: locale === 'id' ? 'Untuk toko retail dan e-commerce' : 'For retail stores and e-commerce',
       image: '/images/industries/retail/industry-retail.jpg',
       href: '/industries/retail',
       icon: (
@@ -72,14 +72,14 @@ export default function IndustriesPage() {
               <div className="inline-block mb-6">
                 <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold">
                   <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
-                  Solusi ERP untuk Semua Industri
+                  {t.industriesPage?.hero?.badge || 'Solusi ERP untuk Semua Industri'}
                 </span>
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-gray-900 mb-6 leading-tight">
-                Industri yang Kami Layani
+                {t.industriesPage?.hero?.title || 'Industri yang Kami Layani'}
               </h1>
               <p className="text-base lg:text-lg xl:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
-                KelolaAja hadir dengan solusi ERP yang disesuaikan untuk berbagai industri. Dari restoran hingga manufaktur, kami membantu bisnis Anda tumbuh lebih efisien dan profesional.
+                {t.industriesPage?.hero?.subtitle || 'KelolaAja hadir dengan solusi ERP yang disesuaikan untuk berbagai industri. Dari restoran hingga manufaktur, kami membantu bisnis Anda tumbuh lebih efisien dan profesional.'}
               </p>
             </ScrollAnimation>
           </div>
@@ -146,7 +146,7 @@ export default function IndustriesPage() {
                         {industry.description}
                       </p>
                       <div className="flex items-center gap-2 text-primary-600 font-semibold text-sm group-hover:gap-3 transition-all duration-300">
-                        <span>Pelajari Selengkapnya</span>
+                        <span>{t.industriesPage?.learnMore || 'Pelajari Selengkapnya'}</span>
                         <svg
                           className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
                           fill="none"
