@@ -1,0 +1,730 @@
+erDiagram
+    %% ============================================
+    %% ADMIN & AUTHENTICATION
+    %% ============================================
+    ADMIN_USER ||--o{ PRICING_PLAN : "mengelola"
+    ADMIN_USER ||--o{ FEATURE_MASTER : "mengelola"
+    ADMIN_USER ||--o{ FEATURE_PAGE : "mengelola"
+    ADMIN_USER ||--o{ DETAIL_FEATURE_SECTION : "mengelola"
+    ADMIN_USER ||--o{ CONTENT_SECTION : "mengelola"
+    ADMIN_USER ||--o{ TESTIMONIAL : "mengelola"
+    ADMIN_USER ||--o{ INDUSTRY : "mengelola"
+    ADMIN_USER ||--o{ BENEFIT_STAT : "mengelola"
+    ADMIN_USER ||--o{ PROCESS_STEP : "mengelola"
+    ADMIN_USER ||--o{ ERP_BENEFIT : "mengelola"
+    ADMIN_USER ||--o{ PARTNER : "mengelola"
+    ADMIN_USER ||--o{ ADVANCED_FEATURE : "mengelola"
+    ADMIN_USER ||--o{ FAQ : "mengelola"
+    ADMIN_USER ||--o{ ABOUT_CARD : "mengelola"
+    ADMIN_USER ||--o{ KELOLA_AJA_FEATURE : "mengelola"
+    ADMIN_USER ||--o{ MEDIA_FILE : "mengelola"
+    ADMIN_USER ||--o{ AUDIT_LOG : "membuat"
+
+    %% ============================================
+    %% PRICING & FEATURES
+    %% ============================================
+    PRICING_PLAN ||--o{ PLAN_FEATURE_LIST : "memiliki"
+    FEATURE_MASTER ||--o{ PLAN_FEATURE_LIST : "termasuk"
+    PRICING_PLAN ||--o{ PRICING_TRANSLATION : "memiliki_translasi"
+    FEATURE_MASTER ||--o{ FEATURE_TRANSLATION : "memiliki_translasi"
+    FEATURE_MASTER ||--o{ FEATURE_PAGE : "memiliki_halaman"
+    FEATURE_PAGE ||--o{ FEATURE_PAGE_TRANSLATION : "memiliki_translasi"
+    FEATURE_PAGE ||--o{ FEATURE_PAGE_ITEM : "memiliki_item"
+    FEATURE_PAGE_ITEM ||--o{ FEATURE_PAGE_ITEM_TRANSLATION : "memiliki_translasi"
+    MEDIA_FILE ||--o{ FEATURE_PAGE_ITEM : "gambar"
+
+    %% ============================================
+    %% CONTENT MANAGEMENT
+    %% ============================================
+    CONTENT_SECTION ||--o{ CONTENT_TRANSLATION : "memiliki_translasi"
+    CONTENT_SECTION ||--o{ CONTENT_MEDIA : "memiliki_media"
+    MEDIA_FILE ||--o{ CONTENT_MEDIA : "digunakan"
+
+    %% ============================================
+    %% TESTIMONIALS
+    %% ============================================
+    TESTIMONIAL ||--o{ TESTIMONIAL_TRANSLATION : "memiliki_translasi"
+    MEDIA_FILE ||--o{ TESTIMONIAL : "foto_profil"
+
+    %% ============================================
+    %% INDUSTRIES
+    %% ============================================
+    INDUSTRY ||--o{ INDUSTRY_TRANSLATION : "memiliki_translasi"
+    INDUSTRY ||--o{ INDUSTRY_SOLUTION : "memiliki_solusi"
+    INDUSTRY ||--o{ INDUSTRY_PROBLEM : "memiliki_masalah"
+    INDUSTRY ||--o{ INDUSTRY_MEDIA : "memiliki_media"
+    MEDIA_FILE ||--o{ INDUSTRY_MEDIA : "digunakan"
+
+    %% ============================================
+    %% DETAIL FEATURES
+    %% ============================================
+    DETAIL_FEATURE_SECTION ||--o{ DETAIL_FEATURE_TRANSLATION : "memiliki_translasi"
+    MEDIA_FILE ||--o{ DETAIL_FEATURE_SECTION : "icon"
+    
+    %% ============================================
+    %% PROCESS STEPS & ERP BENEFITS
+    %% ============================================
+    PROCESS_STEP ||--o{ PROCESS_STEP_TRANSLATION : "memiliki_translasi"
+    ERP_BENEFIT ||--o{ ERP_BENEFIT_TRANSLATION : "memiliki_translasi"
+    MEDIA_FILE ||--o{ ERP_BENEFIT : "gambar"
+    
+    %% ============================================
+    %% PARTNERS & ABOUT CARDS
+    %% ============================================
+    PARTNER ||--o{ PARTNER_TRANSLATION : "memiliki_translasi"
+    MEDIA_FILE ||--o{ PARTNER : "logo"
+    ABOUT_CARD ||--o{ ABOUT_CARD_TRANSLATION : "memiliki_translasi"
+    MEDIA_FILE ||--o{ ABOUT_CARD : "gambar"
+    
+    %% ============================================
+    %% BENEFITS & ADVANCED FEATURES
+    %% ============================================
+    BENEFIT_STAT ||--o{ BENEFIT_STAT_TRANSLATION : "memiliki_translasi"
+    ADVANCED_FEATURE ||--o{ ADVANCED_FEATURE_TRANSLATION : "memiliki_translasi"
+    MEDIA_FILE ||--o{ ADVANCED_FEATURE : "gambar"
+    
+    %% ============================================
+    %% FAQ & KELOLA AJA FEATURES
+    %% ============================================
+    FAQ_CATEGORY ||--o{ FAQ : "memiliki_pertanyaan"
+    FAQ_CATEGORY ||--o{ FAQ_CATEGORY_TRANSLATION : "memiliki_translasi"
+    FAQ ||--o{ FAQ_TRANSLATION : "memiliki_translasi"
+    KELOLA_AJA_FEATURE ||--o{ KELOLA_AJA_FEATURE_TRANSLATION : "memiliki_translasi"
+
+    %% ============================================
+    %% VISITOR & ANALYTICS
+    %% ============================================
+    VISITOR ||--o{ PAGE_VIEW : "mengunjungi"
+    VISITOR ||--o{ CONTACT_SUBMISSION : "mengirim"
+    PAGE_VIEW ||--o{ PAGE_VIEW_EVENT : "memiliki_event"
+
+    %% ============================================
+    %% ENTITIES DEFINITION
+    %% ============================================
+
+    ADMIN_USER {
+        int user_id PK "SERIAL PRIMARY KEY"
+        varchar username UK "UNIQUE, NOT NULL"
+        varchar email UK "UNIQUE, NOT NULL"
+        varchar password_hash "NOT NULL"
+        varchar role "Admin/Editor/Viewer"
+        varchar full_name
+        boolean is_active "DEFAULT true"
+        timestamp last_login
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        int created_by FK "Self reference"
+    }
+
+    PRICING_PLAN {
+        int plan_id PK "SERIAL PRIMARY KEY"
+        varchar plan_code UK "SMALL/MEDIUM/LARGE, UNIQUE"
+        int price_per_user_month "Harga per user per bulan"
+        int min_users "NOT NULL"
+        int max_users "NULL untuk unlimited"
+        int display_order "Untuk sorting"
+        varchar badge_color "orange/blue/green"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    PRICING_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int plan_id FK "PRICING_PLAN.plan_id"
+        varchar locale "id/en, NOT NULL"
+        varchar plan_name "Small/Medium/Large"
+        varchar price_period "Per user dibayar per bulan"
+        varchar user_range "5-10 User"
+        text description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    FEATURE_MASTER {
+        int feature_id PK "SERIAL PRIMARY KEY"
+        varchar feature_code UK "UNIQUE, e.g., BUSINESS_FLOW"
+        varchar category "Main/Advanced/Additional"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    FEATURE_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int feature_id FK "FEATURE_MASTER.feature_id"
+        varchar locale "id/en, NOT NULL"
+        varchar feature_name "Alur Bisnis Lengkap"
+        text description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    PLAN_FEATURE_LIST {
+        int list_id PK "SERIAL PRIMARY KEY"
+        int plan_id FK "PRICING_PLAN.plan_id, UNIQUE dengan feature_id"
+        int feature_id FK "FEATURE_MASTER.feature_id, UNIQUE dengan plan_id"
+        boolean is_included "DEFAULT true"
+        int display_order "Untuk sorting di checklist"
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    DETAIL_FEATURE_SECTION {
+        int section_id PK "SERIAL PRIMARY KEY"
+        varchar section_code UK "UNIQUE, e.g., SECURITY"
+        varchar category "Security/Access/Asset/Tax/etc"
+        int display_order "Untuk sorting"
+        int icon_file_id FK "MEDIA_FILE.file_id"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    DETAIL_FEATURE_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int section_id FK "DETAIL_FEATURE_SECTION.section_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title "Keamanan"
+        text description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    CONTENT_SECTION {
+        int section_id PK "SERIAL PRIMARY KEY"
+        varchar section_type UK "hero/benefits/cta/testimonials/etc"
+        varchar section_key UK "home_hero/about_vision/etc"
+        varchar page_location "home/about/features/etc"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        jsonb metadata "Additional config as JSON"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    CONTENT_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int section_id FK "CONTENT_SECTION.section_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title
+        varchar subtitle
+        text description
+        text content "HTML/Markdown content"
+        jsonb additional_data "Flexible JSON data"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    CONTENT_MEDIA {
+        int content_media_id PK "SERIAL PRIMARY KEY"
+        int section_id FK "CONTENT_SECTION.section_id"
+        int file_id FK "MEDIA_FILE.file_id"
+        varchar media_type "image/video/icon"
+        varchar usage "background/thumbnail/icon"
+        int display_order
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    TESTIMONIAL {
+        int testimonial_id PK "SERIAL PRIMARY KEY"
+        varchar name "NOT NULL"
+        varchar title "Position/Title"
+        varchar company
+        int photo_file_id FK "MEDIA_FILE.file_id"
+        int display_order "Untuk sorting"
+        int rating "1-5 stars, NULL jika tidak ada"
+        boolean is_featured "DEFAULT false"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    TESTIMONIAL_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int testimonial_id FK "TESTIMONIAL.testimonial_id"
+        varchar locale "id/en, NOT NULL"
+        text quote "NOT NULL"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    INDUSTRY {
+        int industry_id PK "SERIAL PRIMARY KEY"
+        varchar industry_code UK "FNB/CONTRACTOR/MANUFACTURING/RETAIL"
+        varchar slug UK "fnb/contractor/manufacturing/retail"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    INDUSTRY_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int industry_id FK "INDUSTRY.industry_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title "Food & Beverage"
+        text description
+        text intro_text
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    INDUSTRY_PROBLEM {
+        int problem_id PK "SERIAL PRIMARY KEY"
+        int industry_id FK "INDUSTRY.industry_id"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    INDUSTRY_PROBLEM_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int problem_id FK "INDUSTRY_PROBLEM.problem_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title
+        text description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    INDUSTRY_SOLUTION {
+        int solution_id PK "SERIAL PRIMARY KEY"
+        int industry_id FK "INDUSTRY.industry_id"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    INDUSTRY_SOLUTION_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int solution_id FK "INDUSTRY_SOLUTION.solution_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title
+        text description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    INDUSTRY_MEDIA {
+        int industry_media_id PK "SERIAL PRIMARY KEY"
+        int industry_id FK "INDUSTRY.industry_id"
+        int file_id FK "MEDIA_FILE.file_id"
+        varchar media_type "image/video"
+        varchar usage "hero/feature/background"
+        int display_order
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    MEDIA_FILE {
+        int file_id PK "SERIAL PRIMARY KEY"
+        varchar file_name "NOT NULL"
+        varchar file_path "NOT NULL, relative path"
+        varchar file_type "image/jpeg, image/png, video/mp4"
+        varchar mime_type
+        bigint file_size "Bytes"
+        int width "Untuk images"
+        int height "Untuk images"
+        varchar alt_text "Untuk accessibility"
+        varchar storage_type "local/s3/cloudinary"
+        varchar storage_url "Full URL jika external"
+        boolean is_public "DEFAULT true"
+        int uploaded_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    VISITOR {
+        int visitor_id PK "SERIAL PRIMARY KEY"
+        varchar ip_address "VARCHAR(45) untuk IPv6"
+        varchar user_agent "TEXT"
+        varchar referrer "TEXT"
+        varchar country_code "ISO 3166-1 alpha-2"
+        varchar city
+        varchar device_type "desktop/mobile/tablet"
+        varchar browser "Chrome/Firefox/Safari"
+        varchar os "Windows/Mac/Linux/iOS/Android"
+        boolean is_bot "DEFAULT false"
+        timestamp first_visit "DEFAULT NOW()"
+        timestamp last_visit "DEFAULT NOW()"
+        int visit_count "DEFAULT 1"
+    }
+
+    PAGE_VIEW {
+        int view_id PK "SERIAL PRIMARY KEY"
+        int visitor_id FK "VISITOR.visitor_id"
+        varchar page_path "NOT NULL, /features/finance"
+        varchar page_title
+        varchar referrer
+        int duration_seconds "Waktu di halaman"
+        int scroll_depth "0-100, persentase scroll"
+        timestamp viewed_at "DEFAULT NOW()"
+    }
+
+    PAGE_VIEW_EVENT {
+        int event_id PK "SERIAL PRIMARY KEY"
+        int view_id FK "PAGE_VIEW.view_id"
+        varchar event_type "click/scroll/form_start/form_submit/cta_click"
+        varchar event_target "button_id/link_url/form_name"
+        jsonb event_data "Additional event data"
+        timestamp event_time "DEFAULT NOW()"
+    }
+
+    CONTACT_SUBMISSION {
+        int submission_id PK "SERIAL PRIMARY KEY"
+        int visitor_id FK "VISITOR.visitor_id, NULL jika tidak track"
+        varchar name "NOT NULL"
+        varchar email
+        varchar phone
+        text message "NOT NULL"
+        varchar source "landing_page/contact_page/pricing_page"
+        varchar status "pending/contacted/resolved/archived"
+        text admin_notes "Internal notes"
+        int assigned_to FK "ADMIN_USER.user_id, NULL"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp contacted_at
+        timestamp resolved_at
+        timestamp deleted_at "Soft delete"
+    }
+
+    AUDIT_LOG {
+        int log_id PK "SERIAL PRIMARY KEY"
+        int user_id FK "ADMIN_USER.user_id"
+        varchar action_type "CREATE/UPDATE/DELETE/LOGIN/LOGOUT"
+        varchar entity_type "PRICING_PLAN/FEATURE_MASTER/etc"
+        int entity_id "ID dari entity yang diubah"
+        jsonb old_values "Data sebelum perubahan"
+        jsonb new_values "Data setelah perubahan"
+        varchar ip_address
+        varchar user_agent
+        timestamp created_at "DEFAULT NOW()"
+    }
+
+    SITE_CONFIG {
+        int config_id PK "SERIAL PRIMARY KEY"
+        varchar config_key UK "UNIQUE, NOT NULL"
+        text config_value
+        varchar value_type "string/number/boolean/json"
+        varchar category "whatsapp/seo/social/general"
+        text description "Deskripsi config"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ============================================
+    %% RELATIONSHIPS DETAIL
+    %% ============================================
+    INDUSTRY ||--o{ INDUSTRY_PROBLEM : "memiliki"
+    INDUSTRY_PROBLEM ||--o{ INDUSTRY_PROBLEM_TRANSLATION : "memiliki_translasi"
+    INDUSTRY ||--o{ INDUSTRY_SOLUTION : "memiliki"
+    INDUSTRY_SOLUTION ||--o{ INDUSTRY_SOLUTION_TRANSLATION : "memiliki_translasi"
+    ADMIN_USER ||--o{ SITE_CONFIG : "mengupdate"
+    ADMIN_USER ||--o{ CONTACT_SUBMISSION : "ditugaskan"
+
+    %% ============================================
+    %% FEATURE PAGES (Detail Feature Pages)
+    %% ============================================
+    FEATURE_PAGE {
+        int page_id PK "SERIAL PRIMARY KEY"
+        int feature_id FK "FEATURE_MASTER.feature_id"
+        varchar page_code UK "FINANCE/HR/INVENTORY/MANUFACTURING/PROJECT/SALES"
+        varchar slug UK "finance/hr/inventory/manufacturing/project/sales"
+        int hero_image_file_id FK "MEDIA_FILE.file_id"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    FEATURE_PAGE_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int page_id FK "FEATURE_PAGE.page_id"
+        varchar locale "id/en, NOT NULL"
+        varchar hero_title
+        varchar hero_subtitle
+        text hero_description
+        text about_title
+        text about_subtitle
+        text about_description1
+        text about_description2
+        varchar cta_title
+        text cta_description
+        varchar cta_button_text
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    FEATURE_PAGE_ITEM {
+        int item_id PK "SERIAL PRIMARY KEY"
+        int page_id FK "FEATURE_PAGE.page_id"
+        int image_file_id FK "MEDIA_FILE.file_id"
+        varchar item_type "feature/benefit/image_section"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    FEATURE_PAGE_ITEM_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int item_id FK "FEATURE_PAGE_ITEM.item_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title
+        text description
+        text short_description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ============================================
+    %% BENEFIT STATS (Home Page Benefits Section)
+    %% ============================================
+    BENEFIT_STAT {
+        int stat_id PK "SERIAL PRIMARY KEY"
+        varchar stat_code UK "REDUCE_ERRORS/CUT_MANUAL/ACCESS_REPORTS/CUSTOMER_SUPPORT"
+        varchar stat_value "90%/80%/100%"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    BENEFIT_STAT_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int stat_id FK "BENEFIT_STAT.stat_id"
+        varchar locale "id/en, NOT NULL"
+        varchar label "Kurangi kesalahan hingga 90%"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ============================================
+    %% PROCESS STEPS (Home Page Process Steps)
+    %% ============================================
+    PROCESS_STEP {
+        int step_id PK "SERIAL PRIMARY KEY"
+        varchar step_code UK "ANALYSIS/PLANNING/TRAINING/GOING_LIVE"
+        int display_order "Untuk sorting"
+        int image_file_id FK "MEDIA_FILE.file_id"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    PROCESS_STEP_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int step_id FK "PROCESS_STEP.step_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title "Analisa Proses Bisnis"
+        text description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ============================================
+    %% ERP BENEFITS (Home Page ERP Benefits)
+    %% ============================================
+    ERP_BENEFIT {
+        int benefit_id PK "SERIAL PRIMARY KEY"
+        varchar benefit_code UK "PURCHASING/MULTI_WAREHOUSE/IMPORT_EXCEL"
+        int image_file_id FK "MEDIA_FILE.file_id"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    ERP_BENEFIT_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int benefit_id FK "ERP_BENEFIT.benefit_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title "Purchasing"
+        text description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ============================================
+    %% PARTNERS (Home Page Partners Section)
+    %% ============================================
+    PARTNER {
+        int partner_id PK "SERIAL PRIMARY KEY"
+        varchar partner_name UK "UNIQUE, NOT NULL"
+        varchar website_url
+        int logo_file_id FK "MEDIA_FILE.file_id"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    PARTNER_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int partner_id FK "PARTNER.partner_id"
+        varchar locale "id/en, NOT NULL"
+        varchar description "Optional description"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ============================================
+    %% ABOUT CARDS (Company/About Page Cards)
+    %% ============================================
+    ABOUT_CARD {
+        int card_id PK "SERIAL PRIMARY KEY"
+        varchar card_code UK "PROFILE/HISTORY/GOVERNANCE/ACHIEVEMENTS"
+        varchar card_link "URL untuk card"
+        int image_file_id FK "MEDIA_FILE.file_id"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    ABOUT_CARD_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int card_id FK "ABOUT_CARD.card_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title "Profil Perusahaan"
+        text description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ============================================
+    %% ADVANCED FEATURES (Home Page Advanced Features)
+    %% ============================================
+    ADVANCED_FEATURE {
+        int feature_id PK "SERIAL PRIMARY KEY"
+        varchar feature_code UK "FINANCE/MANUFACTURING/PROJECT/SALES/INVENTORY/HR"
+        int image_file_id FK "MEDIA_FILE.file_id"
+        varchar link_url "/features/finance"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    ADVANCED_FEATURE_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int feature_id FK "ADVANCED_FEATURE.feature_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title "Keuangan & Akuntansi"
+        text description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ============================================
+    %% FAQ (Frequently Asked Questions)
+    %% ============================================
+    FAQ_CATEGORY {
+        int category_id PK "SERIAL PRIMARY KEY"
+        varchar category_code UK "GENERAL/FEATURES/PRICING/SUPPORT"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    FAQ_CATEGORY_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int category_id FK "FAQ_CATEGORY.category_id"
+        varchar locale "id/en, NOT NULL"
+        varchar category_name "Pertanyaan Umum"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    FAQ {
+        int faq_id PK "SERIAL PRIMARY KEY"
+        int category_id FK "FAQ_CATEGORY.category_id"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    FAQ_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int faq_id FK "FAQ.faq_id"
+        varchar locale "id/en, NOT NULL"
+        varchar question "Apakah ada pelatihan?"
+        text answer "NOT NULL"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+
+    %% ============================================
+    %% KELOLA AJA FEATURES (Pricing Page Features)
+    %% ============================================
+    KELOLA_AJA_FEATURE {
+        int feature_id PK "SERIAL PRIMARY KEY"
+        varchar feature_code UK "SECURITY/ACCESS/ASSET/TAX/STATISTICS/IMPORT"
+        varchar icon_name "shield/lock/chart/cloud/document/calculator/tax/statistics/import"
+        int display_order "Untuk sorting"
+        boolean is_active "DEFAULT true"
+        int created_by FK "ADMIN_USER.user_id"
+        int updated_by FK "ADMIN_USER.user_id"
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+        timestamp deleted_at "Soft delete"
+    }
+
+    KELOLA_AJA_FEATURE_TRANSLATION {
+        int translation_id PK "SERIAL PRIMARY KEY"
+        int feature_id FK "KELOLA_AJA_FEATURE.feature_id"
+        varchar locale "id/en, NOT NULL"
+        varchar title "Keamanan"
+        text description
+        timestamp created_at "DEFAULT NOW()"
+        timestamp updated_at "DEFAULT NOW()"
+    }
+

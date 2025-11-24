@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { PlusIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon, TrashIcon, StarIcon } from '@heroicons/react/24/outline';
 import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
+import PageHeader from '@/components/admin/PageHeader';
+import AdminCard from '@/components/admin/AdminCard';
+import AdminModal from '@/components/admin/AdminModal';
+import SearchBar from '@/components/admin/SearchBar';
 
 interface Testimonial {
   testimonialId: number;
@@ -21,19 +25,9 @@ interface Testimonial {
 export default function TestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
-  const [formData, setFormData] = useState({
-    personName: '',
-    position: '',
-    company: '',
-    testimonialText: '',
-    rating: 5,
-    imageUrl: '',
-    isActive: true,
-    displayOrder: 0,
-  });
 
   useEffect(() => {
     fetchTestimonials();
@@ -53,336 +47,409 @@ export default function TestimonialsPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const endpoint = editingTestimonial
-        ? `/api/v1/admin/testimonials/${editingTestimonial.testimonialId}`
-        : '/api/v1/admin/testimonials';
-      
-      const response = await apiFetch(endpoint, {
-        method: editingTestimonial ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        fetchTestimonials();
-        setShowModal(false);
-        resetForm();
-      }
-    } catch (error) {
-      console.error('Error saving testimonial:', error);
-    }
-  };
-
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this testimonial?')) return;
     
     try {
-      const response = await apiFetch(`/api/v1/admin/testimonials/${id}`, {
+      await apiFetch(`/api/v1/admin/testimonials/${id}`, {
         method: 'DELETE',
       });
-
-      if (response.ok) {
-        fetchTestimonials();
-      }
+      fetchTestimonials();
     } catch (error) {
       console.error('Error deleting testimonial:', error);
     }
   };
 
-  const resetForm = () => {
-    setFormData({
-      personName: '',
-      position: '',
-      company: '',
-      testimonialText: '',
-      rating: 5,
-      imageUrl: '',
-      isActive: true,
-      displayOrder: 0,
-    });
-    setEditingTestimonial(null);
-  };
-
-  const openEditModal = (testimonial: Testimonial) => {
-    setEditingTestimonial(testimonial);
-    setFormData({
-      personName: testimonial.personName,
-      position: testimonial.position,
-      company: testimonial.company,
-      testimonialText: testimonial.testimonialText,
-      rating: testimonial.rating,
-      imageUrl: testimonial.imageUrl || '',
-      isActive: testimonial.isActive,
-      displayOrder: testimonial.displayOrder,
-    });
-    setShowModal(true);
-  };
-
   const filteredTestimonials = testimonials.filter(t =>
-    (t.personName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (t.company?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+    t.personName.toLowerCase().includes(search.toLowerCase()) ||
+    t.company.toLowerCase().includes(search.toLowerCase())
   );
 
+  const activeCount = testimonials.filter(t => t.isActive).length;
+  const inactiveCount = testimonials.filter(t => !t.isActive).length;
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Testimonials</h1>
-          <p className="text-gray-600 mt-1">Manage customer testimonials and reviews</p>
-        </div>
-        <button
-          onClick={() => { resetForm(); setShowModal(true); }}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition shadow-md"
-        >
-          <PlusIcon className="w-5 h-5" />
-          Add Testimonial
-        </button>
+    <div className="space-y-4">
+      <PageHeader
+        title="Testimonials"
+        description="Manage customer testimonials and reviews"
+        action={{
+          label: 'Add Testimonial',
+          onClick: () => {
+            setEditingTestimonial(null);
+            setShowModal(true);
+          },
+        }}
+      />
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Total</p>
+            <p className="text-xl font-bold text-gray-900">{testimonials.length}</p>
+          </div>
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Active</p>
+            <p className="text-xl font-bold text-green-600">{activeCount}</p>
+          </div>
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Inactive</p>
+            <p className="text-xl font-bold text-red-600">{inactiveCount}</p>
+          </div>
+        </AdminCard>
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-lg shadow-md p-4">
-        <div className="relative">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search by name or company..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-          />
-        </div>
-      </div>
+      <AdminCard compact>
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder="Search by name or company..."
+        />
+      </AdminCard>
 
       {/* Testimonials Grid */}
       {loading ? (
-        <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#039edb]"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
-        </div>
+        <AdminCard>
+          <div className="py-12 text-center">
+            <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#039edb]"></div>
+            <p className="mt-2 text-xs text-gray-500">Loading...</p>
+          </div>
+        </AdminCard>
       ) : filteredTestimonials.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-12 text-center">
-          <p className="text-gray-500">No testimonials found</p>
-        </div>
+        <AdminCard>
+          <div className="py-12 text-center">
+            <StarIcon className="mx-auto h-12 w-12 text-gray-300" />
+            <p className="mt-2 text-sm text-gray-500">No testimonials found</p>
+          </div>
+        </AdminCard>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredTestimonials.map((testimonial) => (
-            <div
-              key={testimonial.testimonialId}
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
-            >
-              <div className="p-6">
-                {/* Rating Stars */}
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400' : 'text-gray-300'}`}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                  <span className="ml-2 text-sm text-gray-600">({testimonial.rating}/5)</span>
-                </div>
-
-                {/* Testimonial Text */}
-                <p className="text-gray-700 italic mb-4 line-clamp-4">
-                  &ldquo;{testimonial.testimonialText}&rdquo;
-                </p>
-
-                {/* Person Info */}
-                <div className="flex items-center gap-3 mb-4">
-                  {testimonial.imageUrl && (
-                    <Image
-                      src={testimonial.imageUrl}
-                      alt={testimonial.personName}
-                      width={48}
-                      height={48}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                  )}
-                  <div>
-                    <p className="font-semibold text-gray-900">{testimonial.personName}</p>
-                    <p className="text-sm text-gray-600">{testimonial.position}</p>
-                    <p className="text-sm text-gray-500">{testimonial.company}</p>
+            <AdminCard key={testimonial.testimonialId} compact>
+              <div className="space-y-3">
+                {/* Header */}
+                <div className="flex items-start gap-3">
+                  <div className="relative h-12 w-12 rounded-full bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-200">
+                    {testimonial.imageUrl ? (
+                      <Image
+                        src={testimonial.imageUrl}
+                        alt={testimonial.personName}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-[#039edb] to-[#71bf44]">
+                        <span className="text-white text-sm font-bold">
+                          {testimonial.personName.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-bold text-gray-900 truncate">{testimonial.personName}</h3>
+                    <p className="text-xs text-gray-600 truncate">{testimonial.position}</p>
+                    <p className="text-xs text-gray-500 truncate">{testimonial.company}</p>
                   </div>
                 </div>
 
-                {/* Status Badge */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className={`px-3 py-1 text-xs rounded-full ${
+                {/* Rating */}
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <StarIcon
+                      key={i}
+                      className={`h-4 w-4 ${
+                        i < testimonial.rating
+                          ? 'text-yellow-400 fill-current'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                  <span className="text-xs text-gray-500 ml-1">({testimonial.rating})</span>
+                </div>
+
+                {/* Testimonial Text */}
+                <p className="text-xs text-gray-700 line-clamp-3 leading-relaxed">
+                  {testimonial.testimonialText}
+                </p>
+
+                {/* Meta */}
+                <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
+                  <span>Order: {testimonial.displayOrder}</span>
+                  <span className={`px-2 py-0.5 rounded-md font-semibold ${
                     testimonial.isActive
-                      ? 'bg-gradient-to-r from-[#71bf44]/10 to-[#5a9936]/10 text-[#71bf44] border border-[#71bf44]/30'
-                      : 'bg-gray-100 text-gray-800'
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : 'bg-red-50 text-red-700 border border-red-200'
                   }`}>
                     {testimonial.isActive ? 'Active' : 'Inactive'}
                   </span>
-                  <span className="text-xs text-gray-500">Order: {testimonial.displayOrder}</span>
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-2">
+                <div className="flex gap-1.5 pt-2">
                   <button
-                    onClick={() => openEditModal(testimonial)}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition text-sm"
+                    onClick={() => {
+                      setEditingTestimonial(testimonial);
+                      setShowModal(true);
+                    }}
+                    className="flex-1 px-2.5 py-1.5 text-xs font-semibold text-[#039edb] border border-[#039edb] rounded-lg hover:bg-[#039edb] hover:text-white transition-colors"
                   >
-                    <PencilIcon className="w-4 h-4" />
+                    <PencilIcon className="h-3.5 w-3.5 inline mr-1" />
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(testimonial.testimonialId)}
-                    className="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"
+                    className="px-2.5 py-1.5 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                    title="Delete"
                   >
-                    <TrashIcon className="w-4 h-4" />
+                    <TrashIcon className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
-            </div>
+            </AdminCard>
           ))}
         </div>
       )}
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900">
-                {editingTestimonial ? 'Edit Testimonial' : 'Add New Testimonial'}
-              </h2>
-              <button
-                onClick={() => { setShowModal(false); resetForm(); }}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+        <TestimonialModal
+          testimonial={editingTestimonial}
+          onClose={() => {
+            setShowModal(false);
+            setEditingTestimonial(null);
+          }}
+          onSave={() => {
+            setShowModal(false);
+            fetchTestimonials();
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function TestimonialModal({
+  testimonial,
+  onClose,
+  onSave,
+}: {
+  testimonial: Testimonial | null;
+  onClose: () => void;
+  onSave: () => void;
+}) {
+  const [formData, setFormData] = useState({
+    personName: testimonial?.personName || '',
+    position: testimonial?.position || '',
+    company: testimonial?.company || '',
+    testimonialText: testimonial?.testimonialText || '',
+    rating: testimonial?.rating || 5,
+    imageUrl: testimonial?.imageUrl || '',
+    isActive: testimonial?.isActive ?? true,
+    displayOrder: testimonial?.displayOrder || 0,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (testimonial) {
+      setFormData({
+        personName: testimonial.personName,
+        position: testimonial.position,
+        company: testimonial.company,
+        testimonialText: testimonial.testimonialText,
+        rating: testimonial.rating,
+        imageUrl: testimonial.imageUrl || '',
+        isActive: testimonial.isActive,
+        displayOrder: testimonial.displayOrder,
+      });
+    }
+  }, [testimonial]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const endpoint = testimonial
+        ? `/api/v1/admin/testimonials/${testimonial.testimonialId}`
+        : '/api/v1/admin/testimonials';
+      
+      const response = await apiFetch(endpoint, {
+        method: testimonial ? 'PUT' : 'POST',
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        onSave();
+      } else {
+        setError(data.message || 'Failed to save testimonial');
+      }
+    } catch (error) {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <AdminModal
+      isOpen={true}
+      onClose={onClose}
+      title={testimonial ? 'Edit Testimonial' : 'Add New Testimonial'}
+      size="lg"
+      footer={
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={loading}
+            className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 disabled:opacity-50 transition shadow-sm"
+          >
+            {loading ? 'Saving...' : 'Save'}
+          </button>
+        </div>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-3">
+        {error && (
+          <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-xs text-red-600">{error}</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Person Name</label>
+              <input
+                type="text"
+                required
+                value={formData.personName}
+                onChange={(e) => setFormData({ ...formData, personName: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
             </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Position</label>
+              <input
+                type="text"
+                required
+                value={formData.position}
+                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
+          </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Person Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.personName}
-                    onChange={(e) => setFormData({ ...formData, personName: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                    placeholder="John Doe"
-                  />
-                </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Company</label>
+            <input
+              type="text"
+              required
+              value={formData.company}
+              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+            />
+          </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Position *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.position}
-                    onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                    placeholder="CEO"
-                  />
-                </div>
-              </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Rating</label>
+            <div className="flex items-center gap-2">
+              {[1, 2, 3, 4, 5].map((rating) => (
+                <button
+                  key={rating}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, rating })}
+                  className={`p-1 rounded transition-colors ${
+                    rating <= formData.rating
+                      ? 'text-yellow-400'
+                      : 'text-gray-300'
+                  }`}
+                >
+                  <StarIcon className="h-5 w-5 fill-current" />
+                </button>
+              ))}
+              <span className="text-xs text-gray-500 ml-2">({formData.rating}/5)</span>
+            </div>
+          </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Company *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.company}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  placeholder="Company Name"
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Image URL</label>
+            <input
+              type="url"
+              value={formData.imageUrl}
+              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              placeholder="https://example.com/image.jpg"
+            />
+            {formData.imageUrl && (
+              <div className="mt-2 relative h-20 w-20 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
+                <Image
+                  src={formData.imageUrl}
+                  alt="Preview"
+                  fill
+                  className="object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               </div>
+            )}
+          </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Testimonial Text *</label>
-                <textarea
-                  required
-                  rows={4}
-                  value={formData.testimonialText}
-                  onChange={(e) => setFormData({ ...formData, testimonialText: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  placeholder="Write the testimonial..."
-                />
-              </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Testimonial Text</label>
+            <textarea
+              required
+              value={formData.testimonialText}
+              onChange={(e) => setFormData({ ...formData, testimonialText: e.target.value })}
+              rows={4}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+            />
+          </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Rating (1-5) *</label>
-                  <select
-                    value={formData.rating}
-                    onChange={(e) => setFormData({ ...formData, rating: parseInt(e.target.value) })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  >
-                    {[1, 2, 3, 4, 5].map(num => (
-                      <option key={num} value={num}>{num} Star{num > 1 ? 's' : ''}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
-                  <input
-                    type="number"
-                    value={formData.displayOrder}
-                    onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-                <input
-                  type="url"
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-
-              <div className="flex items-center gap-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Display Order</label>
+              <input
+                type="number"
+                required
+                value={formData.displayOrder}
+                onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
+            <div className="flex items-end">
+              <div className="flex items-center gap-2 w-full">
                 <input
                   type="checkbox"
                   id="isActive"
                   checked={formData.isActive}
                   onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-4 h-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
+                  className="h-4 w-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
                 />
-                <label htmlFor="isActive" className="text-sm font-medium text-gray-700">
-                  Active (Display on website)
-                </label>
+                <label htmlFor="isActive" className="text-xs text-gray-700">Active</label>
               </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => { setShowModal(false); resetForm(); }}
-                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition font-medium shadow-md"
-                >
-                  {editingTestimonial ? 'Update' : 'Create'} Testimonial
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
         </div>
-      )}
-    </div>
+      </form>
+    </AdminModal>
   );
 }

@@ -1,7 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { ClipboardDocumentListIcon, FunnelIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from 'react';
+import { ClipboardDocumentListIcon, FunnelIcon } from '@heroicons/react/24/outline';
+import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
+import PageHeader from '@/components/admin/PageHeader';
+import AdminCard from '@/components/admin/AdminCard';
+import AdminTable from '@/components/admin/AdminTable';
+import Pagination from '@/components/admin/Pagination';
+import SearchBar from '@/components/admin/SearchBar';
 
 interface AuditLog {
   logId: number;
@@ -26,77 +32,141 @@ export default function AuditLogsPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [filters, setFilters] = useState({
-    action: "",
-    entityType: "",
-    userId: "",
-    startDate: "",
-    endDate: ""
-  });
+  const [totalItems, setTotalItems] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    action: '',
+    entityType: '',
+    userId: '',
+    startDate: '',
+    endDate: '',
+  });
+  const [search, setSearch] = useState('');
 
-  useEffect(
-    () => {
-      const loadLogs = async () => {
-        try {
-          const token = localStorage.getItem("accessToken");
-          const params = new URLSearchParams({
-            page: page.toString(),
-            limit: "20",
-            ...(filters.action && { action: filters.action }),
-            ...(filters.entityType && { entityType: filters.entityType }),
-            ...(filters.userId && { userId: filters.userId }),
-            ...(filters.startDate && { startDate: filters.startDate }),
-            ...(filters.endDate && { endDate: filters.endDate })
-          });
+  useEffect(() => {
+    fetchLogs();
+  }, [page, filters]);
 
-          const response = await fetch(`http://localhost:8080/api/v1/admin/audit-logs?${params}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+  const fetchLogs = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: '20',
+        ...(filters.action && { action: filters.action }),
+        ...(filters.entityType && { entityType: filters.entityType }),
+        ...(filters.userId && { userId: filters.userId }),
+        ...(filters.startDate && { startDate: filters.startDate }),
+        ...(filters.endDate && { endDate: filters.endDate }),
+      });
 
-          const data = await response.json();
-          if (data.success) {
-            setLogs(data.data);
-            setTotalPages(data.meta.totalPages);
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
+      const response = await apiFetch(`${API_ENDPOINTS.AUDIT_LOGS.LIST}?${params}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setLogs(data.data);
+        setTotalPages(data.meta.totalPages);
+        setTotalItems(data.meta.total);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      loadLogs();
-    },
-    [page, filters]
+  const getActionBadge = (action: string) => {
+    if (action.includes('CREATE')) {
+      return 'bg-green-50 text-green-700 border border-green-200';
+    } else if (action.includes('UPDATE')) {
+      return 'bg-blue-50 text-blue-700 border border-blue-200';
+    } else if (action.includes('DELETE')) {
+      return 'bg-red-50 text-red-700 border border-red-200';
+    } else if (action.includes('LOGIN')) {
+      return 'bg-purple-50 text-purple-700 border border-purple-200';
+    }
+    return 'bg-gray-50 text-gray-700 border border-gray-200';
+  };
+
+  const filteredLogs = logs.filter(log =>
+    log.action.toLowerCase().includes(search.toLowerCase()) ||
+    log.entityType.toLowerCase().includes(search.toLowerCase()) ||
+    log.user.fullName.toLowerCase().includes(search.toLowerCase()) ||
+    (log.entityName && log.entityName.toLowerCase().includes(search.toLowerCase()))
   );
 
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
+  const columns = [
+    {
+      header: 'Timestamp',
+      render: (log: AuditLog) => (
+        <span className="text-xs text-gray-600">
+          {new Date(log.createdAt).toLocaleString('id-ID', {
+            day: 'numeric',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </span>
+      ),
+    },
+    {
+      header: 'User',
+      render: (log: AuditLog) => (
         <div>
-          <h1 className="text-3xl font-bold">Audit Logs</h1>
-          <p className="text-gray-600 mt-2">Track all system activities</p>
+          <div className="text-sm font-medium text-gray-900">{log.user.fullName}</div>
+          <div className="text-xs text-gray-500">{log.user.role}</div>
         </div>
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-        >
-          <FunnelIcon className="h-5 w-5 mr-2" />
-          {showFilters ? "Hide" : "Show"} Filters
-        </button>
-      </div>
+      ),
+    },
+    {
+      header: 'Action',
+      render: (log: AuditLog) => (
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${getActionBadge(log.action)}`}>
+          {log.action}
+        </span>
+      ),
+    },
+    {
+      header: 'Entity',
+      render: (log: AuditLog) => (
+        <div>
+          <div className="text-sm text-gray-900">{log.entityType}</div>
+          {log.entityName && (
+            <div className="text-xs text-gray-500 truncate max-w-xs">{log.entityName}</div>
+          )}
+        </div>
+      ),
+    },
+    {
+      header: 'IP Address',
+      render: (log: AuditLog) => (
+        <span className="text-xs text-gray-600 font-mono">{log.ipAddress || '-'}</span>
+      ),
+    },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <PageHeader
+        title="Audit Logs"
+        description="Track all system activities and changes"
+        action={{
+          label: showFilters ? 'Hide Filters' : 'Show Filters',
+          onClick: () => setShowFilters(!showFilters),
+          icon: <FunnelIcon className="h-4 w-4" />,
+        }}
+      />
 
       {/* Filters */}
       {showFilters && (
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <AdminCard compact>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
-              <label className="block text-sm font-medium mb-1">Action</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Action</label>
               <select
                 value={filters.action}
-                onChange={e => setFilters({ ...filters, action: e.target.value })}
-                className="block w-full px-3 py-2 border rounded-md"
+                onChange={(e) => setFilters({ ...filters, action: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb] bg-white"
               >
                 <option value="">All Actions</option>
                 <option value="CREATE">Create</option>
@@ -107,11 +177,11 @@ export default function AuditLogsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Entity Type</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Entity Type</label>
               <select
                 value={filters.entityType}
-                onChange={e => setFilters({ ...filters, entityType: e.target.value })}
-                className="block w-full px-3 py-2 border rounded-md"
+                onChange={(e) => setFilters({ ...filters, entityType: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb] bg-white"
               >
                 <option value="">All Entities</option>
                 <option value="USER">User</option>
@@ -123,100 +193,86 @@ export default function AuditLogsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Start Date</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">User ID</label>
+              <input
+                type="number"
+                value={filters.userId}
+                onChange={(e) => setFilters({ ...filters, userId: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                placeholder="Filter by user ID"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Start Date</label>
               <input
                 type="date"
                 value={filters.startDate}
-                onChange={e => setFilters({ ...filters, startDate: e.target.value })}
-                className="block w-full px-3 py-2 border rounded-md"
+                onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">End Date</label>
+              <input
+                type="date"
+                value={filters.endDate}
+                onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
           </div>
-        </div>
+        </AdminCard>
       )}
 
-      {/* Logs Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Timestamp</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Entity</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {loading ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-4 text-center">
-                  Loading...
-                </td>
-              </tr>
-            ) : logs.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                  No logs found
-                </td>
-              </tr>
-            ) : (
-              logs.map(log => (
-                <tr key={log.logId} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">{new Date(log.createdAt).toLocaleString("id-ID")}</td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium">{log.user.fullName}</div>
-                    <div className="text-xs text-gray-500">{log.user.role}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        log.action.includes("CREATE")
-                          ? "bg-gradient-to-r from-[#71bf44]/10 to-[#5a9936]/10 text-[#71bf44] border border-[#71bf44]/30"
-                          : log.action.includes("UPDATE")
-                          ? "bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] border border-[#039edb]/30"
-                          : log.action.includes("DELETE")
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {log.action}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm">{log.entityType}</div>
-                    {log.entityName && <div className="text-xs text-gray-500">{log.entityName}</div>}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                    {log.ipAddress && <div>IP: {log.ipAddress}</div>}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      {/* Search */}
+      <AdminCard compact>
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder="Search by action, entity, or user..."
+        />
+      </AdminCard>
 
-        {/* Pagination */}
-        <div className="px-4 py-3 border-t flex justify-between">
-          <button
-            onClick={() => setPage(page - 1)}
-            disabled={page === 1}
-            className="px-3 py-1 border rounded text-sm disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <span className="text-sm">
-            Page {page} of {totalPages}
-          </span>
-          <button
-            onClick={() => setPage(page + 1)}
-            disabled={page === totalPages}
-            className="px-3 py-1 border rounded text-sm disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Total Logs</p>
+            <p className="text-xl font-bold text-gray-900">{totalItems}</p>
+          </div>
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Current Page</p>
+            <p className="text-xl font-bold text-[#039edb]">{page}</p>
+          </div>
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Total Pages</p>
+            <p className="text-xl font-bold text-gray-900">{totalPages}</p>
+          </div>
+        </AdminCard>
       </div>
+
+      {/* Table */}
+      <AdminTable
+        columns={columns}
+        data={filteredLogs}
+        loading={loading}
+        emptyMessage="No audit logs found"
+      />
+
+      {/* Pagination */}
+      {!loading && logs.length > 0 && (
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          totalItems={totalItems}
+          itemsPerPage={20}
+        />
+      )}
     </div>
   );
 }

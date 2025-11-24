@@ -2,8 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { PhotoIcon, DocumentIcon, VideoCameraIcon, MagnifyingGlassIcon, PlusIcon, TrashIcon, PencilIcon, ArrowUpTrayIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { apiFetch } from '@/lib/api-config';
+import { PhotoIcon, DocumentIcon, VideoCameraIcon, ArrowUpTrayIcon, TrashIcon, PencilIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
+import PageHeader from '@/components/admin/PageHeader';
+import AdminCard from '@/components/admin/AdminCard';
+import AdminModal from '@/components/admin/AdminModal';
+import SearchBar from '@/components/admin/SearchBar';
 
 interface MediaFile {
   mediaFileId: number;
@@ -37,7 +41,7 @@ export default function MediaFilesPage() {
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [search, setSearch] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -62,10 +66,11 @@ export default function MediaFilesPage() {
 
   const fetchMediaFiles = async () => {
     try {
-      const response: any = await apiFetch('/media-files/admin', {
-        method: 'GET',
-      });
-      setMediaFiles(response.data || []);
+      const response = await apiFetch(API_ENDPOINTS.MEDIA_FILES.LIST);
+      const data = await response.json();
+      if (data.success) {
+        setMediaFiles(data.data || []);
+      }
     } catch (error) {
       console.error('Error fetching media files:', error);
     } finally {
@@ -75,10 +80,11 @@ export default function MediaFilesPage() {
 
   const fetchStats = async () => {
     try {
-      const response: any = await apiFetch('/media-files/admin/stats', {
-        method: 'GET',
-      });
-      setStats(response.data || null);
+      const response = await apiFetch(API_ENDPOINTS.MEDIA_FILES.STATS);
+      const data = await response.json();
+      if (data.success) {
+        setStats(data.data || null);
+      }
     } catch (error) {
       console.error('Error fetching stats:', error);
     }
@@ -96,78 +102,38 @@ export default function MediaFilesPage() {
 
     try {
       const token = localStorage.getItem('accessToken');
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
-      
-      const response = await fetch(`${baseUrl}/media-files/admin/upload`, {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+      const response = await fetch(`${baseUrl}/api/v1/media-files/admin/upload`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formDataObj,
       });
-      
-      if (!response.ok) throw new Error('Upload failed');
-      setShowUploadModal(false);
-      setUploadFile(null);
-      setFormData({
-        fileType: 'image',
-        altText: '',
-        caption: ''
-      });
-      fetchMediaFiles();
-      fetchStats();
+
+      if (response.ok) {
+        setShowUploadModal(false);
+        setUploadFile(null);
+        setFormData({ fileType: 'image', altText: '', caption: '' });
+        fetchMediaFiles();
+        fetchStats();
+      }
     } catch (error) {
       console.error('Error uploading file:', error);
-      alert('Failed to upload file');
     }
   };
 
-  const handleEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedFile) return;
-
-    try {
-      await apiFetch(`/media-files/admin/${selectedFile.mediaFileId}`, {
-        method: 'PUT',
-        body: JSON.stringify(editData),
-      });
-      setShowEditModal(false);
-      setSelectedFile(null);
-      fetchMediaFiles();
-    } catch (error) {
-      console.error('Error updating file:', error);
-      alert('Failed to update file');
-    }
-  };
-
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (fileId: number) => {
     if (!confirm('Are you sure you want to delete this file?')) return;
-
     try {
-      await apiFetch(`/media-files/admin/${id}`, {
+      await apiFetch(API_ENDPOINTS.MEDIA_FILES.DELETE(fileId), {
         method: 'DELETE',
       });
       fetchMediaFiles();
       fetchStats();
     } catch (error) {
       console.error('Error deleting file:', error);
-      alert('Failed to delete file');
     }
-  };
-
-  const openEditModal = (file: MediaFile) => {
-    setSelectedFile(file);
-    setEditData({
-      fileName: file.fileName,
-      altText: file.altText || '',
-      caption: file.caption || ''
-    });
-    setShowEditModal(true);
-  };
-
-  const openPreviewModal = (file: MediaFile) => {
-    setSelectedFile(file);
-    setShowPreviewModal(true);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -175,123 +141,88 @@ export default function MediaFilesPage() {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const getFileIcon = (type: string) => {
-    switch (type) {
+  const getFileIcon = (fileType: string) => {
+    switch (fileType) {
       case 'image':
       case 'icon':
-        return <PhotoIcon className="w-6 h-6" />;
-      case 'video':
-        return <VideoCameraIcon className="w-6 h-6" />;
+        return <PhotoIcon className="h-12 w-12" />;
       case 'document':
-        return <DocumentIcon className="w-6 h-6" />;
+        return <DocumentIcon className="h-12 w-12" />;
+      case 'video':
+        return <VideoCameraIcon className="h-12 w-12" />;
       default:
-        return <DocumentIcon className="w-6 h-6" />;
+        return <DocumentIcon className="h-12 w-12" />;
     }
   };
 
-  const filteredFiles = mediaFiles.filter((file) => {
-    const matchesSearch = file.fileName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (file.altText && file.altText.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredFiles = mediaFiles.filter(file => {
+    const matchesSearch = file.fileName.toLowerCase().includes(search.toLowerCase()) ||
+      (file.altText && file.altText.toLowerCase().includes(search.toLowerCase()));
     const matchesType = selectedType === 'all' || file.fileType === selectedType;
     return matchesSearch && matchesType;
   });
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-600">Loading...</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-          Media Files
-        </h1>
-        <button
-          onClick={() => setShowUploadModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition-opacity"
-        >
-          <ArrowUpTrayIcon className="w-5 h-5" />
-          Upload File
-        </button>
-      </div>
+    <div className="space-y-4">
+      <PageHeader
+        title="Media Files"
+        description="Manage uploaded media files and assets"
+        action={{
+          label: 'Upload File',
+          onClick: () => setShowUploadModal(true),
+          icon: <ArrowUpTrayIcon className="h-4 w-4" />,
+        }}
+      />
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Total Files</p>
-              <p className="text-2xl font-bold text-gray-800">{stats?.totalFiles || 0}</p>
-            </div>
-            <DocumentIcon className="w-10 h-10 text-[#039edb]" />
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Total</p>
+            <p className="text-xl font-bold text-gray-900">{stats?.totalFiles || 0}</p>
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Images</p>
-              <p className="text-2xl font-bold text-gray-800">{stats?.byType.image || 0}</p>
-            </div>
-            <PhotoIcon className="w-10 h-10 text-[#71bf44]" />
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Images</p>
+            <p className="text-xl font-bold text-[#039edb]">{stats?.byType.image || 0}</p>
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Icons</p>
-              <p className="text-2xl font-bold text-gray-800">{stats?.byType.icon || 0}</p>
-            </div>
-            <PhotoIcon className="w-10 h-10 text-[#039edb]" />
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Icons</p>
+            <p className="text-xl font-bold text-[#71bf44]">{stats?.byType.icon || 0}</p>
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Documents</p>
-              <p className="text-2xl font-bold text-gray-800">{stats?.byType.document || 0}</p>
-            </div>
-            <DocumentIcon className="w-10 h-10 text-[#71bf44]" />
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Documents</p>
+            <p className="text-xl font-bold text-gray-900">{stats?.byType.document || 0}</p>
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Videos</p>
-              <p className="text-2xl font-bold text-gray-800">{stats?.byType.video || 0}</p>
-            </div>
-            <VideoCameraIcon className="w-10 h-10 text-[#039edb]" />
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Videos</p>
+            <p className="text-xl font-bold text-gray-900">{stats?.byType.video || 0}</p>
           </div>
-        </div>
+        </AdminCard>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Search */}
-          <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by filename or alt text..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-            />
-          </div>
-
-          {/* File Type Filter */}
+      <AdminCard compact>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <SearchBar
+            value={search}
+            onChange={setSearch}
+            placeholder="Search by filename or alt text..."
+          />
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
+            className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb] bg-white"
           >
             <option value="all">All File Types</option>
             <option value="image">Images</option>
@@ -300,341 +231,340 @@ export default function MediaFilesPage() {
             <option value="video">Videos</option>
           </select>
         </div>
-      </div>
+      </AdminCard>
 
       {/* Media Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredFiles.map((file) => (
-          <div key={file.mediaFileId} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
-            {/* Preview */}
-            <div 
-              className="relative h-48 bg-gray-100 flex items-center justify-center cursor-pointer"
-              onClick={() => openPreviewModal(file)}
-            >
-              {(file.fileType === 'image' || file.fileType === 'icon') ? (
-                <Image
-                  src={file.fileUrl}
-                  alt={file.altText || file.fileName}
-                  width={200}
-                  height={200}
-                  className="max-h-full max-w-full object-contain"
-                  unoptimized
-                />
-              ) : (
-                <div className="text-gray-400">
-                  {getFileIcon(file.fileType)}
-                </div>
-              )}
-            </div>
-
-            {/* Info */}
-            <div className="p-4">
-              <h3 className="font-semibold text-gray-800 truncate mb-1" title={file.fileName}>
-                {file.fileName}
-              </h3>
-              <p className="text-sm text-gray-600 mb-2">
-                {formatFileSize(file.fileSize)} • {file.fileType}
-              </p>
-              {file.altText && (
-                <p className="text-xs text-gray-500 mb-3 truncate" title={file.altText}>
-                  {file.altText}
-                </p>
-              )}
-
-              {/* Actions */}
-              <div className="flex gap-2">
-                <button
-                  onClick={() => openPreviewModal(file)}
-                  className="flex-1 px-3 py-1.5 text-sm bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded hover:opacity-90"
-                >
-                  View
-                </button>
-                <button
-                  onClick={() => openEditModal(file)}
-                  className="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
-                >
-                  <PencilIcon className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleDelete(file.mediaFileId)}
-                  className="px-3 py-1.5 text-sm border border-red-300 text-red-600 rounded hover:bg-red-50"
-                >
-                  <TrashIcon className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+      {loading ? (
+        <AdminCard>
+          <div className="py-12 text-center">
+            <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#039edb]"></div>
+            <p className="mt-2 text-xs text-gray-500">Loading...</p>
           </div>
-        ))}
-      </div>
+        </AdminCard>
+      ) : filteredFiles.length === 0 ? (
+        <AdminCard>
+          <div className="py-12 text-center">
+            <PhotoIcon className="mx-auto h-12 w-12 text-gray-300" />
+            <p className="mt-2 text-sm text-gray-500">No media files found</p>
+          </div>
+        </AdminCard>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {filteredFiles.map((file) => (
+            <AdminCard key={file.mediaFileId} compact>
+              <div className="space-y-3">
+                {/* Preview */}
+                <div 
+                  className="relative h-32 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer overflow-hidden border border-gray-200"
+                  onClick={() => {
+                    setSelectedFile(file);
+                    setShowPreviewModal(true);
+                  }}
+                >
+                  {(file.fileType === 'image' || file.fileType === 'icon') ? (
+                    <Image
+                      src={file.fileUrl}
+                      alt={file.altText || file.fileName}
+                      fill
+                      className="object-contain p-2"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="text-gray-400">
+                      {getFileIcon(file.fileType)}
+                    </div>
+                  )}
+                </div>
 
-      {filteredFiles.length === 0 && (
-        <div className="text-center py-12 bg-white rounded-lg shadow-md">
-          <DocumentIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">No media files found</p>
+                {/* Info */}
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-900 truncate mb-1" title={file.fileName}>
+                    {file.fileName}
+                  </h3>
+                  <p className="text-xs text-gray-600 mb-1">
+                    {formatFileSize(file.fileSize)} • {file.fileType}
+                  </p>
+                  {file.altText && (
+                    <p className="text-xs text-gray-500 truncate" title={file.altText}>
+                      {file.altText}
+                    </p>
+                  )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-1.5 pt-2 border-t border-gray-200">
+                  <button
+                    onClick={() => {
+                      setSelectedFile(file);
+                      setShowPreviewModal(true);
+                    }}
+                    className="flex-1 px-2.5 py-1.5 text-xs font-semibold bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition"
+                  >
+                    <EyeIcon className="h-3.5 w-3.5 inline mr-1" />
+                    View
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedFile(file);
+                      setEditData({
+                        fileName: file.fileName,
+                        altText: file.altText || '',
+                        caption: file.caption || '',
+                      });
+                      setShowEditModal(true);
+                    }}
+                    className="px-2.5 py-1.5 text-[#039edb] border border-[#039edb] rounded-lg hover:bg-[#039edb] hover:text-white transition-colors"
+                    title="Edit"
+                  >
+                    <PencilIcon className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(file.mediaFileId)}
+                    className="px-2.5 py-1.5 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                    title="Delete"
+                  >
+                    <TrashIcon className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </AdminCard>
+          ))}
         </div>
       )}
 
       {/* Upload Modal */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-                Upload File
-              </h2>
-              <button onClick={() => setShowUploadModal(false)} className="text-gray-500 hover:text-gray-700">
-                <XMarkIcon className="w-6 h-6" />
+        <AdminModal
+          isOpen={true}
+          onClose={() => {
+            setShowUploadModal(false);
+            setUploadFile(null);
+            setFormData({ fileType: 'image', altText: '', caption: '' });
+          }}
+          title="Upload Media File"
+          size="md"
+          footer={
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowUploadModal(false);
+                  setUploadFile(null);
+                  setFormData({ fileType: 'image', altText: '', caption: '' });
+                }}
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleUpload}
+                disabled={!uploadFile}
+                className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 disabled:opacity-50 transition shadow-sm"
+              >
+                Upload
               </button>
             </div>
-
-            <form onSubmit={handleUpload}>
-              {/* File Input */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Choose File *
-                </label>
-                <input
-                  type="file"
-                  onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  required
-                />
-                {uploadFile && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    Selected: {uploadFile.name} ({formatFileSize(uploadFile.size)})
-                  </p>
-                )}
-              </div>
-
-              {/* File Type */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  File Type *
-                </label>
-                <select
-                  value={formData.fileType}
-                  onChange={(e) => setFormData({ ...formData, fileType: e.target.value as MediaFile['fileType'] })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  required
-                >
-                  <option value="image">Image</option>
-                  <option value="icon">Icon</option>
-                  <option value="document">Document</option>
-                  <option value="video">Video</option>
-                </select>
-              </div>
-
-              {/* Alt Text */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Alt Text
-                </label>
-                <input
-                  type="text"
-                  value={formData.altText}
-                  onChange={(e) => setFormData({ ...formData, altText: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  placeholder="Alternative text for accessibility"
-                />
-              </div>
-
-              {/* Caption */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Caption
-                </label>
-                <textarea
-                  value={formData.caption}
-                  onChange={(e) => setFormData({ ...formData, caption: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  rows={3}
-                  placeholder="File description or caption"
-                />
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowUploadModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90"
-                >
-                  Upload
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+          }
+        >
+          <form onSubmit={handleUpload} className="space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">File</label>
+              <input
+                type="file"
+                required
+                onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">File Type</label>
+              <select
+                value={formData.fileType}
+                onChange={(e) => setFormData({ ...formData, fileType: e.target.value as MediaFile['fileType'] })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb] bg-white"
+              >
+                <option value="image">Image</option>
+                <option value="icon">Icon</option>
+                <option value="document">Document</option>
+                <option value="video">Video</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Alt Text</label>
+              <input
+                type="text"
+                value={formData.altText}
+                onChange={(e) => setFormData({ ...formData, altText: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                placeholder="Alternative text for image"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Caption</label>
+              <textarea
+                value={formData.caption}
+                onChange={(e) => setFormData({ ...formData, caption: e.target.value })}
+                rows={2}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                placeholder="Optional caption"
+              />
+            </div>
+          </form>
+        </AdminModal>
       )}
 
       {/* Edit Modal */}
       {showEditModal && selectedFile && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-                Edit File Metadata
-              </h2>
-              <button onClick={() => setShowEditModal(false)} className="text-gray-500 hover:text-gray-700">
-                <XMarkIcon className="w-6 h-6" />
+        <AdminModal
+          isOpen={true}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedFile(null);
+          }}
+          title="Edit Media File"
+          size="md"
+          footer={
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowEditModal(false);
+                  setSelectedFile(null);
+                }}
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await apiFetch(API_ENDPOINTS.MEDIA_FILES.UPDATE(selectedFile.mediaFileId), {
+                      method: 'PUT',
+                      body: JSON.stringify({
+                        altText: editData.altText,
+                        caption: editData.caption,
+                      }),
+                    });
+                    setShowEditModal(false);
+                    setSelectedFile(null);
+                    fetchMediaFiles();
+                  } catch (error) {
+                    console.error('Error updating file:', error);
+                  }
+                }}
+                className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 transition shadow-sm"
+              >
+                Save
               </button>
             </div>
-
-            <form onSubmit={handleEdit}>
-              {/* File Name */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  File Name
-                </label>
-                <input
-                  type="text"
-                  value={editData.fileName}
-                  onChange={(e) => setEditData({ ...editData, fileName: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                />
-              </div>
-
-              {/* Alt Text */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Alt Text
-                </label>
-                <input
-                  type="text"
-                  value={editData.altText}
-                  onChange={(e) => setEditData({ ...editData, altText: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                />
-              </div>
-
-              {/* Caption */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Caption
-                </label>
-                <textarea
-                  value={editData.caption}
-                  onChange={(e) => setEditData({ ...editData, caption: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  rows={3}
-                />
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
+          }
+        >
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">File Name</label>
+              <input
+                type="text"
+                value={editData.fileName}
+                disabled
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Alt Text</label>
+              <input
+                type="text"
+                value={editData.altText}
+                onChange={(e) => setEditData({ ...editData, altText: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Caption</label>
+              <textarea
+                value={editData.caption}
+                onChange={(e) => setEditData({ ...editData, caption: e.target.value })}
+                rows={3}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
           </div>
-        </div>
+        </AdminModal>
       )}
 
       {/* Preview Modal */}
       {showPreviewModal && selectedFile && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50" onClick={() => setShowPreviewModal(false)}>
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-4">
-                <h2 className="text-xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-                  {selectedFile.fileName}
-                </h2>
-                <button onClick={() => setShowPreviewModal(false)} className="text-gray-500 hover:text-gray-700">
-                  <XMarkIcon className="w-6 h-6" />
-                </button>
+        <AdminModal
+          isOpen={true}
+          onClose={() => {
+            setShowPreviewModal(false);
+            setSelectedFile(null);
+          }}
+          title="Media File Preview"
+          size="lg"
+          footer={
+            <div className="flex justify-end">
+              <button
+                onClick={() => {
+                  setShowPreviewModal(false);
+                  setSelectedFile(null);
+                }}
+                className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 transition shadow-sm"
+              >
+                Close
+              </button>
+            </div>
+          }
+        >
+          <div className="space-y-4">
+            <div className="relative h-64 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+              {(selectedFile.fileType === 'image' || selectedFile.fileType === 'icon') ? (
+                <Image
+                  src={selectedFile.fileUrl}
+                  alt={selectedFile.altText || selectedFile.fileName}
+                  fill
+                  className="object-contain p-4"
+                  unoptimized
+                />
+              ) : (
+                <div className="h-full flex items-center justify-center text-gray-400">
+                  {getFileIcon(selectedFile.fileType)}
+                </div>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-xs">
+              <div>
+                <span className="font-semibold text-gray-700">File Name:</span>
+                <p className="text-gray-600 mt-1">{selectedFile.fileName}</p>
               </div>
-
-              {/* Preview */}
-              <div className="mb-4 bg-gray-100 rounded-lg p-4 flex items-center justify-center min-h-[300px]">
-                {(selectedFile.fileType === 'image' || selectedFile.fileType === 'icon') ? (
-                  <Image
-                    src={selectedFile.fileUrl}
-                    alt={selectedFile.altText || selectedFile.fileName}
-                    width={800}
-                    height={400}
-                    className="max-h-[400px] max-w-full object-contain"
-                    unoptimized
-                  />
-                ) : selectedFile.fileType === 'video' ? (
-                  <video controls className="max-h-[400px] max-w-full">
-                    <source src={selectedFile.fileUrl} type={selectedFile.mimeType} />
-                  </video>
-                ) : (
-                  <div className="text-center text-gray-500">
-                    {getFileIcon(selectedFile.fileType)}
-                    <p className="mt-2">Preview not available</p>
-                  </div>
-                )}
+              <div>
+                <span className="font-semibold text-gray-700">File Type:</span>
+                <p className="text-gray-600 mt-1 capitalize">{selectedFile.fileType}</p>
               </div>
-
-              {/* Details */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-600">File Type</p>
-                  <p className="font-medium capitalize">{selectedFile.fileType}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">File Size</p>
-                  <p className="font-medium">{formatFileSize(selectedFile.fileSize)}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">MIME Type</p>
-                  <p className="font-medium">{selectedFile.mimeType}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Uploaded</p>
-                  <p className="font-medium">{new Date(selectedFile.createdAt).toLocaleDateString()}</p>
-                </div>
-                {selectedFile.altText && (
-                  <div className="col-span-2">
-                    <p className="text-sm text-gray-600">Alt Text</p>
-                    <p className="font-medium">{selectedFile.altText}</p>
-                  </div>
-                )}
-                {selectedFile.caption && (
-                  <div className="col-span-2">
-                    <p className="text-sm text-gray-600">Caption</p>
-                    <p className="font-medium">{selectedFile.caption}</p>
-                  </div>
-                )}
-                {selectedFile.uploadedBy && (
-                  <div className="col-span-2">
-                    <p className="text-sm text-gray-600">Uploaded By</p>
-                    <p className="font-medium">{selectedFile.uploadedBy.fullName}</p>
-                  </div>
-                )}
-                <div className="col-span-2">
-                  <p className="text-sm text-gray-600">File URL</p>
-                  <a
-                    href={selectedFile.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#039edb] hover:underline break-all"
-                  >
-                    {selectedFile.fileUrl}
-                  </a>
-                </div>
+              <div>
+                <span className="font-semibold text-gray-700">File Size:</span>
+                <p className="text-gray-600 mt-1">{formatFileSize(selectedFile.fileSize)}</p>
               </div>
+              <div>
+                <span className="font-semibold text-gray-700">MIME Type:</span>
+                <p className="text-gray-600 mt-1">{selectedFile.mimeType}</p>
+              </div>
+              {selectedFile.altText && (
+                <div>
+                  <span className="font-semibold text-gray-700">Alt Text:</span>
+                  <p className="text-gray-600 mt-1">{selectedFile.altText}</p>
+                </div>
+              )}
+              {selectedFile.caption && (
+                <div>
+                  <span className="font-semibold text-gray-700">Caption:</span>
+                  <p className="text-gray-600 mt-1">{selectedFile.caption}</p>
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        </AdminModal>
       )}
     </div>
   );

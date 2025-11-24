@@ -2,19 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  PlusIcon,
-  PencilIcon,
-  TrashIcon,
-  DocumentTextIcon,
-  MagnifyingGlassIcon,
-  EyeIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  GlobeAltIcon,
-  ListBulletIcon,
-} from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon, TrashIcon, DocumentTextIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { apiFetch } from '@/lib/api-config';
+import PageHeader from '@/components/admin/PageHeader';
+import AdminCard from '@/components/admin/AdminCard';
+import AdminTable from '@/components/admin/AdminTable';
+import AdminModal from '@/components/admin/AdminModal';
+import SearchBar from '@/components/admin/SearchBar';
 
 interface Translation {
   locale: string;
@@ -37,11 +31,9 @@ export default function FeaturePagesPage() {
   const router = useRouter();
   const [pages, setPages] = useState<FeaturePage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
   const [editingPage, setEditingPage] = useState<FeaturePage | null>(null);
-  const [previewPage, setPreviewPage] = useState<FeaturePage | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchPages();
@@ -63,14 +55,11 @@ export default function FeaturePagesPage() {
 
   const handleDelete = async (pageId: number) => {
     if (!confirm('Are you sure you want to delete this feature page?')) return;
-
     try {
-      const response = await apiFetch(`/api/v1/feature-pages/admin/${pageId}`, {
+      await apiFetch(`/api/v1/feature-pages/admin/${pageId}`, {
         method: 'DELETE',
       });
-      if (response.ok) {
-        fetchPages();
-      }
+      fetchPages();
     } catch (error) {
       console.error('Error deleting page:', error);
     }
@@ -78,224 +67,146 @@ export default function FeaturePagesPage() {
 
   const filteredPages = pages.filter(
     (page) =>
-      page.pageSlug?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      page.iconName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      page.pageSlug?.toLowerCase().includes(search.toLowerCase()) ||
+      page.iconName?.toLowerCase().includes(search.toLowerCase()) ||
       (Array.isArray(page.translations) && page.translations.some((t) =>
-        t.title?.toLowerCase().includes(searchTerm.toLowerCase())
+        t.title?.toLowerCase().includes(search.toLowerCase())
       ))
   );
 
-  const statsCount = {
-    total: pages.length,
-    active: pages.filter((p) => p.isActive).length,
-    inactive: pages.filter((p) => !p.isActive).length,
-  };
+  const activeCount = pages.filter(p => p.isActive).length;
+  const inactiveCount = pages.filter(p => !p.isActive).length;
+
+  const columns = [
+    {
+      header: 'Slug',
+      render: (page: FeaturePage) => (
+        <span className="text-xs font-mono text-gray-600">{page.pageSlug}</span>
+      ),
+    },
+    {
+      header: 'Title',
+      render: (page: FeaturePage) => {
+        const idTrans = page.translations?.find(t => t.locale === 'id');
+        return (
+          <span className="text-sm font-medium text-gray-900">{idTrans?.title || '-'}</span>
+        );
+      },
+    },
+    {
+      header: 'Icon',
+      render: (page: FeaturePage) => (
+        <span className="text-xs text-gray-600">{page.iconName || '-'}</span>
+      ),
+    },
+    {
+      header: 'Order',
+      render: (page: FeaturePage) => (
+        <span className="text-xs text-gray-600">{page.displayOrder}</span>
+      ),
+    },
+    {
+      header: 'Status',
+      render: (page: FeaturePage) => (
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
+          page.isActive
+            ? 'bg-green-50 text-green-700 border border-green-200'
+            : 'bg-red-50 text-red-700 border border-red-200'
+        }`}>
+          {page.isActive ? 'Active' : 'Inactive'}
+        </span>
+      ),
+    },
+    {
+      header: 'Actions',
+      className: 'text-right',
+      render: (page: FeaturePage) => (
+        <div className="flex items-center justify-end gap-1.5">
+          <button
+            onClick={() => router.push(`/admin/feature-pages/${page.pageId}/items`)}
+            className="p-1.5 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+            title="Items"
+          >
+            <ListBulletIcon className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => {
+              setEditingPage(page);
+              setShowModal(true);
+            }}
+            className="p-1.5 text-[#039edb] hover:bg-blue-50 rounded-lg transition-colors"
+            title="Edit"
+          >
+            <PencilIcon className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => handleDelete(page.pageId)}
+            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            title="Delete"
+          >
+            <TrashIcon className="h-4 w-4" />
+          </button>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <DocumentTextIcon className="w-8 h-8 text-[#039edb]" />
-            Feature Pages
-          </h1>
-          <p className="text-gray-600 mt-2">Manage dedicated pages for each product feature</p>
-        </div>
-        <button
-          onClick={() => {
+    <div className="space-y-4">
+      <PageHeader
+        title="Feature Pages"
+        description="Manage feature detail pages and their content"
+        action={{
+          label: 'Add Page',
+          onClick: () => {
             setEditingPage(null);
             setShowModal(true);
-          }}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition shadow-lg"
-        >
-          <PlusIcon className="w-5 h-5" />
-          Add Feature Page
-        </button>
-      </div>
+          },
+        }}
+      />
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-[#039edb]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Total Pages</p>
-              <p className="text-3xl font-bold text-gray-900">{statsCount.total}</p>
-            </div>
-            <DocumentTextIcon className="w-12 h-12 text-[#039edb]/20" />
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Total</p>
+            <p className="text-xl font-bold text-gray-900">{pages.length}</p>
           </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-[#71bf44]">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Active Pages</p>
-              <p className="text-3xl font-bold text-[#71bf44]">{statsCount.active}</p>
-            </div>
-            <CheckCircleIcon className="w-12 h-12 text-[#71bf44]/20" />
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Active</p>
+            <p className="text-xl font-bold text-green-600">{activeCount}</p>
           </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-gray-400">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Inactive Pages</p>
-              <p className="text-3xl font-bold text-gray-600">{statsCount.inactive}</p>
-            </div>
-            <XCircleIcon className="w-12 h-12 text-gray-400/20" />
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Inactive</p>
+            <p className="text-xl font-bold text-red-600">{inactiveCount}</p>
           </div>
-        </div>
+        </AdminCard>
       </div>
 
       {/* Search */}
-      <div className="bg-white rounded-xl shadow-md p-4">
-        <div className="relative">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search pages by slug, title, or icon..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-          />
-        </div>
-      </div>
+      <AdminCard compact>
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder="Search by slug, icon, or title..."
+        />
+      </AdminCard>
 
-      {/* Pages Grid */}
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#039edb]"></div>
-        </div>
-      ) : filteredPages.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-md p-12 text-center">
-          <DocumentTextIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            {searchTerm ? 'No pages found' : 'No feature pages yet'}
-          </h3>
-          <p className="text-gray-600 mb-6">
-            {searchTerm
-              ? 'Try adjusting your search terms'
-              : 'Start by adding your first feature page'}
-          </p>
-          {!searchTerm && (
-            <button
-              onClick={() => {
-                setEditingPage(null);
-                setShowModal(true);
-              }}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition"
-            >
-              <PlusIcon className="w-5 h-5" />
-              Add First Page
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredPages.map((page) => (
-            <div
-              key={page.pageId}
-              className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-[#039edb]/30"
-            >
-              {/* Header */}
-              <div className="bg-gradient-to-r from-[#039edb]/5 to-[#71bf44]/5 p-4 border-b">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-mono">
-                        {page.pageSlug}
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Icon: {page.iconName} | Order: {page.displayOrder}
-                    </p>
-                  </div>
-                  <span
-                    className={`px-3 py-1 text-xs font-medium rounded-full ${
-                      page.isActive
-                        ? 'bg-gradient-to-r from-[#71bf44]/10 to-[#5a9936]/10 text-[#71bf44] border border-[#71bf44]/30'
-                        : 'bg-gray-100 text-gray-600 border border-gray-200'
-                    }`}
-                  >
-                    {page.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </div>
-              </div>
+      {/* Table */}
+      <AdminTable
+        columns={columns}
+        data={filteredPages}
+        loading={loading}
+        emptyMessage="No feature pages found. Click 'Add Page' to create one."
+      />
 
-              {/* Content */}
-              <div className="p-4 space-y-2">
-                {page.translations && page.translations.length > 0 && (
-                  <div className="space-y-2">
-                    {page.translations.slice(0, 2).map((trans, idx) => (
-                      <div key={idx} className="bg-gray-50 rounded-lg p-3 border">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="px-2 py-0.5 bg-[#039edb]/10 text-[#039edb] rounded text-xs font-medium">
-                            {trans.locale.toUpperCase()}
-                          </span>
-                        </div>
-                        <p className="text-sm font-semibold text-gray-900 mb-1">
-                          {trans.title || '-'}
-                        </p>
-                        {trans.description && (
-                          <p className="text-xs text-gray-600 line-clamp-2">
-                            {trans.description}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Actions */}
-              <div className="border-t p-4 bg-gray-50">
-                <div className="flex gap-2 mb-3">
-                  <button
-                    onClick={() => router.push(`/admin/feature-pages/${page.pageId}/items`)}
-                    className="flex-1 flex items-center justify-center gap-1 px-2 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition text-xs font-medium"
-                    title="Manage Page Items"
-                  >
-                    <ListBulletIcon className="w-4 h-4" />
-                    Page Items
-                  </button>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      setPreviewPage(page);
-                      setShowPreview(true);
-                    }}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition text-sm font-medium"
-                  >
-                    <EyeIcon className="w-4 h-4" />
-                    Preview
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEditingPage(page);
-                      setShowModal(true);
-                    }}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#039edb] text-white rounded-lg hover:bg-[#028dc9] transition text-sm font-medium"
-                  >
-                    <PencilIcon className="w-4 h-4" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(page.pageId)}
-                    className="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"
-                  >
-                    <TrashIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Modals */}
+      {/* Modal */}
       {showModal && (
-        <PageModal
+        <FeaturePageModal
           page={editingPage}
           onClose={() => {
             setShowModal(false);
@@ -307,21 +218,11 @@ export default function FeaturePagesPage() {
           }}
         />
       )}
-
-      {showPreview && previewPage && (
-        <PreviewModal
-          page={previewPage}
-          onClose={() => {
-            setShowPreview(false);
-            setPreviewPage(null);
-          }}
-        />
-      )}
     </div>
   );
 }
 
-function PageModal({
+function FeaturePageModal({
   page,
   onClose,
   onSave,
@@ -333,7 +234,7 @@ function PageModal({
   const [formData, setFormData] = useState({
     pageSlug: page?.pageSlug || '',
     iconName: page?.iconName || '',
-    displayOrder: page?.displayOrder || 1,
+    displayOrder: page?.displayOrder || 0,
     isActive: page?.isActive ?? true,
     translations: page?.translations || [
       { locale: 'id', title: '', description: '', heroTitle: '', heroDescription: '' },
@@ -341,10 +242,27 @@ function PageModal({
     ],
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (page) {
+      setFormData({
+        pageSlug: page.pageSlug,
+        iconName: page.iconName,
+        displayOrder: page.displayOrder,
+        isActive: page.isActive,
+        translations: page.translations || [
+          { locale: 'id', title: '', description: '', heroTitle: '', heroDescription: '' },
+          { locale: 'en', title: '', description: '', heroTitle: '', heroDescription: '' },
+        ],
+      });
+    }
+  }, [page]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
       const endpoint = page
@@ -356,280 +274,159 @@ function PageModal({
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         onSave();
+      } else {
+        setError(data.message || 'Failed to save page');
       }
     } catch (error) {
-      console.error('Error saving page:', error);
+      setError('Network error. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full my-8">
-        <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center rounded-t-xl z-10">
-          <h2 className="text-xl font-bold text-gray-900">
-            {page ? 'Edit Feature Page' : 'Add New Feature Page'}
-          </h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+    <AdminModal
+      isOpen={true}
+      onClose={onClose}
+      title={page ? 'Edit Feature Page' : 'Add New Feature Page'}
+      size="xl"
+      footer={
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={loading}
+            className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 disabled:opacity-50 transition shadow-sm"
+          >
+            {loading ? 'Saving...' : 'Save'}
           </button>
         </div>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-3">
+        {error && (
+          <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-xs text-red-600">{error}</p>
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <DocumentTextIcon className="w-5 h-5 text-[#039edb]" />
-              Basic Information
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Page Slug *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.pageSlug}
-                  onChange={(e) => setFormData({ ...formData, pageSlug: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#039edb]"
-                  placeholder="inventory-management"
-                />
-                <p className="mt-1 text-xs text-gray-500">Lowercase with dashes</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Icon Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.iconName}
-                  onChange={(e) => setFormData({ ...formData, iconName: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#039edb]"
-                  placeholder="warehouse"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
-                <input
-                  type="number"
-                  value={formData.displayOrder}
-                  onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#039edb]"
-                />
-              </div>
+        <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Page Slug</label>
+              <input
+                type="text"
+                required
+                value={formData.pageSlug}
+                onChange={(e) => setFormData({ ...formData, pageSlug: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                placeholder="feature-slug"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Icon Name</label>
+              <input
+                type="text"
+                value={formData.iconName}
+                onChange={(e) => setFormData({ ...formData, iconName: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Display Order</label>
+              <input
+                type="number"
+                required
+                value={formData.displayOrder}
+                onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-              <GlobeAltIcon className="w-5 h-5 text-[#039edb]" />
-              Translations
-            </h3>
-            {formData.translations.map((trans: any, idx: number) => (
-              <div key={idx} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <span className="px-3 py-1 bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] rounded-full text-sm font-medium">
-                  {trans.locale.toUpperCase()}
-                </span>
-
-                <div className="space-y-3 mt-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
-                    <input
-                      type="text"
-                      required
-                      value={trans.title}
-                      onChange={(e) => {
-                        const newTrans = [...formData.translations];
-                        newTrans[idx].title = e.target.value;
-                        setFormData({ ...formData, translations: newTrans });
-                      }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#039edb]"
-                      placeholder="Inventory Management"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                    <textarea
-                      value={trans.description}
-                      onChange={(e) => {
-                        const newTrans = [...formData.translations];
-                        newTrans[idx].description = e.target.value;
-                        setFormData({ ...formData, translations: newTrans });
-                      }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#039edb]"
-                      rows={2}
-                      placeholder="Short description for cards"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Hero Title</label>
-                    <input
-                      type="text"
-                      value={trans.heroTitle}
-                      onChange={(e) => {
-                        const newTrans = [...formData.translations];
-                        newTrans[idx].heroTitle = e.target.value;
-                        setFormData({ ...formData, translations: newTrans });
-                      }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#039edb]"
-                      placeholder="Main title on feature page"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Hero Description</label>
-                    <textarea
-                      value={trans.heroDescription}
-                      onChange={(e) => {
-                        const newTrans = [...formData.translations];
-                        newTrans[idx].heroDescription = e.target.value;
-                        setFormData({ ...formData, translations: newTrans });
-                      }}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-[#039edb]"
-                      rows={2}
-                      placeholder="Description below hero title"
-                    />
-                  </div>
+          {/* Translations */}
+          <div className="space-y-2 pt-2 border-t border-gray-200">
+            <label className="block text-xs font-semibold text-gray-700 mb-2">Translations</label>
+            {formData.translations.map((trans, idx) => (
+              <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
+                    {trans.locale.toUpperCase()}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 gap-2">
+                  <input
+                    type="text"
+                    placeholder="Title"
+                    value={trans.title}
+                    onChange={(e) => {
+                      const newTranslations = [...formData.translations];
+                      newTranslations[idx] = { ...trans, title: e.target.value };
+                      setFormData({ ...formData, translations: newTranslations });
+                    }}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Hero Title"
+                    value={trans.heroTitle}
+                    onChange={(e) => {
+                      const newTranslations = [...formData.translations];
+                      newTranslations[idx] = { ...trans, heroTitle: e.target.value };
+                      setFormData({ ...formData, translations: newTranslations });
+                    }}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                  <textarea
+                    placeholder="Description"
+                    value={trans.description}
+                    onChange={(e) => {
+                      const newTranslations = [...formData.translations];
+                      newTranslations[idx] = { ...trans, description: e.target.value };
+                      setFormData({ ...formData, translations: newTranslations });
+                    }}
+                    rows={2}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                  <textarea
+                    placeholder="Hero Description"
+                    value={trans.heroDescription}
+                    onChange={(e) => {
+                      const newTranslations = [...formData.translations];
+                      newTranslations[idx] = { ...trans, heroDescription: e.target.value };
+                      setFormData({ ...formData, translations: newTranslations });
+                    }}
+                    rows={2}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pt-1">
             <input
               type="checkbox"
               id="isActive"
               checked={formData.isActive}
               onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-              className="w-4 h-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
+              className="h-4 w-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
             />
-            <label htmlFor="isActive" className="text-sm font-medium text-gray-700">
-              Active (Display on website)
-            </label>
+            <label htmlFor="isActive" className="text-xs text-gray-700">Active</label>
           </div>
-
-          <div className="flex gap-3 pt-4 border-t sticky bottom-0 bg-white">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 px-4 py-3 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition font-medium shadow-md disabled:opacity-50"
-            >
-              {loading ? 'Saving...' : `${page ? 'Update' : 'Create'} Page`}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function PreviewModal({ page, onClose }: { page: FeaturePage; onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-900">Feature Page Preview</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
         </div>
-
-        <div className="p-6 space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600 mb-1">Slug</p>
-              <p className="font-mono text-gray-900">{page.pageSlug}</p>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600 mb-1">Icon</p>
-              <p className="font-semibold text-gray-900">{page.iconName}</p>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600 mb-1">Display Order</p>
-              <p className="font-semibold text-gray-900">{page.displayOrder}</p>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600 mb-1">Status</p>
-              <span className={`inline-flex px-3 py-1 text-sm font-medium rounded-full ${
-                page.isActive
-                  ? 'bg-gradient-to-r from-[#71bf44]/10 to-[#5a9936]/10 text-[#71bf44] border border-[#71bf44]/30'
-                  : 'bg-gray-100 text-gray-600'
-              }`}>
-                {page.isActive ? 'Active' : 'Inactive'}
-              </span>
-            </div>
-          </div>
-
-          {page.translations && page.translations.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="font-semibold text-gray-900">Translations</h3>
-              {page.translations.map((trans: any, idx: number) => (
-                <div key={idx} className="border rounded-lg p-4 space-y-3">
-                  <span className="px-2 py-1 bg-[#039edb]/10 text-[#039edb] rounded text-xs font-medium">
-                    {trans.locale?.toUpperCase()}
-                  </span>
-                  
-                  <div>
-                    <p className="text-xs text-gray-500">Title</p>
-                    <p className="font-semibold text-gray-900">{trans.title || '-'}</p>
-                  </div>
-
-                  {trans.description && (
-                    <div>
-                      <p className="text-xs text-gray-500">Description</p>
-                      <p className="text-sm text-gray-600">{trans.description}</p>
-                    </div>
-                  )}
-
-                  {trans.heroTitle && (
-                    <div>
-                      <p className="text-xs text-gray-500">Hero Title</p>
-                      <p className="text-sm font-medium text-gray-900">{trans.heroTitle}</p>
-                    </div>
-                  )}
-
-                  {trans.heroDescription && (
-                    <div>
-                      <p className="text-xs text-gray-500">Hero Description</p>
-                      <p className="text-sm text-gray-600">{trans.heroDescription}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="border-t px-6 py-4 sticky bottom-0 bg-white">
-          <button
-            onClick={onClose}
-            className="w-full px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium"
-          >
-            Close Preview
-          </button>
-        </div>
-      </div>
-    </div>
+      </form>
+    </AdminModal>
   );
 }

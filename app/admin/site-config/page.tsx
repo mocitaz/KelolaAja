@@ -1,8 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Cog6ToothIcon, MagnifyingGlassIcon, PlusIcon, TrashIcon, PencilIcon, EyeIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { apiFetch } from '@/lib/api-config';
+import { Cog6ToothIcon, PlusIcon, TrashIcon, PencilIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
+import PageHeader from '@/components/admin/PageHeader';
+import AdminCard from '@/components/admin/AdminCard';
+import AdminTable from '@/components/admin/AdminTable';
+import AdminModal from '@/components/admin/AdminModal';
+import SearchBar from '@/components/admin/SearchBar';
 
 interface SiteConfig {
   configId: number;
@@ -19,7 +24,7 @@ interface SiteConfig {
 export default function SiteConfigPage() {
   const [configs, setConfigs] = useState<SiteConfig[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -40,10 +45,11 @@ export default function SiteConfigPage() {
 
   const fetchConfigs = async () => {
     try {
-      const response: any = await apiFetch('/site-config/admin', {
-        method: 'GET',
-      });
-      setConfigs(response.data || []);
+      const response = await apiFetch(API_ENDPOINTS.SITE_CONFIG.LIST);
+      const data = await response.json();
+      if (data.success) {
+        setConfigs(data.data || []);
+      }
     } catch (error) {
       console.error('Error fetching configs:', error);
     } finally {
@@ -54,7 +60,7 @@ export default function SiteConfigPage() {
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiFetch('/site-config/admin', {
+      await apiFetch(API_ENDPOINTS.SITE_CONFIG.CREATE, {
         method: 'POST',
         body: JSON.stringify(formData),
       });
@@ -72,7 +78,7 @@ export default function SiteConfigPage() {
     if (!selectedConfig) return;
 
     try {
-      await apiFetch(`/site-config/admin/${selectedConfig.configId}`, {
+      await apiFetch(API_ENDPOINTS.SITE_CONFIG.UPDATE(selectedConfig.configId), {
         method: 'PUT',
         body: JSON.stringify({
           configValue: formData.configValue,
@@ -94,32 +100,13 @@ export default function SiteConfigPage() {
     if (!confirm('Are you sure you want to delete this configuration?')) return;
 
     try {
-      await apiFetch(`/site-config/admin/${id}`, {
+      await apiFetch(API_ENDPOINTS.SITE_CONFIG.DELETE(id), {
         method: 'DELETE',
       });
       fetchConfigs();
     } catch (error) {
       console.error('Error deleting config:', error);
-      alert('Failed to delete config');
     }
-  };
-
-  const openEditModal = (config: SiteConfig) => {
-    setSelectedConfig(config);
-    setFormData({
-      configKey: config.configKey,
-      configValue: config.configValue,
-      valueType: config.valueType,
-      category: config.category,
-      isPublic: config.isPublic,
-      description: config.description || ''
-    });
-    setShowEditModal(true);
-  };
-
-  const openPreviewModal = (config: SiteConfig) => {
-    setSelectedConfig(config);
-    setShowPreviewModal(true);
   };
 
   const resetForm = () => {
@@ -135,9 +122,9 @@ export default function SiteConfigPage() {
 
   const categories = Array.from(new Set(configs.map(c => c.category)));
 
-  const filteredConfigs = configs.filter((config) => {
-    const matchesSearch = config.configKey.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (config.description && config.description.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredConfigs = configs.filter(config => {
+    const matchesSearch = config.configKey.toLowerCase().includes(search.toLowerCase()) ||
+      (config.description && config.description.toLowerCase().includes(search.toLowerCase()));
     const matchesCategory = selectedCategory === 'all' || config.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -146,130 +133,153 @@ export default function SiteConfigPage() {
   const publicConfigs = configs.filter(c => c.isPublic).length;
   const privateConfigs = configs.filter(c => !c.isPublic).length;
 
-  const renderValueInput = () => {
-    switch (formData.valueType) {
-      case 'boolean':
-        return (
-          <select
-            value={formData.configValue}
-            onChange={(e) => setFormData({ ...formData, configValue: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-            required
+  const columns = [
+    {
+      header: 'Key',
+      render: (config: SiteConfig) => (
+        <div>
+          <div className="text-xs font-mono font-semibold text-gray-900">{config.configKey}</div>
+          {config.description && (
+            <div className="text-xs text-gray-500 mt-0.5">{config.description}</div>
+          )}
+        </div>
+      ),
+    },
+    {
+      header: 'Value',
+      render: (config: SiteConfig) => (
+        <div className="max-w-xs">
+          {config.valueType === 'json' ? (
+            <code className="text-xs text-gray-600 truncate block">{config.configValue.substring(0, 50)}...</code>
+          ) : config.valueType === 'boolean' ? (
+            <span className={`text-xs font-semibold ${config.configValue === 'true' ? 'text-green-600' : 'text-red-600'}`}>
+              {config.configValue}
+            </span>
+          ) : (
+            <span className="text-xs text-gray-700 truncate block">{config.configValue}</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      header: 'Type',
+      render: (config: SiteConfig) => (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-50 text-gray-700 border border-gray-200">
+          {config.valueType}
+        </span>
+      ),
+    },
+    {
+      header: 'Category',
+      render: (config: SiteConfig) => (
+        <span className="text-xs text-gray-600 capitalize">{config.category.replace('_', ' ')}</span>
+      ),
+    },
+    {
+      header: 'Visibility',
+      render: (config: SiteConfig) => (
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
+          config.isPublic
+            ? 'bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] border border-[#039edb]/20'
+            : 'bg-gray-50 text-gray-700 border border-gray-200'
+        }`}>
+          {config.isPublic ? 'Public' : 'Private'}
+        </span>
+      ),
+    },
+    {
+      header: 'Actions',
+      className: 'text-right',
+      render: (config: SiteConfig) => (
+        <div className="flex items-center justify-end gap-1.5">
+          <button
+            onClick={() => {
+              setSelectedConfig(config);
+              setShowPreviewModal(true);
+            }}
+            className="p-1.5 text-[#039edb] hover:bg-blue-50 rounded-lg transition-colors"
+            title="View"
           >
-            <option value="">Select value</option>
-            <option value="true">True</option>
-            <option value="false">False</option>
-          </select>
-        );
-      case 'number':
-        return (
-          <input
-            type="number"
-            value={formData.configValue}
-            onChange={(e) => setFormData({ ...formData, configValue: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-            required
-          />
-        );
-      case 'json':
-        return (
-          <textarea
-            value={formData.configValue}
-            onChange={(e) => setFormData({ ...formData, configValue: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent font-mono text-sm"
-            rows={6}
-            placeholder='{"key": "value"}'
-            required
-          />
-        );
-      default:
-        return (
-          <input
-            type="text"
-            value={formData.configValue}
-            onChange={(e) => setFormData({ ...formData, configValue: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-            required
-          />
-        );
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-600">Loading...</div>
+            <EyeIcon className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => {
+              setSelectedConfig(config);
+              setFormData({
+                configKey: config.configKey,
+                configValue: config.configValue,
+                valueType: config.valueType,
+                category: config.category,
+                isPublic: config.isPublic,
+                description: config.description || '',
+              });
+              setShowEditModal(true);
+            }}
+            className="p-1.5 text-[#039edb] hover:bg-blue-50 rounded-lg transition-colors"
+            title="Edit"
+          >
+            <PencilIcon className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => handleDelete(config.configId)}
+            className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            title="Delete"
+          >
+            <TrashIcon className="h-4 w-4" />
+          </button>
       </div>
-    );
-  }
+      ),
+    },
+  ];
 
   return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-          Site Configuration
-        </h1>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition-opacity"
-        >
-          <PlusIcon className="w-5 h-5" />
-          Add Config
-        </button>
-      </div>
+    <div className="space-y-4">
+      <PageHeader
+        title="Site Configuration"
+        description="Manage site-wide configuration settings"
+        action={{
+          label: 'Add Config',
+          onClick: () => {
+            resetForm();
+            setShowAddModal(true);
+          },
+        }}
+      />
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Total Configs</p>
-              <p className="text-2xl font-bold text-gray-800">{totalConfigs}</p>
-            </div>
-            <Cog6ToothIcon className="w-10 h-10 text-[#039edb]" />
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Total</p>
+            <p className="text-xl font-bold text-gray-900">{totalConfigs}</p>
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Public</p>
-              <p className="text-2xl font-bold text-gray-800">{publicConfigs}</p>
-            </div>
-            <div className="w-3 h-3 bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-full"></div>
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Public</p>
+            <p className="text-xl font-bold text-[#039edb]">{publicConfigs}</p>
           </div>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Private</p>
-              <p className="text-2xl font-bold text-gray-800">{privateConfigs}</p>
-            </div>
-            <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+        </AdminCard>
+        <AdminCard compact>
+          <div className="text-center">
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Private</p>
+            <p className="text-xl font-bold text-gray-700">{privateConfigs}</p>
           </div>
-        </div>
+        </AdminCard>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Search */}
-          <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
+      <AdminCard compact>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <SearchBar
+            value={search}
+            onChange={setSearch}
               placeholder="Search by key or description..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
             />
-          </div>
-
-          {/* Category Filter */}
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
+            className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb] bg-white"
           >
             <option value="all">All Categories</option>
             {categories.map((category) => (
@@ -279,144 +289,78 @@ export default function SiteConfigPage() {
             ))}
           </select>
         </div>
-      </div>
+      </AdminCard>
 
-      {/* Configs Table */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white">
-              <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Key</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Value</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Type</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Category</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Visibility</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredConfigs.map((config) => (
-                <tr key={config.configId} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="font-mono text-sm text-gray-800">{config.configKey}</div>
-                    {config.description && (
-                      <div className="text-xs text-gray-500 mt-1">{config.description}</div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-800 max-w-xs truncate">
-                      {config.valueType === 'json' ? (
-                        <code className="text-xs">{config.configValue.substring(0, 50)}...</code>
-                      ) : config.valueType === 'boolean' ? (
-                        <span className={config.configValue === 'true' ? 'text-green-600' : 'text-red-600'}>
-                          {config.configValue}
-                        </span>
-                      ) : (
-                        config.configValue
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">
-                      {config.valueType}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm capitalize text-gray-700">
-                      {config.category.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    {config.isPublic ? (
-                      <span className="px-2 py-1 text-xs rounded-full bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white">
-                        Public
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 text-xs rounded-full bg-gray-400 text-white">
-                        Private
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => openPreviewModal(config)}
-                        className="p-1 text-blue-600 hover:bg-blue-50 rounded"
-                        title="View Details"
-                      >
-                        <EyeIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => openEditModal(config)}
-                        className="p-1 text-green-600 hover:bg-green-50 rounded"
-                        title="Edit"
-                      >
-                        <PencilIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(config.configId)}
-                        className="p-1 text-red-600 hover:bg-red-50 rounded"
-                        title="Delete"
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {filteredConfigs.length === 0 && (
-            <div className="text-center py-12">
-              <Cog6ToothIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No configurations found</p>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Table */}
+      <AdminTable
+        columns={columns}
+        data={filteredConfigs}
+        loading={loading}
+        emptyMessage="No configurations found. Click 'Add Config' to create one."
+      />
 
       {/* Add Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-                Add New Configuration
-              </h2>
-              <button onClick={() => { setShowAddModal(false); resetForm(); }} className="text-gray-500 hover:text-gray-700">
-                <XMarkIcon className="w-6 h-6" />
+        <AdminModal
+          isOpen={true}
+          onClose={() => {
+            setShowAddModal(false);
+            resetForm();
+          }}
+          title="Add New Configuration"
+          size="md"
+          footer={
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAddModal(false);
+                  resetForm();
+                }}
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleAdd}
+                className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 transition shadow-sm"
+              >
+                Create
               </button>
             </div>
-
-            <form onSubmit={handleAdd}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                {/* Config Key */}
+          }
+        >
+          <form onSubmit={handleAdd} className="space-y-3">
+            <div className="grid grid-cols-1 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Config Key *
-                  </label>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Config Key</label>
                   <input
                     type="text"
+                  required
                     value={formData.configKey}
                     onChange={(e) => setFormData({ ...formData, configKey: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent font-mono"
-                    placeholder="contact_email"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  placeholder="config.key.name"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Config Value</label>
+                <input
+                  type="text"
                     required
+                  value={formData.configValue}
+                  onChange={(e) => setFormData({ ...formData, configValue: e.target.value })}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
                   />
                 </div>
-
-                {/* Value Type */}
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Value Type *
-                  </label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Value Type</label>
                   <select
                     value={formData.valueType}
                     onChange={(e) => setFormData({ ...formData, valueType: e.target.value as SiteConfig['valueType'] })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                    required
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb] bg-white"
                   >
                     <option value="string">String</option>
                     <option value="number">Number</option>
@@ -424,251 +368,190 @@ export default function SiteConfigPage() {
                     <option value="json">JSON</option>
                   </select>
                 </div>
-              </div>
-
-              {/* Config Value */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Config Value *
-                </label>
-                {renderValueInput()}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                {/* Category */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Category *
-                  </label>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">Category</label>
                   <input
                     type="text"
+                    required
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
                     placeholder="general"
-                    required
                   />
                 </div>
-
-                {/* Is Public */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Visibility *
-                  </label>
-                  <select
-                    value={formData.isPublic ? 'true' : 'false'}
-                    onChange={(e) => setFormData({ ...formData, isPublic: e.target.value === 'true' })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  >
-                    <option value="true">Public</option>
-                    <option value="false">Private</option>
-                  </select>
-                </div>
               </div>
-
-              {/* Description */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  rows={3}
-                  placeholder="Description of this configuration..."
+                  rows={2}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  placeholder="Optional description"
                 />
               </div>
-
-              {/* Buttons */}
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => { setShowAddModal(false); resetForm(); }}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90"
-                >
-                  Add Config
-                </button>
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="isPublic"
+                  checked={formData.isPublic}
+                  onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                  className="h-4 w-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
+                />
+                <label htmlFor="isPublic" className="text-xs text-gray-700">Public (accessible via API)</label>
+              </div>
               </div>
             </form>
-          </div>
-        </div>
+        </AdminModal>
       )}
 
       {/* Edit Modal */}
       {showEditModal && selectedConfig && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-                Edit Configuration
-              </h2>
-              <button onClick={() => { setShowEditModal(false); resetForm(); }} className="text-gray-500 hover:text-gray-700">
-                <XMarkIcon className="w-6 h-6" />
+        <AdminModal
+          isOpen={true}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedConfig(null);
+          }}
+          title="Edit Configuration"
+          size="md"
+          footer={
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowEditModal(false);
+                  setSelectedConfig(null);
+                }}
+                className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleEdit}
+                className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 transition shadow-sm"
+              >
+                Save
               </button>
             </div>
-
-            <form onSubmit={handleEdit}>
-              {/* Config Key (Read-only) */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Config Key
-                </label>
+          }
+        >
+          <form onSubmit={handleEdit} className="space-y-3">
+            <div className="grid grid-cols-1 gap-3">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Config Key</label>
                 <input
                   type="text"
                   value={formData.configKey}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 font-mono"
                   disabled
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
                 />
               </div>
-
-              {/* Config Value */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Config Value *
-                </label>
-                {renderValueInput()}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Config Value</label>
+                {formData.valueType === 'json' ? (
+                  <textarea
+                    value={formData.configValue}
+                    onChange={(e) => setFormData({ ...formData, configValue: e.target.value })}
+                    rows={4}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb] font-mono"
+                  />
+                ) : (
+                  <input
+                    type={formData.valueType === 'number' ? 'number' : 'text'}
+                    required
+                    value={formData.configValue}
+                    onChange={(e) => setFormData({ ...formData, configValue: e.target.value })}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                )}
               </div>
-
-              {/* Is Public */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Visibility *
-                </label>
-                <select
-                  value={formData.isPublic ? 'true' : 'false'}
-                  onChange={(e) => setFormData({ ...formData, isPublic: e.target.value === 'true' })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                >
-                  <option value="true">Public</option>
-                  <option value="false">Private</option>
-                </select>
-              </div>
-
-              {/* Description */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-transparent"
-                  rows={3}
+                  rows={2}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
                 />
               </div>
-
-              {/* Buttons */}
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => { setShowEditModal(false); resetForm(); }}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90"
-                >
-                  Save Changes
-                </button>
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="isPublicEdit"
+                  checked={formData.isPublic}
+                  onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                  className="h-4 w-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
+                />
+                <label htmlFor="isPublicEdit" className="text-xs text-gray-700">Public (accessible via API)</label>
+              </div>
               </div>
             </form>
-          </div>
-        </div>
+        </AdminModal>
       )}
 
       {/* Preview Modal */}
       {showPreviewModal && selectedConfig && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-                Configuration Details
-              </h2>
-              <button onClick={() => setShowPreviewModal(false)} className="text-gray-500 hover:text-gray-700">
-                <XMarkIcon className="w-6 h-6" />
+        <AdminModal
+          isOpen={true}
+          onClose={() => {
+            setShowPreviewModal(false);
+            setSelectedConfig(null);
+          }}
+          title="Configuration Details"
+          size="md"
+          footer={
+            <div className="flex justify-end">
+              <button
+                onClick={() => {
+                  setShowPreviewModal(false);
+                  setSelectedConfig(null);
+                }}
+                className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 transition shadow-sm"
+              >
+                Close
               </button>
             </div>
-
-            <div className="space-y-4">
+          }
+        >
+          <div className="space-y-3">
               <div>
-                <p className="text-sm text-gray-600">Config Key</p>
-                <p className="font-mono text-lg font-semibold text-gray-800">{selectedConfig.configKey}</p>
+              <span className="text-xs font-semibold text-gray-700">Key:</span>
+              <p className="text-xs font-mono text-gray-900 mt-1">{selectedConfig.configKey}</p>
               </div>
-
               <div>
-                <p className="text-sm text-gray-600">Config Value</p>
+              <span className="text-xs font-semibold text-gray-700">Value:</span>
+              <div className="mt-1 p-2 bg-gray-50 rounded-lg border border-gray-200">
                 {selectedConfig.valueType === 'json' ? (
-                  <pre className="mt-1 p-3 bg-gray-50 rounded-lg overflow-x-auto font-mono text-sm">
-                    {JSON.stringify(JSON.parse(selectedConfig.configValue), null, 2)}
-                  </pre>
+                  <pre className="text-xs text-gray-700 whitespace-pre-wrap">{selectedConfig.configValue}</pre>
                 ) : (
-                  <p className="text-lg font-semibold text-gray-800">{selectedConfig.configValue}</p>
+                  <p className="text-xs text-gray-700">{selectedConfig.configValue}</p>
                 )}
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <p className="text-sm text-gray-600">Value Type</p>
-                  <p className="font-medium capitalize">{selectedConfig.valueType}</p>
+                <span className="font-semibold text-gray-700">Type:</span>
+                <p className="text-gray-600 mt-1">{selectedConfig.valueType}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Category</p>
-                  <p className="font-medium capitalize">{selectedConfig.category.replace('_', ' ')}</p>
-                </div>
+                <span className="font-semibold text-gray-700">Category:</span>
+                <p className="text-gray-600 mt-1 capitalize">{selectedConfig.category.replace('_', ' ')}</p>
               </div>
-
               <div>
-                <p className="text-sm text-gray-600">Visibility</p>
-                <div className="mt-1">
-                  {selectedConfig.isPublic ? (
-                    <span className="px-3 py-1 text-sm rounded-full bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white">
-                      Public
-                    </span>
-                  ) : (
-                    <span className="px-3 py-1 text-sm rounded-full bg-gray-400 text-white">
-                      Private
-                    </span>
-                  )}
-                </div>
+                <span className="font-semibold text-gray-700">Visibility:</span>
+                <p className="text-gray-600 mt-1">{selectedConfig.isPublic ? 'Public' : 'Private'}</p>
               </div>
-
+            </div>
               {selectedConfig.description && (
                 <div>
-                  <p className="text-sm text-gray-600">Description</p>
-                  <p className="text-gray-800">{selectedConfig.description}</p>
+                <span className="text-xs font-semibold text-gray-700">Description:</span>
+                <p className="text-xs text-gray-600 mt-1">{selectedConfig.description}</p>
                 </div>
               )}
-
-              {selectedConfig.createdAt && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-600">Created At</p>
-                    <p className="text-sm text-gray-800">
-                      {new Date(selectedConfig.createdAt).toLocaleString()}
-                    </p>
-                  </div>
-                  {selectedConfig.updatedAt && (
-                    <div>
-                      <p className="text-sm text-gray-600">Updated At</p>
-                      <p className="text-sm text-gray-800">
-                        {new Date(selectedConfig.updatedAt).toLocaleString()}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
           </div>
-        </div>
+        </AdminModal>
       )}
     </div>
   );

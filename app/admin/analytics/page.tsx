@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { EyeIcon, UserGroupIcon, DocumentTextIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
+import PageHeader from '@/components/admin/PageHeader';
+import AdminCard from '@/components/admin/AdminCard';
+import StatCard from '@/components/admin/StatCard';
 
 interface AnalyticsOverview {
   totalVisitors: number;
@@ -25,53 +29,19 @@ export default function AnalyticsPage() {
   });
 
   useEffect(() => {
-    const loadAnalytics = async () => {
-      try {
-        const token = localStorage.getItem('accessToken');
-        
-        // Fetch overview
-        const overviewRes = await fetch('http://localhost:8080/api/v1/analytics/overview', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const overviewData = await overviewRes.json();
-        
-        // Fetch top pages
-        const topPagesRes = await fetch(
-          `http://localhost:8080/api/v1/analytics/top-pages?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}&limit=10`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const topPagesData = await topPagesRes.json();
-
-        if (overviewData.success) {
-          setOverview(overviewData.data);
-        }
-        if (topPagesData.success) {
-          setTopPages(topPagesData.data);
-        }
-      } catch (error) {
-        console.error('Error fetching analytics:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadAnalytics();
+    fetchAnalytics();
   }, [dateRange]);
 
   const fetchAnalytics = async () => {
+    setLoading(true);
     try {
-      const token = localStorage.getItem('accessToken');
-      
       // Fetch overview
-      const overviewRes = await fetch('http://localhost:8080/api/v1/analytics/overview', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const overviewRes = await apiFetch(API_ENDPOINTS.ANALYTICS.OVERVIEW);
       const overviewData = await overviewRes.json();
       
       // Fetch top pages
-      const topPagesRes = await fetch(
-        `http://localhost:8080/api/v1/analytics/top-pages?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}&limit=10`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      const topPagesRes = await apiFetch(
+        `/api/v1/analytics/top-pages?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}&limit=10`
       );
       const topPagesData = await topPagesRes.json();
 
@@ -92,152 +62,120 @@ export default function AnalyticsPage() {
     {
       name: 'Total Visitors',
       value: overview?.totalVisitors || 0,
-      icon: UserGroupIcon,
-      color: 'bg-gradient-to-r from-[#039edb] to-[#0280af]',
+      icon: <UserGroupIcon className="h-6 w-6" />,
+      gradient: 'from-[#039edb] to-[#0280af]',
     },
     {
       name: 'Page Views',
       value: overview?.totalPageViews || 0,
-      icon: EyeIcon,
-      color: 'bg-green-500',
+      icon: <EyeIcon className="h-6 w-6" />,
+      gradient: 'from-green-500 to-green-600',
     },
     {
       name: 'Content Items',
       value: overview?.totalContent || 0,
-      icon: DocumentTextIcon,
-      color: 'bg-purple-500',
+      icon: <DocumentTextIcon className="h-6 w-6" />,
+      gradient: 'from-purple-500 to-purple-600',
     },
     {
       name: 'Recent Visits (7d)',
       value: overview?.recentVisits || 0,
-      icon: CalendarIcon,
-      color: 'bg-yellow-500',
+      icon: <CalendarIcon className="h-6 w-6" />,
+      gradient: 'from-yellow-500 to-yellow-600',
     },
   ];
 
+  const totalVisits = topPages.reduce((sum, p) => sum + p.visits, 0);
+
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
-        <p className="mt-2 text-gray-600">Website analytics and statistics</p>
-      </div>
+    <div className="space-y-4">
+      <PageHeader
+        title="Analytics"
+        description="Website analytics and statistics"
+      />
 
       {/* Date Range Filter */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <AdminCard compact>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Start Date
-            </label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Start Date</label>
             <input
               type="date"
               value={dateRange.startDate}
               onChange={(e) =>
                 setDateRange({ ...dateRange, startDate: e.target.value })
               }
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              End Date
-            </label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">End Date</label>
             <input
               type="date"
               value={dateRange.endDate}
               onChange={(e) =>
                 setDateRange({ ...dateRange, endDate: e.target.value })
               }
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
             />
           </div>
         </div>
-      </div>
+      </AdminCard>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
-          <div key={stat.name} className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center">
-              <div className={`${stat.color} rounded-lg p-3`}>
-                <stat.icon className="h-6 w-6 text-white" />
-              </div>
-              <div className="ml-4 flex-1">
-                <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {loading ? '...' : stat.value.toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </div>
+          <StatCard
+            key={stat.name}
+            title={stat.name}
+            value={stat.value}
+            icon={stat.icon}
+            gradient={stat.gradient}
+            loading={loading}
+          />
         ))}
       </div>
 
       {/* Top Pages */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Top Pages</h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Page Path
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Visits
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Percentage
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {loading ? (
-                <tr>
-                  <td colSpan={3} className="px-6 py-4 text-center text-gray-500">
-                    Loading...
-                  </td>
-                </tr>
-              ) : topPages.length === 0 ? (
-                <tr>
-                  <td colSpan={3} className="px-6 py-4 text-center text-gray-500">
-                    No data available
-                  </td>
-                </tr>
-              ) : (
-                topPages.map((page, index) => {
-                  const totalVisits = topPages.reduce((sum, p) => sum + p.visits, 0);
-                  const percentage = ((page.visits / totalVisits) * 100).toFixed(1);
-                  
-                  return (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                        {page.pagePath}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {page.visits.toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2 max-w-xs">
-                            <div
-                              className="bg-gradient-to-r from-[#039edb] to-[#71bf44] h-2.5 rounded-full"
-                              style={{ width: `${percentage}%` }}
-                            />
-                          </div>
-                          <span className="text-sm text-gray-600">{percentage}%</span>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <AdminCard title="Top Pages" compact>
+        {loading ? (
+          <div className="py-8 text-center">
+            <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-[#039edb]"></div>
+            <p className="mt-2 text-xs text-gray-500">Loading...</p>
+          </div>
+        ) : topPages.length === 0 ? (
+          <div className="py-8 text-center">
+            <DocumentTextIcon className="mx-auto h-10 w-10 text-gray-300" />
+            <p className="mt-2 text-xs text-gray-500">No data available</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {topPages.map((page, index) => {
+              const percentage = totalVisits > 0 ? ((page.visits / totalVisits) * 100).toFixed(1) : '0';
+              
+              return (
+                <div key={index} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-gray-50 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{page.pagePath}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-xs">
+                        <div
+                          className="bg-gradient-to-r from-[#039edb] to-[#71bf44] h-2 rounded-full transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-600 whitespace-nowrap">{percentage}%</span>
+                    </div>
+                  </div>
+                  <div className="ml-4 text-sm font-semibold text-gray-900 whitespace-nowrap">
+                    {page.visits.toLocaleString()}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </AdminCard>
     </div>
   );
 }

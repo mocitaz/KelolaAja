@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
@@ -37,8 +38,13 @@ export default function AdminLogin() {
       } else {
         setError(data.message || "Login failed");
       }
-    } catch (error) {
-      setError("Network error. Please try again.");
+    } catch (error: any) {
+      // Handle network errors and JSON parsing errors
+      if (error.message?.includes("JSON") || error.message?.includes("Unexpected")) {
+        setError("Backend server is not responding. Please ensure the backend API is running on port 8080.");
+      } else {
+        setError(error.message || "Network error. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -54,9 +60,16 @@ export default function AdminLogin() {
 
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center px-16 text-white">
-          <h1 className="text-5xl font-bold mb-6">
-            Kelola<span className="text-[#71bf44]">Aja</span>
-          </h1>
+          <div className="mb-8">
+            <Image
+              src="/images/common/logo.png"
+              alt="KelolaAja"
+              width={180}
+              height={50}
+              className="h-12 w-auto mb-4 brightness-0 invert"
+              priority
+            />
+          </div>
           <p className="text-xl mb-8 text-white/90">Sistem Manajemen Bisnis Terpadu</p>
 
           <div className="space-y-4">
@@ -110,12 +123,28 @@ export default function AdminLogin() {
         <div className="max-w-md w-full">
           {/* Logo for mobile */}
           <div className="lg:hidden text-center mb-8">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-              KelolaAja
-            </h1>
+            <Image
+              src="/images/common/logo.png"
+              alt="KelolaAja"
+              width={140}
+              height={40}
+              className="h-10 w-auto mx-auto"
+              priority
+            />
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8">
+            {/* Logo for desktop */}
+            <div className="hidden lg:block mb-6 text-center">
+              <Image
+                src="/images/common/logo.png"
+                alt="KelolaAja"
+                width={140}
+                height={40}
+                className="h-10 w-auto mx-auto"
+                priority
+              />
+            </div>
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900">Welcome Back!</h2>
               <p className="text-gray-600 mt-2">Sign in to your admin account</p>
@@ -136,6 +165,7 @@ export default function AdminLogin() {
                   id="email"
                   type="email"
                   required
+                  autoComplete="email"
                   value={formData.email}
                   onChange={e => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent transition"
@@ -152,6 +182,7 @@ export default function AdminLogin() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     required
+                    autoComplete="current-password"
                     value={formData.password}
                     onChange={e => setFormData({ ...formData, password: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent transition pr-12"

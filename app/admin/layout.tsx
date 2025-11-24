@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   HomeIcon,
@@ -202,9 +203,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
         <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
           <div className="flex h-16 items-center justify-between px-4 border-b">
-            <span className="text-xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-              KelolaAja Admin
-            </span>
+            <Link href="/admin" className="flex items-center">
+              <Image
+                src="/images/common/logo.png"
+                alt="KelolaAja"
+                width={120}
+                height={35}
+                className="h-8 w-auto"
+                priority
+              />
+            </Link>
             <button onClick={() => setSidebarOpen(false)} className="text-gray-500 hover:text-gray-700">
               <XMarkIcon className="h-6 w-6" />
             </button>
@@ -216,35 +224,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex flex-col flex-1 min-h-0 bg-white border-r">
-          <div className="flex items-center h-16 px-4 border-b">
-            <Link
-              href="/admin"
-              className="text-xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent"
-            >
-              KelolaAja Admin
+      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-60 lg:flex-col">
+        <div className="flex flex-col flex-1 min-h-0 bg-white border-r border-gray-200 shadow-sm">
+          <div className="flex items-center h-14 px-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+            <Link href="/admin" className="flex items-center">
+              <Image
+                src="/images/common/logo.png"
+                alt="KelolaAja"
+                width={120}
+                height={35}
+                className="h-8 w-auto"
+                priority
+              />
             </Link>
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto py-2">
             <SidebarMenu menuItems={menuItems} isActive={isActive} expandedMenus={expandedMenus} toggleMenu={toggleMenu} />
           </div>
           {user && (
-            <div className="flex-shrink-0 p-4 border-t">
-              <div className="flex items-center">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{user.fullName}</p>
-                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                  <p className="text-xs bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent font-semibold">
-                    {user.role}
-                  </p>
-                </div>
+            <div className="flex-shrink-0 p-3 border-t border-gray-200 bg-gray-50">
+              <div className="mb-2">
+                <p className="text-xs font-semibold text-gray-900 truncate">{user.fullName}</p>
+                <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                <span className="inline-block mt-1 px-2 py-0.5 text-xs font-semibold bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded">
+                  {user.role}
+                </span>
               </div>
               <button
                 onClick={handleLogout}
-                className="mt-3 w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-red-600 rounded-md hover:opacity-90 transition"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg hover:opacity-90 transition shadow-sm"
               >
-                <ArrowLeftOnRectangleIcon className="h-5 w-5 mr-2" />
+                <ArrowLeftOnRectangleIcon className="h-4 w-4" />
                 Logout
               </button>
             </div>
@@ -254,18 +264,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main content */}
       <div className="lg:pl-64 flex flex-col flex-1">
-        <div className="sticky top-0 z-10 flex h-16 bg-white border-b lg:hidden">
+        <div className="sticky top-0 z-10 flex h-14 bg-white border-b shadow-sm lg:hidden">
           <button onClick={() => setSidebarOpen(true)} className="px-4 text-gray-500 focus:outline-none lg:hidden">
-            <Bars3Icon className="h-6 w-6" />
+            <Bars3Icon className="h-5 w-5" />
           </button>
           <div className="flex items-center flex-1 px-4">
-            <span className="text-xl font-bold bg-gradient-to-r from-[#039edb] to-[#71bf44] bg-clip-text text-transparent">
-              KelolaAja Admin
-            </span>
+            <Link href="/admin" className="flex items-center">
+              <Image
+                src="/images/common/logo.png"
+                alt="KelolaAja"
+                width={120}
+                height={35}
+                className="h-7 w-auto"
+                priority
+              />
+            </Link>
           </div>
         </div>
 
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-4 lg:p-6 bg-gray-50">{children}</main>
       </div>
     </div>
   );
@@ -283,35 +300,39 @@ function SidebarMenu({
   toggleMenu: (name: string) => void;
 }) {
   return (
-    <nav className="px-2 py-4 space-y-1">
+    <nav className="px-2 space-y-0.5">
       {menuItems.map(item => (
         <div key={item.name}>
           {item.children ? (
             <>
               <button
                 onClick={() => toggleMenu(item.name)}
-                className="w-full flex items-center justify-between px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100"
+                className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
+                  expandedMenus.includes(item.name)
+                    ? "bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb]"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
               >
-                <div className="flex items-center">
-                  <item.icon className="h-5 w-5 mr-3 text-gray-500" />
-                  {item.name}
+                <div className="flex items-center gap-2.5">
+                  <item.icon className="h-4 w-4 flex-shrink-0" />
+                  <span>{item.name}</span>
                 </div>
                 {expandedMenus.includes(item.name) ? (
-                  <ChevronDownIcon className="h-4 w-4" />
+                  <ChevronDownIcon className="h-3.5 w-3.5" />
                 ) : (
-                  <ChevronRightIcon className="h-4 w-4" />
+                  <ChevronRightIcon className="h-3.5 w-3.5" />
                 )}
               </button>
               {expandedMenus.includes(item.name) && (
-                <div className="ml-8 mt-1 space-y-1">
+                <div className="ml-7 mt-0.5 space-y-0.5">
                   {item.children.map(child => (
                     <Link
                       key={child.name}
                       href={child.href || "#"}
-                      className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                      className={`flex items-center px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors ${
                         isActive(child.href)
-                          ? "bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] border-l-4 border-[#039edb]"
-                          : "text-gray-700 hover:bg-gray-50"
+                          ? "bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] font-semibold"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                       }`}
                     >
                       {child.name}
@@ -323,16 +344,16 @@ function SidebarMenu({
           ) : (
             <Link
               href={item.href || "#"}
-              className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+              className={`flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
                 isActive(item.href)
-                  ? "bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] border-l-4 border-[#039edb]"
-                  : "text-gray-700 hover:bg-gray-50"
+                  ? "bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] font-semibold"
+                  : "text-gray-700 hover:bg-gray-100"
               }`}
             >
-              <item.icon className="h-5 w-5 mr-3 text-gray-500" />
-              {item.name}
+              <item.icon className="h-4 w-4 flex-shrink-0" />
+              <span className="flex-1">{item.name}</span>
               {item.badge && (
-                <span className="ml-auto inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">
                   {item.badge}
                 </span>
               )}

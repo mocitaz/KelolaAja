@@ -8,7 +8,12 @@ import {
   ChartBarIcon,
   EyeIcon,
   CurrencyDollarIcon,
+  ClockIcon,
+  ArrowTrendingUpIcon,
 } from '@heroicons/react/24/outline';
+import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
+import StatCard from '@/components/admin/StatCard';
+import AdminCard from '@/components/admin/AdminCard';
 
 interface Stats {
   totalUsers: number;
@@ -33,30 +38,20 @@ export default function AdminDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
-      
       // Fetch users count
-      const usersRes = await fetch('http://localhost:8080/api/v1/users?limit=1', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+      const usersRes = await apiFetch(`${API_ENDPOINTS.USERS.LIST}?limit=1`);
       const usersData = await usersRes.json();
       
       // Fetch analytics
-      const analyticsRes = await fetch('http://localhost:8080/api/v1/analytics/overview', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+      const analyticsRes = await apiFetch(API_ENDPOINTS.ANALYTICS.OVERVIEW);
       const analyticsData = await analyticsRes.json();
       
       // Fetch contact submissions
-      const contactsRes = await fetch('http://localhost:8080/api/v1/admin/contact-submissions?limit=1', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+      const contactsRes = await apiFetch(`${API_ENDPOINTS.CONTACTS.LIST}?limit=1`);
       const contactsData = await contactsRes.json();
       
       // Fetch recent audit logs
-      const logsRes = await fetch('http://localhost:8080/api/v1/admin/audit-logs?limit=10', {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+      const logsRes = await apiFetch(`${API_ENDPOINTS.AUDIT_LOGS.LIST}?limit=10`);
       const logsData = await logsRes.json();
 
       setStats({
@@ -78,164 +73,157 @@ export default function AdminDashboard() {
     {
       name: 'Total Users',
       value: stats.totalUsers,
-      icon: UsersIcon,
+      icon: <UsersIcon className="h-6 w-6" />,
       gradient: 'from-[#039edb] to-[#0280af]',
       href: '/admin/users',
     },
     {
-      name: 'Total Content Items',
+      name: 'Total Content',
       value: stats.totalContent,
-      icon: DocumentTextIcon,
+      icon: <DocumentTextIcon className="h-6 w-6" />,
       gradient: 'from-[#71bf44] to-[#5a9936]',
       href: '/admin/features',
     },
     {
       name: 'Contact Submissions',
       value: stats.totalContacts,
-      icon: EnvelopeIcon,
+      icon: <EnvelopeIcon className="h-6 w-6" />,
       gradient: 'from-[#039edb] to-[#71bf44]',
       href: '/admin/contact-submissions',
     },
     {
       name: 'Total Visitors',
       value: stats.totalVisitors,
-      icon: EyeIcon,
+      icon: <EyeIcon className="h-6 w-6" />,
       gradient: 'from-purple-500 to-pink-500',
       href: '/admin/analytics',
     },
   ];
 
+  const getActionBadge = (action: string) => {
+    if (action.includes('CREATE')) {
+      return 'bg-green-50 text-green-700 border-green-200';
+    } else if (action.includes('UPDATE')) {
+      return 'bg-blue-50 text-blue-700 border-blue-200';
+    } else if (action.includes('DELETE')) {
+      return 'bg-red-50 text-red-700 border-red-200';
+    }
+    return 'bg-gray-50 text-gray-700 border-gray-200';
+  };
+
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-gray-600">
-          Welcome to KelolaAja Admin Panel
-        </p>
+    <div className="space-y-5">
+      {/* Header */}
+      <div>
+        <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
+        <p className="mt-0.5 text-xs text-gray-600">Overview of your system</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Stats Grid - Compact */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
-          <div
+          <StatCard
             key={stat.name}
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
-            onClick={() => window.location.href = stat.href}
-          >
-            <div className="flex items-center">
-              <div className={`bg-gradient-to-br ${stat.gradient} rounded-lg p-3 shadow-lg`}>
-                <stat.icon className="h-6 w-6 text-white" />
-              </div>
-              <div className="ml-4 flex-1">
-                <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {loading ? '...' : stat.value.toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </div>
+            title={stat.name}
+            value={stat.value}
+            icon={stat.icon}
+            gradient={stat.gradient}
+            href={stat.href}
+            loading={loading}
+          />
         ))}
       </div>
 
-      {/* Recent Activities */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Activities</h2>
-        </div>
-        <div className="divide-y divide-gray-200">
-          {loading ? (
-            <div className="px-6 py-4 text-center text-gray-500">Loading...</div>
-          ) : recentActivities.length === 0 ? (
-            <div className="px-6 py-4 text-center text-gray-500">No recent activities</div>
-          ) : (
-            recentActivities.map((activity, index) => (
-              <div key={index} className="px-6 py-4 hover:bg-gray-50">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">
-                      {activity.action}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {activity.entityType} - {activity.entityName || 'N/A'}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      By {activity.user?.fullName || 'Unknown'} •{' '}
-                      {new Date(activity.createdAt).toLocaleString('id-ID')}
-                    </p>
-                  </div>
-                  <div className="ml-4">
-                    <span
-                      className={`px-2 py-1 text-xs font-semibold rounded ${
-                        activity.action.includes('CREATE')
-                          ? 'bg-gradient-to-r from-[#71bf44]/10 to-[#5a9936]/10 text-[#71bf44] border border-[#71bf44]/30'
-                          : activity.action.includes('UPDATE')
-                          ? 'bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] border border-[#039edb]/30'
-                          : activity.action.includes('DELETE')
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      {activity.action.split('_')[0]}
-                    </span>
-                  </div>
-                </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Recent Activities - Compact */}
+        <div className="lg:col-span-2">
+          <AdminCard title="Recent Activities" compact>
+            {loading ? (
+              <div className="py-6 text-center">
+                <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-[#039edb]"></div>
+                <p className="mt-2 text-xs text-gray-500">Loading...</p>
               </div>
-            ))
-          )}
+            ) : recentActivities.length === 0 ? (
+              <div className="py-6 text-center">
+                <ClockIcon className="mx-auto h-8 w-8 text-gray-400" />
+                <p className="mt-2 text-xs text-gray-500">No recent activities</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {recentActivities.slice(0, 5).map((activity, index) => (
+                  <div key={index} className="flex items-start justify-between p-2.5 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="text-xs font-medium text-gray-900 truncate">
+                          {activity.action.replace(/_/g, ' ')}
+                        </p>
+                        <span className={`px-1.5 py-0.5 text-xs font-medium rounded border flex-shrink-0 ${getActionBadge(activity.action)}`}>
+                          {activity.action.split('_')[0]}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600 truncate">
+                        {activity.entityType} • {activity.entityName || 'N/A'}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {activity.user?.fullName || 'Unknown'} • {new Date(activity.createdAt).toLocaleString('id-ID', { 
+                          day: 'numeric', 
+                          month: 'short', 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </AdminCard>
         </div>
-      </div>
 
-      {/* Quick Actions */}
-      <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <QuickActionCard
-          title="Manage Users"
-          description="Add, edit, or remove users"
-          icon={UsersIcon}
-          href="/admin/users"
-          color="from-[#039edb] to-[#0280af]"
-        />
-        <QuickActionCard
-          title="Pricing Plans"
-          description="Manage pricing plans and features"
-          icon={CurrencyDollarIcon}
-          href="/admin/pricing-plans"
-          color="from-[#71bf44] to-[#5a9936]"
-        />
-        <QuickActionCard
-          title="View Analytics"
-          description="Check site analytics and reports"
-          icon={ChartBarIcon}
-          href="/admin/analytics"
-          color="from-[#039edb] to-[#71bf44]"
-        />
+        {/* Quick Actions - Compact */}
+        <div>
+          <AdminCard title="Quick Actions" compact>
+            <div className="space-y-1.5">
+              <a
+                href="/admin/users"
+                className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="bg-gradient-to-br from-[#039edb] to-[#0280af] rounded-lg p-2 group-hover:scale-110 transition-transform flex-shrink-0">
+                  <UsersIcon className="h-4 w-4 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-900">Manage Users</p>
+                  <p className="text-xs text-gray-500 truncate">Add, edit, or remove</p>
+                </div>
+              </a>
+              <a
+                href="/admin/pricing-plans"
+                className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="bg-gradient-to-br from-[#71bf44] to-[#5a9936] rounded-lg p-2 group-hover:scale-110 transition-transform flex-shrink-0">
+                  <CurrencyDollarIcon className="h-4 w-4 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-900">Pricing Plans</p>
+                  <p className="text-xs text-gray-500 truncate">Manage plans & features</p>
+                </div>
+              </a>
+              <a
+                href="/admin/analytics"
+                className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <div className="bg-gradient-to-br from-[#039edb] to-[#71bf44] rounded-lg p-2 group-hover:scale-110 transition-transform flex-shrink-0">
+                  <ChartBarIcon className="h-4 w-4 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-gray-900">Analytics</p>
+                  <p className="text-xs text-gray-500 truncate">View reports & stats</p>
+                </div>
+              </a>
+            </div>
+          </AdminCard>
+        </div>
       </div>
     </div>
-  );
-}
-
-function QuickActionCard({
-  title,
-  description,
-  icon: Icon,
-  href,
-  color,
-}: {
-  title: string;
-  description: string;
-  icon: any;
-  href: string;
-  color: string;
-}) {
-  return (
-    <a
-      href={href}
-      className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-    >
-      <div className={`bg-gradient-to-br ${color} rounded-lg p-3 w-12 h-12 flex items-center justify-center mb-4 shadow-lg`}>
-        <Icon className="h-6 w-6 text-white" />
-      </div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-      <p className="text-sm text-gray-600">{description}</p>
-    </a>
   );
 }
