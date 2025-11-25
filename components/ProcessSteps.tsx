@@ -3,11 +3,84 @@
 import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
+import { useEffect, useState } from 'react'
+
+interface ProcessStep {
+  stepId: number
+  iconName: string
+  displayOrder: number
+  isActive: boolean
+  translations?: {
+    locale: string
+    title: string
+    description: string
+  }[]
+}
 
 export default function ProcessSteps() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
+  const [steps, setSteps] = useState<ProcessStep[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const steps = [
+  useEffect(() => {
+    fetchProcessSteps()
+  }, [])
+
+  const fetchProcessSteps = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+      const response = await fetch(`${baseUrl}/api/v1/process-steps`)
+      const data = await response.json()
+      
+      if (data.success && Array.isArray(data.data)) {
+        setSteps(data.data.filter((step: ProcessStep) => step.isActive))
+      }
+    } catch (error) {
+      console.error('Error fetching process steps:', error)
+      setSteps([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getStepContent = (step: ProcessStep) => {
+    const translation = step.translations?.find(t => t.locale === locale)
+    return {
+      title: translation?.title || step.iconName,
+      description: translation?.description || ''
+    }
+  }
+
+  const getIconForStep = (iconName: string, index: number) => {
+    // Map icon names to actual SVG icons
+    const iconMap: { [key: string]: JSX.Element } = {
+      'analysis': (
+        <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3 13h2v7H3v-7zm4-4h2v11H7V9zm4-3h2v14h-2V6zm4 2h2v12h-2V8zm4 4h2v8h-2v-8z" />
+        </svg>
+      ),
+      'planning': (
+        <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+      ),
+      'training': (
+        <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ),
+      'goingLive': (
+        <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      ),
+    }
+    
+    return iconMap[iconName] || iconMap['analysis']
+  }
+
+  // Fallback steps
+  const fallbackSteps = [
     {
       title: t.processSteps?.steps?.analysis?.title || 'Analisa Proses Bisnis',
       description: t.processSteps?.steps?.analysis?.description || 'Tim konsultan kami akan mengidentifikasi masalah dan kebutuhan bisnismu',
@@ -45,6 +118,13 @@ export default function ProcessSteps() {
       ),
     },
   ]
+
+  const displaySteps = steps.length > 0
+    ? steps.map((step, index) => ({
+        ...getStepContent(step),
+        icon: getIconForStep(step.iconName, index)
+      }))
+    : fallbackSteps
 
   return (
     <section className="py-8 lg:py-12 bg-gradient-to-b from-white via-primary-50/20 to-white relative overflow-hidden">
@@ -99,7 +179,12 @@ export default function ProcessSteps() {
 
               {/* Steps */}
               <div className="space-y-4 lg:space-y-5">
-                {steps.map((step, index) => (
+                {loading ? (
+                  <div className="flex justify-center py-12">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]"></div>
+                  </div>
+                ) : (
+                  displaySteps.map((step, index) => (
                   <ScrollAnimation
                     key={index}
                     direction="left"
@@ -166,12 +251,13 @@ export default function ProcessSteps() {
                       </div>
 
                       {/* Connecting Line - Between steps (Desktop only) */}
-                      {index < steps.length - 1 && (
+                      {index < displaySteps.length - 1 && (
                         <div className="hidden lg:block absolute left-6 top-16 w-0.5 h-5 bg-gradient-to-b from-primary-300 to-secondary-300"></div>
                       )}
                     </div>
                   </ScrollAnimation>
-                ))}
+                ))
+                )}
               </div>
             </div>
           </div>

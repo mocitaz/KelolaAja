@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { EyeIcon, UserGroupIcon, DocumentTextIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
 import PageHeader from '@/components/admin/PageHeader';
@@ -28,11 +28,7 @@ export default function AnalyticsPage() {
     endDate: new Date().toISOString().split('T')[0],
   });
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [dateRange]);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch overview
@@ -56,7 +52,11 @@ export default function AnalyticsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   const statCards = [
     {
@@ -168,7 +168,7 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                   <div className="ml-4 text-sm font-semibold text-gray-900 whitespace-nowrap">
-                    {page.visits.toLocaleString()}
+                    {page.visits != null ? page.visits.toLocaleString() : '0'}
                   </div>
                 </div>
               );

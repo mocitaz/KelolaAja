@@ -3,16 +3,63 @@
 import { useLanguage } from '@/contexts/LanguageContext'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import AnimatedCounter from '@/components/AnimatedCounter'
+import { useEffect, useState } from 'react'
+
+interface BenefitStat {
+  statId: number
+  statKey: string
+  value: string
+  displayOrder: number
+  isActive: boolean
+  translations?: {
+    locale: string
+    label: string
+  }[]
+}
 
 export default function Benefits() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
+  const [stats, setStats] = useState<BenefitStat[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const stats = [
+  useEffect(() => {
+    fetchBenefitStats()
+  }, [])
+
+  const fetchBenefitStats = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+      const response = await fetch(`${baseUrl}/api/v1/benefit-stats`)
+      const data = await response.json()
+      
+      if (data.success && Array.isArray(data.data)) {
+        setStats(data.data.filter((stat: BenefitStat) => stat.isActive))
+      }
+    } catch (error) {
+      console.error('Error fetching benefit stats:', error)
+      // Use fallback data
+      setStats([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getLabel = (stat: BenefitStat) => {
+    const translation = stat.translations?.find(t => t.locale === locale)
+    return translation?.label || stat.statKey
+  }
+
+  // Fallback stats if API fails
+  const fallbackStats = [
     { label: t.benefits?.stats?.reduceErrors || 'Kurangi kesalahan hingga 90%', value: '90%' },
     { label: t.benefits?.stats?.cutManualProcess || 'Pangkas Proses Manual 80%', value: '80%' },
     { label: t.benefits?.stats?.accessReports || 'Akses Laporan Real-time 100%', value: '100%' },
     { label: t.benefits?.stats?.customerSupport || 'Kepuasan Customer Support 100%', value: '100%' },
   ]
+
+  const displayStats = stats.length > 0 
+    ? stats.map(stat => ({ label: getLabel(stat), value: stat.value }))
+    : fallbackStats
 
   const features = [
     {
@@ -67,7 +114,12 @@ export default function Benefits() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-10 lg:mb-12">
-            {stats.map((stat, index) => (
+            {loading ? (
+              <div className="col-span-2 lg:col-span-4 flex justify-center py-8">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]"></div>
+              </div>
+            ) : (
+              displayStats.map((stat, index) => (
               <ScrollAnimation
                 key={index}
                 direction="up"
@@ -94,7 +146,8 @@ export default function Benefits() {
                   </div>
                 </div>
               </ScrollAnimation>
-            ))}
+            ))
+            )}
         </div>
 
         {/* Features Grid */}

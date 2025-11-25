@@ -78,7 +78,7 @@ export default function PricingPlansPage() {
         <div className="flex items-center gap-1">
           <CurrencyDollarIcon className="h-4 w-4 text-gray-400" />
           <span className="text-sm font-semibold text-gray-900">
-            {plan.price.toLocaleString()}
+            {plan.price != null ? plan.price.toLocaleString() : '0'}
           </span>
         </div>
       ),

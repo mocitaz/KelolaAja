@@ -3,15 +3,64 @@
 import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createWhatsAppLink } from '@/lib/whatsapp'
+
+interface ERPBenefit {
+  benefitId: number
+  imageUrl: string
+  displayOrder: number
+  isActive: boolean
+  translations?: {
+    locale: string
+    title: string
+    description: string
+  }[]
+}
 
 export default function ERPBenefits() {
   const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0)
+  const [benefits, setBenefits] = useState<ERPBenefit[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const benefits = [
+  useEffect(() => {
+    fetchERPBenefits()
+  }, [])
+
+  const fetchERPBenefits = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+      const response = await fetch(`${baseUrl}/api/v1/erp-benefits`)
+      const data = await response.json()
+      
+      if (data.success && Array.isArray(data.data)) {
+        const activeBenefits = data.data.filter((b: ERPBenefit) => b.isActive)
+        setBenefits(activeBenefits)
+        if (activeBenefits.length > 0) {
+          setExpandedIndex(0)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching ERP benefits:', error)
+      setBenefits([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getBenefitContent = (benefit: ERPBenefit) => {
+    const translation = benefit.translations?.find(t => t.locale === locale)
+    return {
+      title: translation?.title || '',
+      description: translation?.description || '',
+      image: benefit.imageUrl
+    }
+  }
+
+  // Fallback benefits
+  const fallbackBenefits = [
     {
       title: t.erpBenefits?.benefits?.purchasing?.title || 'Purchasing',
       description: t.erpBenefits?.benefits?.purchasing?.description || 'Buat purchase order dan faktur dalam satu langkah mudah.',
@@ -29,6 +78,10 @@ export default function ERPBenefits() {
     },
   ]
 
+  const displayBenefits = benefits.length > 0
+    ? benefits.map(b => getBenefitContent(b))
+    : fallbackBenefits
+
   const toggleExpand = (index: number) => {
     // Jika klik pada item yang sudah expanded, jangan tutup (harus ada minimal 1 yang terbuka)
     if (expandedIndex === index) {
@@ -39,7 +92,23 @@ export default function ERPBenefits() {
   }
 
   const activeIndex = expandedIndex ?? 0
-  const activeBenefit = benefits[activeIndex]
+  const activeBenefit = displayBenefits[activeIndex]
+
+  if (loading) {
+    return (
+      <section className="py-12 lg:py-16 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]"></div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (displayBenefits.length === 0) {
+    return null
+  }
 
   return (
     <section className="py-12 lg:py-16 bg-white">
@@ -56,7 +125,7 @@ export default function ERPBenefits() {
         {/* Benefits Accordion with Split Layout */}
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center">
           <div className="space-y-3">
-            {benefits.map((benefit, index) => {
+            {displayBenefits.map((benefit, index) => {
               const isExpanded = expandedIndex === index
               return (
                 <ScrollAnimation

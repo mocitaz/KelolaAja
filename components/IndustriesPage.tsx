@@ -4,11 +4,29 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { fetchAllIndustries, type IndustryData } from '@/lib/fetch-pages'
 
 export default function IndustriesPage() {
   const { t, locale } = useLanguage()
+  const [industriesData, setIndustriesData] = useState<IndustryData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadIndustries = async () => {
+      setLoading(true)
+      const data = await fetchAllIndustries(locale)
+      if (data && data.length > 0) {
+        setIndustriesData(data)
+      }
+      setLoading(false)
+    }
+
+    loadIndustries()
+  }, [locale])
   
-  const industries = [
+  // Fallback data jika API gagal
+  const fallbackIndustries = [
     {
       title: t.navDropdown.industries.fnb,
       description: locale === 'id' ? 'Untuk restoran, kafe, dan bisnis kuliner' : 'For restaurants, cafes, and culinary businesses',
@@ -54,6 +72,35 @@ export default function IndustriesPage() {
       )
     }
   ]
+
+  // Map API data ke format yang dibutuhkan komponen atau gunakan fallback
+  const industries = industriesData.length > 0 
+    ? industriesData.map(industry => ({
+        title: industry.name,
+        description: industry.description,
+        image: `/images/industries/${industry.industrySlug}/industry-${industry.industrySlug}.jpg`,
+        href: `/industries/${industry.industrySlug}`,
+        icon: (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+        )
+      }))
+    : fallbackIndustries
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-white">
+        <section className="pt-32 lg:pt-40 pb-16 lg:pb-20">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-center items-center min-h-[400px]">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#0498da]"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-white">

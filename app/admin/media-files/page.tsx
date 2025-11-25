@@ -188,25 +188,25 @@ export default function MediaFilesPage() {
         <AdminCard compact>
           <div className="text-center">
             <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Images</p>
-            <p className="text-xl font-bold text-[#039edb]">{stats?.byType.image || 0}</p>
+            <p className="text-xl font-bold text-[#039edb]">{stats?.byType?.image || 0}</p>
           </div>
         </AdminCard>
         <AdminCard compact>
           <div className="text-center">
             <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Icons</p>
-            <p className="text-xl font-bold text-[#71bf44]">{stats?.byType.icon || 0}</p>
+            <p className="text-xl font-bold text-[#71bf44]">{stats?.byType?.icon || 0}</p>
           </div>
         </AdminCard>
         <AdminCard compact>
           <div className="text-center">
             <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Documents</p>
-            <p className="text-xl font-bold text-gray-900">{stats?.byType.document || 0}</p>
+            <p className="text-xl font-bold text-gray-900">{stats?.byType?.document || 0}</p>
           </div>
         </AdminCard>
         <AdminCard compact>
           <div className="text-center">
             <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Videos</p>
-            <p className="text-xl font-bold text-gray-900">{stats?.byType.video || 0}</p>
+            <p className="text-xl font-bold text-gray-900">{stats?.byType?.video || 0}</p>
           </div>
         </AdminCard>
       </div>

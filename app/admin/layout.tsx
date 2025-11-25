@@ -204,14 +204,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
           <div className="flex h-16 items-center justify-between px-4 border-b">
             <Link href="/admin" className="flex items-center">
-              <Image
-                src="/images/common/logo.png"
-                alt="KelolaAja"
-                width={120}
-                height={35}
-                className="h-8 w-auto"
-                priority
-              />
+              <Image src="/images/common/logo.png" alt="KelolaAja" width={120} height={35} className="h-8 w-auto" priority />
             </Link>
             <button onClick={() => setSidebarOpen(false)} className="text-gray-500 hover:text-gray-700">
               <XMarkIcon className="h-6 w-6" />
@@ -228,14 +221,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="flex flex-col flex-1 min-h-0 bg-white border-r border-gray-200 shadow-sm">
           <div className="flex items-center h-14 px-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
             <Link href="/admin" className="flex items-center">
-              <Image
-                src="/images/common/logo.png"
-                alt="KelolaAja"
-                width={120}
-                height={35}
-                className="h-8 w-auto"
-                priority
-              />
+              <Image src="/images/common/logo.png" alt="KelolaAja" width={120} height={35} className="h-8 w-auto" priority />
             </Link>
           </div>
           <div className="flex-1 overflow-y-auto py-2">
@@ -270,14 +256,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </button>
           <div className="flex items-center flex-1 px-4">
             <Link href="/admin" className="flex items-center">
-              <Image
-                src="/images/common/logo.png"
-                alt="KelolaAja"
-                width={120}
-                height={35}
-                className="h-7 w-auto"
-                priority
-              />
+              <Image src="/images/common/logo.png" alt="KelolaAja" width={120} height={35} className="h-7 w-auto" priority />
             </Link>
           </div>
         </div>

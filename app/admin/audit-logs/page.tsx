@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ClipboardDocumentListIcon, FunnelIcon } from '@heroicons/react/24/outline';
 import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
 import PageHeader from '@/components/admin/PageHeader';
@@ -43,11 +43,7 @@ export default function AuditLogsPage() {
   });
   const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    fetchLogs();
-  }, [page, filters]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -69,11 +65,15 @@ export default function AuditLogsPage() {
         setTotalItems(data.meta.total);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching audit logs:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, filters]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
   const getActionBadge = (action: string) => {
     if (action.includes('CREATE')) {
@@ -89,9 +89,9 @@ export default function AuditLogsPage() {
   };
 
   const filteredLogs = logs.filter(log =>
-    log.action.toLowerCase().includes(search.toLowerCase()) ||
-    log.entityType.toLowerCase().includes(search.toLowerCase()) ||
-    log.user.fullName.toLowerCase().includes(search.toLowerCase()) ||
+    log.action?.toLowerCase().includes(search.toLowerCase()) ||
+    log.entityType?.toLowerCase().includes(search.toLowerCase()) ||
+    log.user?.fullName?.toLowerCase().includes(search.toLowerCase()) ||
     (log.entityName && log.entityName.toLowerCase().includes(search.toLowerCase()))
   );
 

@@ -61,8 +61,8 @@ export default function TestimonialsPage() {
   };
 
   const filteredTestimonials = testimonials.filter(t =>
-    t.personName.toLowerCase().includes(search.toLowerCase()) ||
-    t.company.toLowerCase().includes(search.toLowerCase())
+    t.personName?.toLowerCase().includes(search.toLowerCase()) ||
+    t.company?.toLowerCase().includes(search.toLowerCase())
   );
 
   const activeCount = testimonials.filter(t => t.isActive).length;
@@ -146,7 +146,7 @@ export default function TestimonialsPage() {
                     ) : (
                       <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-[#039edb] to-[#71bf44]">
                         <span className="text-white text-sm font-bold">
-                          {testimonial.personName.charAt(0).toUpperCase()}
+                          {testimonial.personName?.charAt(0)?.toUpperCase() || '?'}
                         </span>
                       </div>
                     )}

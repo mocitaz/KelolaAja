@@ -81,8 +81,8 @@ export default function FAQsPage() {
   };
 
   const filteredFAQs = faqs.filter(faq => {
-    const matchesSearch = faq.question.toLowerCase().includes(search.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = faq.question?.toLowerCase().includes(search.toLowerCase()) ||
+      faq.answer?.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = filterCategory === 'all' || faq.categoryId === filterCategory;
     return matchesSearch && matchesCategory;
   });

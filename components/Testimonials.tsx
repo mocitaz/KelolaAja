@@ -1,20 +1,52 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
 
 interface Testimonial {
-  quote: string
-  name: string
-  title: string
+  testimonialId: number
+  personName: string
+  position: string
   company: string
+  testimonialText: string
+  rating: number
+  imageUrl?: string
+  isActive: boolean
+  displayOrder: number
 }
 
 export default function Testimonials() {
   const { t } = useLanguage()
-  const testimonials: Testimonial[] = t.testimonials?.testimonials || [
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchTestimonials()
+  }, [])
+
+  const fetchTestimonials = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+      const response = await fetch(`${baseUrl}/api/v1/testimonials`)
+      const data = await response.json()
+      
+      if (data.success && Array.isArray(data.data)) {
+        setTestimonials(data.data.filter((t: Testimonial) => t.isActive))
+      }
+    } catch (error) {
+      console.error('Error fetching testimonials:', error)
+      setTestimonials([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Fallback testimonials
+  const fallbackTestimonials: Testimonial[] = (t.testimonials?.testimonials || [
     {
       quote: 'Mengguanakan software ERP KelolaAja yang simpel, praktis, dan mudah digunakan, menjadikan pengelolaan lebih cepat dan efisien.',
       name: 'Puji Waluyo',
@@ -33,22 +65,31 @@ export default function Testimonials() {
       title: 'Manager Finance',
       company: '',
     },
-  ]
+  ]).map((item: any, index: number) => ({
+    testimonialId: index,
+    personName: item.name,
+    position: item.title,
+    company: item.company,
+    testimonialText: item.quote,
+    rating: 5,
+    imageUrl: undefined,
+    isActive: true,
+    displayOrder: index
+  }))
 
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isAnimating, setIsAnimating] = useState(false)
+  const displayTestimonials = testimonials.length > 0 ? testimonials : fallbackTestimonials
 
   const nextTestimonial = () => {
     if (isAnimating) return
     setIsAnimating(true)
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length)
+    setCurrentIndex((prev) => (prev + 1) % displayTestimonials.length)
     setTimeout(() => setIsAnimating(false), 300)
   }
 
   const prevTestimonial = () => {
     if (isAnimating) return
     setIsAnimating(true)
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)
+    setCurrentIndex((prev) => (prev - 1 + displayTestimonials.length) % displayTestimonials.length)
     setTimeout(() => setIsAnimating(false), 300)
   }
 
@@ -64,9 +105,25 @@ export default function Testimonials() {
   const getVisibleTestimonials = () => {
     const visible: Testimonial[] = []
     // Show current and next testimonial
-    visible.push(testimonials[currentIndex])
-    visible.push(testimonials[(currentIndex + 1) % testimonials.length])
+    visible.push(displayTestimonials[currentIndex])
+    visible.push(displayTestimonials[(currentIndex + 1) % displayTestimonials.length])
     return visible
+  }
+
+  if (loading) {
+    return (
+      <section className="pt-12 lg:pt-16 pb-16 lg:pb-24 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]"></div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (displayTestimonials.length === 0) {
+    return null
   }
 
   return (
@@ -115,15 +172,15 @@ export default function Testimonials() {
 
                   {/* Quote Text */}
                   <p className="text-gray-700 leading-relaxed text-sm lg:text-base mb-5">
-                    {testimonial.quote}
+                    {testimonial.testimonialText}
                   </p>
 
                   {/* Author Info */}
                   <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
                     <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-gray-200">
                       <Image
-                        src="/images/common/default-profile.png"
-                        alt={testimonial.name}
+                        src={testimonial.imageUrl || "/images/common/default-profile.png"}
+                        alt={testimonial.personName}
                         fill
                         className="object-cover"
                         sizes="40px"
@@ -131,10 +188,10 @@ export default function Testimonials() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold text-gray-900 text-sm lg:text-base truncate">
-                        {testimonial.name}
+                        {testimonial.personName}
                       </p>
                       <p className="text-xs lg:text-sm text-gray-600 truncate">
-                        {testimonial.title}
+                        {testimonial.position}
                         {testimonial.company && `, ${testimonial.company}`}
                       </p>
                     </div>
@@ -179,7 +236,7 @@ export default function Testimonials() {
 
           {/* Pagination Dots */}
           <div className="flex justify-center items-center gap-2 mt-6">
-            {testimonials.map((_, index) => {
+            {displayTestimonials.map((_, index) => {
               const isActive = index === currentIndex
               return (
                 <button

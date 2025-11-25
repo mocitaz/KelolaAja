@@ -5,56 +5,58 @@ import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import { useState, useRef, useEffect } from 'react'
 
+interface AdvancedFeature {
+  featureId: number
+  imageUrl: string
+  linkUrl: string
+  displayOrder: number
+  isActive: boolean
+  translations?: {
+    locale: string
+    title: string
+    description: string
+  }[]
+}
+
 export default function AdvancedFeatures() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
+  const [features, setFeatures] = useState<AdvancedFeature[]>([])
+  const [loading, setLoading] = useState(true)
   
-  const featuresData = t.advancedFeatures?.features || [
-    {
-      title: 'Keuangan & Akuntansi',
-      description: 'Buat laporan keuangan seperti laba rugi, neraca, dan arus kas secara real-time. Pemantauan buku besar, serta utang dan piutang, menjadi lebih sederhana. Dapatkan laporan kinerja perusahaan yang selalu terkini dan menyeluruh.',
-    },
-    {
-      title: 'Manufaktur',
-      description: 'KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis. Rencanakan produksi, Bill of Material, serta hitung biaya bahan baku dan overhead produksi pabrik secara otomatis dengan modul manufaktur.',
-    },
-    {
-      title: 'Manajement Proyek',
-      description: 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim kelolaAja akan selalu membantu sampai Anda bisa.',
-    },
-    {
-      title: 'Pembelian & Penjualan',
-      description: 'Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi. Dilengkapi fitur DP dan diskon bertingkat. Pantau pengiriman barang, buat tagihan, hingga dengan mudah dalam satu software.',
-    },
-    {
-      title: 'Produk & Inventory',
-      description: 'KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman. Pantau stok secara real-time, atur harga, dan optimalkan alur distribusi menggunakan satu platform.',
-    },
-    {
-      title: 'HR & Payroll',
-      description: 'KelolaAja HR dan payroll dengan mudah, mulai dari pengelolaan data karyawan, absensi, hingga perhitungan gaji. Semua proses otomatis, akurat, dan dapat diakses kapan saja, memudahkan manajemen SDM di perusahaan Anda.',
-    },
-  ]
-  
-  const images = [
-    '/images/finance/feature-finance.jpg',
-    '/images/manufacturing/feature-manufacturing.jpg',
-    '/images/project/feature-project.jpg',
-    '/images/sales/feature-sales.jpg',
-    '/images/inventory/feature-inventory.jpg',
-    '/images/hr/feature-hr.jpg',
-  ]
-  
-  const links = [
-    '/features/finance',
-    '/features/manufacturing',
-    '/features/project',
-    '/features/sales',
-    '/features/inventory',
-    '/features/hr',
-  ]
-  
+  useEffect(() => {
+    fetchAdvancedFeatures()
+  }, [])
+
+  const fetchAdvancedFeatures = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+      const response = await fetch(`${baseUrl}/api/v1/advanced-features`)
+      const data = await response.json()
+      
+      if (data.success && Array.isArray(data.data)) {
+        setFeatures(data.data.filter((f: AdvancedFeature) => f.isActive))
+      }
+    } catch (error) {
+      console.error('Error fetching advanced features:', error)
+      setFeatures([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getFeatureContent = (feature: AdvancedFeature, index: number) => {
+    const translation = feature.translations?.find(t => t.locale === locale)
+    return {
+      title: translation?.title || '',
+      description: translation?.description || '',
+      image: feature.imageUrl,
+      link: feature.linkUrl,
+      icon: icons[index % icons.length]
+    }
+  }
+
   const icons = [
     <svg key="finance" className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -73,17 +75,59 @@ export default function AdvancedFeatures() {
     </svg>,
     <svg key="hr" className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-    </svg>,
+    </svg>
   ]
-  
-  const features = featuresData.map((feature, index) => ({
+
+  // Fallback features
+  const fallbackFeaturesData = t.advancedFeatures?.features || [
+    {
+      title: 'Keuangan & Akuntansi',
+      description: 'Buat laporan keuangan seperti laba rugi, neraca, dan arus kas secara real-time. Pemantauan buku besar, serta utang dan piutang, menjadi lebih sederhana. Dapatkan laporan kinerja perusahaan yang selalu terkini dan menyeluruh.',
+      image: '/images/finance/feature-finance.jpg',
+      link: '/features/finance',
+    },
+    {
+      title: 'Manufaktur',
+      description: 'KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis. Rencanakan produksi, Bill of Material, serta hitung biaya bahan baku dan overhead produksi pabrik secara otomatis dengan modul manufaktur.',
+      image: '/images/manufacturing/feature-manufacturing.jpg',
+      link: '/features/manufacturing',
+    },
+    {
+      title: 'Manajement Proyek',
+      description: 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim kelolaAja akan selalu membantu sampai Anda bisa.',
+      image: '/images/project/feature-project.jpg',
+      link: '/features/project',
+    },
+    {
+      title: 'Pembelian & Penjualan',
+      description: 'Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi. Dilengkapi fitur DP dan diskon bertingkat. Pantau pengiriman barang, buat tagihan, hingga dengan mudah dalam satu software.',
+      image: '/images/sales/feature-sales.jpg',
+      link: '/features/sales',
+    },
+    {
+      title: 'Produk & Inventory',
+      description: 'KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman. Pantau stok secara real-time, atur harga, dan optimalkan alur distribusi menggunakan satu platform.',
+      image: '/images/inventory/feature-inventory.jpg',
+      link: '/features/inventory',
+    },
+    {
+      title: 'HR & Payroll',
+      description: 'KelolaAja HR dan payroll dengan mudah, mulai dari pengelolaan data karyawan, absensi, hingga perhitungan gaji. Semua proses otomatis, akurat, dan dapat diakses kapan saja, memudahkan manajemen SDM di perusahaan Anda.',
+      image: '/images/hr/feature-hr.jpg',
+      link: '/features/hr',
+    },
+  ]
+
+  const fallbackFeatures = fallbackFeaturesData.map((feature, index) => ({
     ...feature,
-    image: images[index],
-    icon: icons[index],
-    link: links[index],
+    icon: icons[index]
   }))
 
-  const totalSlides = Math.ceil(features.length / 3)
+  const displayFeatures = features.length > 0
+    ? features.map((f, i) => getFeatureContent(f, i))
+    : fallbackFeatures
+  
+  const totalSlides = Math.ceil(displayFeatures.length / 3)
   const maxIndex = totalSlides - 1
 
   const goToSlide = (index: number) => {
@@ -133,7 +177,23 @@ export default function AdvancedFeatures() {
   // Get visible features for current slide
   const getVisibleFeatures = () => {
     const start = currentIndex * 3
-    return features.slice(start, start + 3)
+    return displayFeatures.slice(start, start + 3)
+  }
+
+  if (loading) {
+    return (
+      <section className="py-16 lg:py-24 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]"></div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (displayFeatures.length === 0) {
+    return null
   }
 
   return (
@@ -183,7 +243,7 @@ export default function AdvancedFeatures() {
                     key={slideIndex}
                     className="min-w-full grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6"
                   >
-                    {features.slice(slideIndex * 3, slideIndex * 3 + 3).map((feature, index) => (
+                    {displayFeatures.slice(slideIndex * 3, slideIndex * 3 + 3).map((feature, index) => (
                       <ScrollAnimation
                         key={slideIndex * 3 + index}
                         direction="up"

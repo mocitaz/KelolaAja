@@ -6,10 +6,27 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import Image from 'next/image'
 import { createWhatsAppLink } from '@/lib/whatsapp'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useEffect, useState } from 'react'
+import { fetchAllFeaturePages, type FeaturePageData } from '@/lib/fetch-pages'
 
 export default function FeaturesPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
+  const [featurePagesData, setFeaturePagesData] = useState<FeaturePageData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadFeaturePages = async () => {
+      setLoading(true)
+      const data = await fetchAllFeaturePages(locale)
+      if (data && data.length > 0) {
+        setFeaturePagesData(data)
+      }
+      setLoading(false)
+    }
+
+    loadFeaturePages()
+  }, [locale])
 
   const features = t.featuresPage?.features || []
   const hero = t.featuresPage?.hero
@@ -18,30 +35,64 @@ export default function FeaturesPage() {
   const faq = t.featuresPage?.faq
   const learnMore = t.featuresPage?.learnMore || 'Pelajari Selengkapnya'
 
-  // Map features with images and links
-  const featuresWithImages = features.map((feature, index) => {
-    const images = [
-      '/images/finance/feature-finance.jpg',
-      '/images/manufacturing/feature-manufacturing.jpg',
-      '/images/project/feature-project.jpg',
-      '/images/sales/feature-sales.jpg',
-      '/images/inventory/feature-inventory.jpg',
-      '/images/hr/feature-hr.jpg',
-    ]
-    const links = [
-      '/features/finance',
-      '/features/manufacturing',
-      '/features/project',
-      '/features/sales',
-      '/features/inventory',
-      '/features/hr',
-    ]
-    return {
-      ...feature,
-      image: images[index] || '/images/common/default.jpg',
-      link: links[index] || '#',
-    }
-  })
+  // Map slug ke image dan link
+  const slugToImage: Record<string, string> = {
+    'finance': '/images/finance/feature-finance.jpg',
+    'accounting': '/images/finance/feature-finance.jpg',
+    'manufacturing': '/images/manufacturing/feature-manufacturing.jpg',
+    'project': '/images/project/feature-project.jpg',
+    'sales': '/images/sales/feature-sales.jpg',
+    'inventory': '/images/inventory/feature-inventory.jpg',
+    'hr': '/images/hr/feature-hr.jpg',
+  }
+
+  // Gunakan data dari API jika ada, jika tidak gunakan fallback dari translation
+  const featuresWithImages = featurePagesData.length > 0
+    ? featurePagesData.map((page) => ({
+        title: page.title,
+        shortDesc: page.description,
+        image: slugToImage[page.pageSlug] || '/images/common/default.jpg',
+        link: `/features/${page.pageSlug}`,
+      }))
+    : features.map((feature, index) => {
+        const images = [
+          '/images/finance/feature-finance.jpg',
+          '/images/manufacturing/feature-manufacturing.jpg',
+          '/images/project/feature-project.jpg',
+          '/images/sales/feature-sales.jpg',
+          '/images/inventory/feature-inventory.jpg',
+          '/images/hr/feature-hr.jpg',
+        ]
+        const links = [
+          '/features/finance',
+          '/features/manufacturing',
+          '/features/project',
+          '/features/sales',
+          '/features/inventory',
+          '/features/hr',
+        ]
+        return {
+          ...feature,
+          image: images[index] || '/images/common/default.jpg',
+          link: links[index] || '#',
+        }
+      })
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-white">
+        <Navbar />
+        <section className="pt-32 lg:pt-40 pb-16 lg:pb-20">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-center items-center min-h-[400px]">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#0498da]"></div>
+            </div>
+          </div>
+        </section>
+        <Footer />
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-white">

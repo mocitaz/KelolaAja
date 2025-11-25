@@ -65,8 +65,8 @@ export default function FeaturesPage() {
   };
 
   const filteredFeatures = features.filter(f =>
-    f.featureName.toLowerCase().includes(search.toLowerCase()) ||
-    f.category.toLowerCase().includes(search.toLowerCase())
+    f.featureName?.toLowerCase().includes(search.toLowerCase()) ||
+    f.category?.toLowerCase().includes(search.toLowerCase())
   );
 
   const activeCount = features.filter(f => f.isActive).length;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { EnvelopeIcon, PhoneIcon, BuildingOfficeIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
 import PageHeader from '@/components/admin/PageHeader';
@@ -28,11 +28,7 @@ export default function ContactSubmissionsPage() {
   const [totalItems, setTotalItems] = useState(0);
   const [filterRead, setFilterRead] = useState('');
 
-  useEffect(() => {
-    fetchSubmissions();
-  }, [page, filterRead]);
-
-  const fetchSubmissions = async () => {
+  const fetchSubmissions = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -50,11 +46,15 @@ export default function ContactSubmissionsPage() {
         setTotalItems(data.meta.total);
       }
     } catch (error) {
-      console.error('Error fetching submissions:', error);
+      console.error('Error fetching contact submissions:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, filterRead]);
+
+  useEffect(() => {
+    fetchSubmissions();
+  }, [fetchSubmissions]);
 
   const markAsRead = async (submissionId: number) => {
     try {

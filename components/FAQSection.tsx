@@ -2,15 +2,46 @@
 
 import { useLanguage } from '@/contexts/LanguageContext'
 import ScrollAnimation from '@/components/ScrollAnimation'
+import { useEffect, useState } from 'react'
 
-interface FAQItem {
+interface FAQ {
+  faqId: number
   question: string
   answer: string
+  categoryId?: number
+  displayOrder: number
+  isActive: boolean
 }
 
 export default function FAQSection() {
   const { t } = useLanguage()
-  const faqItems: FAQItem[] = t.faq?.items || [
+  const [faqs, setFaqs] = useState<FAQ[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchFAQs()
+  }, [])
+
+  const fetchFAQs = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+      const response = await fetch(`${baseUrl}/api/v1/faqs`)
+      const data = await response.json()
+      
+      if (data.success && Array.isArray(data.data)) {
+        // Only get active FAQs and limit to 4 items
+        setFaqs(data.data.filter((faq: FAQ) => faq.isActive).slice(0, 4))
+      }
+    } catch (error) {
+      console.error('Error fetching FAQs:', error)
+      setFaqs([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Fallback FAQs
+  const fallbackFaqItems = t.faq?.items || [
     {
       question: 'Apakah ada pelatihan untuk menggunakan KelolaAja?',
       answer: 'Ada, pelatihan baik secara online maupun langsung, termasuk tutorial, webinar, dan dukungan teknis, agar tim Anda dapat memanfaatkan software tersebut secara optimal.',
@@ -29,6 +60,20 @@ export default function FAQSection() {
     },
   ]
 
+  const displayFaqs = faqs.length > 0 ? faqs : fallbackFaqItems
+
+  if (loading) {
+    return (
+      <div className="h-full flex items-center justify-center py-12">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]"></div>
+      </div>
+    )
+  }
+
+  if (displayFaqs.length === 0) {
+    return null
+  }
+
   return (
     <div className="h-full">
       <ScrollAnimation direction="left" delay={200} duration={600}>
@@ -40,7 +85,7 @@ export default function FAQSection() {
             {t.faq?.subtitle || 'Temukan jawaban atas pertanyaan umum tentang KelolaAja'}
           </p>
           <div className="space-y-3">
-            {faqItems.map((item, index) => (
+            {displayFaqs.map((item, index) => (
               <div
                 key={index}
                 className="border border-gray-200 rounded-lg overflow-hidden"

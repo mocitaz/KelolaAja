@@ -75,7 +75,9 @@ export default function KelolaAjaFeaturesPage() {
     {
       header: 'Title',
       render: (feature: KelolaAjaFeature) => {
-        const idTrans = feature.translations?.find(t => t.locale === 'id');
+        const idTrans = Array.isArray(feature.translations) 
+          ? feature.translations.find(t => t.locale === 'id')
+          : null;
         return (
           <span className="text-sm font-medium text-gray-900">{idTrans?.title || '-'}</span>
         );

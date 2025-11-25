@@ -123,7 +123,7 @@ export default function SiteConfigPage() {
   const categories = Array.from(new Set(configs.map(c => c.category)));
 
   const filteredConfigs = configs.filter(config => {
-    const matchesSearch = config.configKey.toLowerCase().includes(search.toLowerCase()) ||
+    const matchesSearch = config.configKey?.toLowerCase().includes(search.toLowerCase()) ||
       (config.description && config.description.toLowerCase().includes(search.toLowerCase()));
     const matchesCategory = selectedCategory === 'all' || config.category === selectedCategory;
     return matchesSearch && matchesCategory;
