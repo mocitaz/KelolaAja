@@ -8,6 +8,7 @@ export default function CareersPage() {
   const { locale } = useLanguage()
   const [formData, setFormData] = useState({
     name: '',
+    email: '',
     phone: '',
     address: '',
     resume: null as File | null,
@@ -48,6 +49,11 @@ export default function CareersPage() {
     if (!formData.name.trim()) {
       newErrors.name = locale === 'id' ? 'Nama wajib diisi' : 'Name is required'
     }
+    if (!formData.email.trim()) {
+      newErrors.email = locale === 'id' ? 'Email wajib diisi' : 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = locale === 'id' ? 'Format email tidak valid' : 'Invalid email format'
+    }
     if (!formData.phone.trim()) {
       newErrors.phone = locale === 'id' ? 'Nomor telepon wajib diisi' : 'Phone number is required'
     }
@@ -70,6 +76,7 @@ export default function CareersPage() {
       alert(locale === 'id' ? 'Form berhasil dikirim!' : 'Form submitted successfully!')
       setFormData({
         name: '',
+        email: '',
         phone: '',
         address: '',
         resume: null,
@@ -81,7 +88,7 @@ export default function CareersPage() {
   return (
     <div className="pt-16 lg:pt-20">
       {/* Hero Section - Compact & Modern */}
-      <section className="relative pt-16 lg:pt-20 pb-8 lg:pb-10 bg-gradient-to-br from-[#0498da]/5 via-white to-[#71bf44]/5 overflow-hidden">
+      <section className="relative pt-20 lg:pt-24 pb-6 lg:pb-8 bg-gradient-to-br from-[#0498da]/5 via-white to-[#71bf44]/5 overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-32 -left-32 w-64 h-64 bg-[#0498da]/8 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
@@ -90,16 +97,16 @@ export default function CareersPage() {
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollAnimation direction="fade" delay={0} duration={800}>
-            <div className="text-center max-w-4xl mx-auto">
+            <div className="text-center max-w-3xl mx-auto">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#0498da]/10 rounded-full mb-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#0498da]/10 rounded-full mb-4">
                 <div className="w-1.5 h-1.5 bg-[#0498da] rounded-full animate-pulse"></div>
                 <span className="text-xs font-semibold text-[#0498da]">
                   {locale === 'id' ? 'Karir di KelolaAja' : 'Careers at KelolaAja'}
                 </span>
               </div>
               
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-extrabold text-gray-900 mb-3 leading-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-gray-900 mb-4 leading-tight">
                 {locale === 'id' ? (
                   <>
                     Bangun Karir Bersama{' '}
@@ -126,39 +133,72 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* Benefits Section - Compact & Modern */}
-      <section className="py-6 lg:py-8 bg-white relative border-b border-gray-100">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-6xl mx-auto">
-            <ScrollAnimation direction="up" delay={100} duration={600}>
-              <div className="text-center mb-5">
+      {/* Process Section - Compact */}
+      <section className="py-6 lg:py-8 bg-white border-b border-gray-100">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <ScrollAnimation direction="fade" delay={100} duration={600}>
+              <div className="text-center mb-6">
                 <h2 className="text-lg lg:text-xl font-display font-bold text-gray-900 mb-2">
-                  {locale === 'id' ? 'Mengapa Bergabung dengan Kami?' : 'Why Join Us?'}
+                  {locale === 'id' ? 'Proses Rekrutmen' : 'Recruitment Process'}
                 </h2>
-                <p className="text-gray-600 text-xs lg:text-sm max-w-2xl mx-auto leading-relaxed">
-                  {locale === 'id'
-                    ? 'Kami mencari individu yang passionate tentang teknologi dan inovasi. Di KelolaAja, setiap kontribusi Anda dihargai, setiap ide didengar, dan setiap pencapaian dirayakan.'
-                    : 'We are looking for individuals passionate about technology and innovation. At KelolaAja, every contribution is valued, every idea is heard, and every achievement is celebrated.'}
+                <p className="text-xs lg:text-sm text-gray-600">
+                  {locale === 'id' ? 'Proses yang sederhana dan transparan' : 'Simple and transparent process'}
                 </p>
               </div>
             </ScrollAnimation>
-            <ScrollAnimation direction="up" delay={150} duration={600}>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 lg:gap-3">
-                {benefits.map((benefit, index) => (
+            <ScrollAnimation direction="fade" delay={150} duration={600}>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { 
+                    step: locale === 'id' ? '1' : '1', 
+                    title: locale === 'id' ? 'Kirim Aplikasi' : 'Submit Application',
+                    icon: (
+                      <svg className="w-6 h-6 text-[#0498da]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    step: locale === 'id' ? '2' : '2', 
+                    title: locale === 'id' ? 'Review CV' : 'CV Review',
+                    icon: (
+                      <svg className="w-6 h-6 text-[#0498da]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    step: locale === 'id' ? '3' : '3', 
+                    title: locale === 'id' ? 'Interview' : 'Interview',
+                    icon: (
+                      <svg className="w-6 h-6 text-[#0498da]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    )
+                  },
+                  { 
+                    step: locale === 'id' ? '4' : '4', 
+                    title: locale === 'id' ? 'Onboarding' : 'Onboarding',
+                    icon: (
+                      <svg className="w-6 h-6 text-[#0498da]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    )
+                  },
+                ].map((item, index) => (
                   <div
                     key={index}
-                    className="bg-white rounded-lg p-3.5 border border-gray-200 hover:border-[#0498da]/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group"
+                    className="text-center p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 hover:border-[#0498da]/50 hover:shadow-md transition-all duration-300"
                   >
-                    <div className="flex flex-col items-center text-center">
-                      <div className="w-10 h-10 bg-gradient-to-br from-[#0498da]/10 to-[#71bf44]/10 rounded-lg flex items-center justify-center mb-2.5 group-hover:scale-110 group-hover:from-[#0498da]/20 group-hover:to-[#71bf44]/20 transition-all duration-300">
-                        <svg className="w-5 h-5 text-[#0498da]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <h3 className="text-xs font-semibold text-gray-900 group-hover:text-[#0498da] transition-colors leading-tight">
-                        {benefit}
-                      </h3>
+                    <div className="flex items-center justify-center mb-2 w-10 h-10 mx-auto bg-gradient-to-br from-[#0498da]/10 to-[#71bf44]/10 rounded-lg">
+                      {item.icon}
                     </div>
+                    <div className="text-xs font-semibold text-[#0498da] mb-1">STEP {item.step}</div>
+                    <h3 className="text-xs font-semibold text-gray-900 leading-tight">
+                      {item.title}
+                    </h3>
                   </div>
                 ))}
               </div>
@@ -167,82 +207,33 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* Main Content - 2 Column Layout */}
-      <section className="py-6 lg:py-8 bg-gradient-to-b from-gray-50 via-white to-white relative">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-[0.02] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wNCI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')]"></div>
-        
+      {/* Main Content - Application Form */}
+      <section className="py-8 lg:py-10 bg-gradient-to-b from-gray-50 via-white to-white relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-              {/* Left: Benefits Card - Sticky */}
-              <div className="lg:col-span-1">
-                <ScrollAnimation direction="right" delay={100} duration={600}>
-                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 sticky top-24 hover:shadow-xl transition-shadow duration-300">
+          <div className="max-w-2xl mx-auto">
+            {/* Application Form */}
+            <ScrollAnimation direction="fade" delay={150} duration={600}>
+              <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-xl border border-gray-200 hover:shadow-2xl transition-shadow duration-300">
                     <div className="mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-br from-[#0498da] to-[#71bf44] rounded-xl flex items-center justify-center mb-4">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                      </div>
-                      <h2 className="text-xl font-bold text-gray-900 mb-2">
-                        {locale === 'id' ? 'Keuntungan Bergabung' : 'Why Join Us'}
-                      </h2>
-                      <p className="text-sm text-gray-600 leading-relaxed">
-                        {locale === 'id'
-                          ? 'Dapatkan pengalaman kerja terbaik di industri teknologi'
-                          : 'Get the best work experience in the technology industry'}
-                      </p>
-                    </div>
-                    <div className="space-y-3">
-                      {benefits.map((benefit, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                          <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-[#0498da]/10 to-[#71bf44]/10 rounded-lg flex items-center justify-center">
-                            <svg className="w-4 h-4 text-[#0498da]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-sm font-semibold text-gray-900 leading-tight">
-                              {benefit}
-                            </h3>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </ScrollAnimation>
-              </div>
-
-              {/* Right: Application Form */}
-              <div className="lg:col-span-2">
-                <ScrollAnimation direction="left" delay={150} duration={600}>
-                  <div className="bg-white rounded-2xl p-6 lg:p-8 shadow-xl border border-gray-200 hover:shadow-2xl transition-shadow duration-300">
-                    <div className="mb-8">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 bg-gradient-to-br from-[#0498da] to-[#71bf44] rounded-xl flex items-center justify-center">
-                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="text-center mb-6">
+                        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-[#0498da] to-[#71bf44] rounded-xl mb-3">
+                          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                         </div>
-                        <div>
-                          <h2 className="text-xl lg:text-2xl font-display font-bold text-gray-900">
-                            {locale === 'id' ? 'Formulir Aplikasi' : 'Application Form'}
-                          </h2>
-                          <p className="text-sm text-gray-600 mt-1">
-                            {locale === 'id'
-                              ? 'Lengkapi data diri Anda untuk melamar posisi di KelolaAja'
-                              : 'Complete your information to apply for a position at KelolaAja'}
-                          </p>
-                        </div>
+                        <h2 className="text-xl lg:text-2xl font-display font-bold text-gray-900 mb-2">
+                          {locale === 'id' ? 'Formulir Aplikasi' : 'Application Form'}
+                        </h2>
+                        <p className="text-xs lg:text-sm text-gray-600">
+                          {locale === 'id'
+                            ? 'Lengkapi data diri Anda untuk melamar posisi di KelolaAja'
+                            : 'Complete your information to apply for a position at KelolaAja'}
+                        </p>
                       </div>
-                      <div className="h-1 w-20 bg-gradient-to-r from-[#0498da] to-[#71bf44] rounded-full"></div>
+                      <div className="h-0.5 w-16 bg-gradient-to-r from-[#0498da] to-[#71bf44] rounded-full mx-auto"></div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                       {/* Name */}
                       <div>
                         <label htmlFor="name" className="block text-sm font-semibold text-gray-900 mb-2">
@@ -261,7 +252,7 @@ export default function CareersPage() {
                             value={formData.name}
                             onChange={handleChange}
                             placeholder={locale === 'id' ? 'Masukkan nama lengkap' : 'Enter your full name'}
-                            className={`w-full pl-12 pr-4 py-3 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0498da] focus:border-[#0498da] transition-all ${
+                            className={`w-full pl-12 pr-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0498da] focus:border-[#0498da] transition-all ${
                               errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             }`}
                           />
@@ -272,6 +263,39 @@ export default function CareersPage() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             {errors.name}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Email */}
+                      <div>
+                        <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
+                          {locale === 'id' ? 'Email' : 'Email'} <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                          <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder={locale === 'id' ? 'nama@email.com' : 'name@email.com'}
+                            className={`w-full pl-12 pr-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0498da] focus:border-[#0498da] transition-all ${
+                              errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                            }`}
+                          />
+                        </div>
+                        {errors.email && (
+                          <p className="mt-1.5 text-xs text-red-500 flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {errors.email}
                           </p>
                         )}
                       </div>
@@ -294,7 +318,7 @@ export default function CareersPage() {
                             value={formData.phone}
                             onChange={handleChange}
                             placeholder={locale === 'id' ? '08xxxxxxxxxx' : '08xxxxxxxxxx'}
-                            className={`w-full pl-12 pr-4 py-3 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0498da] focus:border-[#0498da] transition-all ${
+                            className={`w-full pl-12 pr-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0498da] focus:border-[#0498da] transition-all ${
                               errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             }`}
                           />
@@ -328,7 +352,7 @@ export default function CareersPage() {
                             onChange={handleChange}
                             rows={3}
                             placeholder={locale === 'id' ? 'Masukkan alamat lengkap' : 'Enter your full address'}
-                            className={`w-full pl-12 pr-4 py-3 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0498da] focus:border-[#0498da] transition-all resize-none ${
+                            className={`w-full pl-12 pr-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0498da] focus:border-[#0498da] transition-all resize-none ${
                               errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             }`}
                           />
@@ -358,7 +382,7 @@ export default function CareersPage() {
                           />
                           <label
                             htmlFor="resume"
-                            className={`flex items-center justify-between w-full px-4 py-3.5 text-sm border-2 border-dashed rounded-xl cursor-pointer transition-all group ${
+                            className={`flex items-center justify-between w-full px-4 py-3 text-sm border-2 border-dashed rounded-lg cursor-pointer transition-all group ${
                               errors.resume
                                 ? 'border-red-500 bg-red-50 hover:bg-red-100'
                                 : formData.resume
@@ -442,7 +466,7 @@ export default function CareersPage() {
                           />
                           <label
                             htmlFor="photo"
-                            className={`flex items-center justify-between w-full px-4 py-3.5 text-sm border-2 border-dashed rounded-xl cursor-pointer transition-all group ${
+                            className={`flex items-center justify-between w-full px-4 py-3 text-sm border-2 border-dashed rounded-lg cursor-pointer transition-all group ${
                               formData.photo
                                 ? 'border-green-500 bg-green-50 hover:bg-green-100'
                                 : 'border-gray-300 bg-gray-50 hover:border-[#0498da] hover:bg-[#0498da]/5'
@@ -494,11 +518,11 @@ export default function CareersPage() {
                       </div>
 
                       {/* Submit Button */}
-                      <div className="pt-4">
+                      <div className="pt-3">
                         <button
                           type="submit"
                           disabled={isSubmitting}
-                          className="w-full group relative px-6 py-3.5 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-[#0498da] to-[#71bf44] hover:from-[#0388c2] hover:to-[#5fa836]"
+                          className="w-full group relative px-6 py-3 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.01] overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-[#0498da] to-[#71bf44] hover:from-[#0388c2] hover:to-[#5fa836]"
                         >
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                           <span className="relative flex items-center justify-center gap-2">
@@ -528,9 +552,7 @@ export default function CareersPage() {
                       </div>
                     </form>
                   </div>
-                </ScrollAnimation>
-              </div>
-            </div>
+            </ScrollAnimation>
           </div>
         </div>
       </section>
