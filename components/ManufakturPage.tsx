@@ -3,6 +3,7 @@
 import { useLanguage } from '@/contexts/LanguageContext'
 import { createWhatsAppLink } from '@/lib/whatsapp'
 import ScrollAnimation from '@/components/ScrollAnimation'
+import FAQSection from '@/components/FAQSection'
 import Image from 'next/image'
 import Partners from '@/components/Partners'
 
@@ -354,59 +355,7 @@ export default function ManufakturPage() {
               </ScrollAnimation>
 
               {/* Right Side - FAQ */}
-              <ScrollAnimation direction="left" delay={200} duration={600}>
-                <div>
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-4">
-                    Pertanyaan Umum
-                  </h2>
-                  <div className="space-y-3">
-                    {[
-                      {
-                        question: 'Apakah ada pelatihan untuk menggunakan KelolaAja?',
-                        answer: 'Ya, KelolaAja menyediakan pelatihan gratis untuk semua pengguna. Tim kami akan membantu Anda memahami cara menggunakan software dengan mudah dan efektif.',
-                      },
-                      {
-                        question: 'Apa yang dibutuhkan untuk menggunakan KelolaAja?',
-                        answer: 'Untuk menggunakan KelolaAja, Anda hanya membutuhkan koneksi internet dan perangkat (laptop, tablet, atau smartphone). Software ini berbasis cloud sehingga dapat diakses kapan saja dan di mana saja.',
-                      },
-                      {
-                        question: 'Apa manfaat software ERP akuntansi untuk bisnis?',
-                        answer: 'Software ERP akuntansi membantu bisnis mengelola keuangan, inventory, dan operasional secara terintegrasi. Dengan KelolaAja, Anda dapat meningkatkan efisiensi, mengurangi kesalahan manual, dan membuat keputusan bisnis yang lebih tepat dengan laporan real-time.',
-                      },
-                      {
-                        question: 'Apakah Aman Menggunakan KelolaAja?',
-                        answer: 'Ya, KelolaAja menggunakan teknologi keamanan terdepan untuk melindungi data bisnis Anda. Semua data dienkripsi dan disimpan dengan aman. Kami juga memiliki backup rutin untuk memastikan data Anda selalu terlindungi.',
-                      }
-                    ].map((faq, index) => (
-                      <div
-                        key={index}
-                        className="border border-gray-200 rounded-lg overflow-hidden"
-                      >
-                        <details className="group">
-                          <summary className="px-4 py-3 cursor-pointer list-none flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200">
-                            <span className="font-semibold text-sm text-gray-900 pr-4">
-                              {faq.question}
-                            </span>
-                            <svg
-                              className="w-4 h-4 text-gray-500 flex-shrink-0 transform transition-transform duration-200 group-open:rotate-180"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                          </summary>
-                          <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-                            <p className="text-xs text-gray-700 leading-relaxed">
-                              {faq.answer}
-                            </p>
-                          </div>
-                        </details>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </ScrollAnimation>
+              <FAQSection />
             </div>
           </div>
         </div>

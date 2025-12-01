@@ -284,9 +284,23 @@ function FAQModal({
         ? `/api/v1/admin/faqs/${faq.faqId}`
         : '/api/v1/admin/faqs';
       
+      // Format request body with translations (API expects this format)
+      const requestBody = {
+        categoryId: formData.categoryId,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: [
+          {
+            locale: 'id',
+            question: formData.question,
+            answer: formData.answer
+          }
+        ]
+      };
+      
       const response = await apiFetch(endpoint, {
         method: faq ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();

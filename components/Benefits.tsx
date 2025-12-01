@@ -28,16 +28,30 @@ export default function Benefits() {
 
   const fetchBenefitStats = async () => {
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+      
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/benefit-stats`)
+      const response = await fetch(`${baseUrl}/api/v1/benefit-stats`, {
+        signal: controller.signal,
+      })
+      
+      clearTimeout(timeoutId)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
       const data = await response.json()
       
       if (data.success && Array.isArray(data.data)) {
         setStats(data.data.filter((stat: BenefitStat) => stat.isActive))
       }
-    } catch (error) {
-      console.error('Error fetching benefit stats:', error)
-      // Use fallback data
+    } catch (error: any) {
+      // Silently fail - only log in development
+      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
+        console.error('Error fetching benefit stats:', error)
+      }
       setStats([])
     } finally {
       setLoading(false)

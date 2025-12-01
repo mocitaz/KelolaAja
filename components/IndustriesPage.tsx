@@ -104,32 +104,57 @@ export default function IndustriesPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="pt-32 lg:pt-40 pb-16 lg:pb-20 bg-gradient-to-br from-white via-primary-50/30 to-secondary-50/20 relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary-200/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary-200/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary-100/10 rounded-full blur-3xl"></div>
+      {/* Hero Section - Enhanced */}
+      <section className="relative pt-32 lg:pt-40 pb-16 lg:pb-20 bg-gradient-to-br from-[#0498da]/5 via-white to-[#71bf44]/5 overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -left-40 w-80 h-80 bg-[#0498da]/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#71bf44]/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute -bottom-40 left-1/2 w-80 h-80 bg-[#0498da]/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
         </div>
-
+        
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-5xl mx-auto text-center">
-            <ScrollAnimation direction="fade" delay={0} duration={600}>
-              <div className="inline-block mb-6">
-                <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold">
-                  <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
-                  {t.industriesPage?.hero?.badge || 'Solusi ERP untuk Semua Industri'}
+          <ScrollAnimation direction="fade" delay={0} duration={800}>
+            <div className="text-center max-w-5xl mx-auto">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#0498da]/10 rounded-full mb-6">
+                <div className="w-2 h-2 bg-[#0498da] rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold text-[#0498da]">
+                  {t.industriesPage?.hero?.badge || (locale === 'id' ? 'Solusi ERP untuk Semua Industri' : 'ERP Solutions for All Industries')}
                 </span>
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-gray-900 mb-6 leading-tight">
-                {t.industriesPage?.hero?.title || 'Industri yang Kami Layani'}
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-extrabold text-gray-900 mb-6 leading-tight">
+                {t.industriesPage?.hero?.title ? (
+                  t.industriesPage.hero.title.includes('KelolaAja') ? (
+                    <>
+                      {t.industriesPage.hero.title.split('KelolaAja').map((part, index, array) => (
+                        <span key={index}>
+                          {part}
+                          {index < array.length - 1 && (
+                            <span className="bg-gradient-to-r from-[#0498da] to-[#71bf44] bg-clip-text text-transparent">
+                              KelolaAja
+                            </span>
+                          )}
+                        </span>
+                      ))}
+                    </>
+                  ) : (
+                    t.industriesPage.hero.title
+                  )
+                ) : (
+                  <>
+                    {locale === 'id' ? 'Industri yang Kami Layani' : 'Industries We Serve'}
+                  </>
+                )}
               </h1>
-              <p className="text-base lg:text-lg xl:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
-                {t.industriesPage?.hero?.subtitle || 'KelolaAja hadir dengan solusi ERP yang disesuaikan untuk berbagai industri. Dari restoran hingga manufaktur, kami membantu bisnis Anda tumbuh lebih efisien dan profesional.'}
+              <p className="text-lg lg:text-xl xl:text-2xl text-gray-600 leading-relaxed max-w-3xl mx-auto font-light">
+                {t.industriesPage?.hero?.subtitle || (locale === 'id'
+                  ? 'KelolaAja hadir dengan solusi ERP yang disesuaikan untuk berbagai industri. Dari restoran hingga manufaktur, kami membantu bisnis Anda tumbuh lebih efisien dan profesional.'
+                  : 'KelolaAja comes with ERP solutions tailored for various industries. From restaurants to manufacturing, we help your business grow more efficiently and professionally.')}
               </p>
-            </ScrollAnimation>
-          </div>
+            </div>
+          </ScrollAnimation>
         </div>
       </section>
 

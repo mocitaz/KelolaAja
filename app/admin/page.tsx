@@ -114,7 +114,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div>
+    <div>
         <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
         <p className="mt-0.5 text-xs text-gray-600">Overview of your system</p>
       </div>
@@ -172,10 +172,10 @@ export default function AdminDashboard() {
                           minute: '2-digit' 
                         })}
                       </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            </div>
+          </div>
+        ))}
+      </div>
             )}
           </AdminCard>
         </div>
@@ -206,7 +206,7 @@ export default function AdminDashboard() {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-gray-900">Pricing Plans</p>
                   <p className="text-xs text-gray-500 truncate">Manage plans & features</p>
-                </div>
+                  </div>
               </a>
               <a
                 href="/admin/analytics"
@@ -214,13 +214,13 @@ export default function AdminDashboard() {
               >
                 <div className="bg-gradient-to-br from-[#039edb] to-[#71bf44] rounded-lg p-2 group-hover:scale-110 transition-transform flex-shrink-0">
                   <ChartBarIcon className="h-4 w-4 text-white" />
-                </div>
+                  </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-gray-900">Analytics</p>
                   <p className="text-xs text-gray-500 truncate">View reports & stats</p>
                 </div>
               </a>
-            </div>
+              </div>
           </AdminCard>
         </div>
       </div>

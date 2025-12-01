@@ -1,0 +1,40 @@
+[
+  {
+    "question": "Apa itu KelolaAja?",
+    "answer": "KelolaAja adalah software ERP terintegrasi yang dikembangkan khusus untuk menjawab kebutuhan small to growing businesses di Indonesia. Dirancang untuk menyederhanakan proses manajemen keuangan, pembukuan, pelaporan, hingga operasional bisnis lainnya secara menyeluruh, KelolaAja memungkinkan perusahaan untuk mengelola dan memantau aktivitas bisnis secara real-time, dari mana saja, dengan efisiensi tinggi dan akurasi yang konsisten.\n\nMeski dioptimalkan untuk bisnis yang sedang tumbuh, KelolaAja dibangun dengan standar dan kapabilitas enterprise-class. Ini memastikan bahwa perusahaan skala besar sekalipun tetap dapat mengandalkan KelolaAja dalam memenuhi kompleksitas kebutuhan internal mereka.",
+    "categoryId": 1,
+    "displayOrder": 1,
+    "isActive": true
+  },
+  {
+    "question": "Apa yang membedakan KelolaAja dari software ERP lain di pasaran?",
+    "answer": "KelolaAja menghadirkan keseimbangan antara kualitas sistem, kedalaman fitur, dan keterjangkauan biaya. Dibanding ERP lokal maupun global, KelolaAja menawarkan solusi yang komprehensif dan efisien secara biaya, tanpa mengorbankan fungsionalitas inti.",
+    "categoryId": 1,
+    "displayOrder": 2,
+    "isActive": true
+  },
+  {
+    "question": "Apakah pengguna perlu memiliki pengalaman teknis untuk menggunakan KelolaAja?",
+    "answer": "Tidak. KelolaAja dirancang dengan antarmuka yang intuitif dan alur kerja yang disederhanakan berdasarkan riset langsung terhadap kebutuhan pengguna bisnis di berbagai level. Sistem ini dapat digunakan tanpa pengalaman teknis sebelumnya.",
+    "categoryId": 1,
+    "displayOrder": 3,
+    "isActive": true
+  },
+  {
+    "question": "Berapa lama proses implementasi KelolaAja?",
+    "answer": "Proses implementasi KelolaAja umumnya memakan waktu antara 1 hingga 3 bulan, tergantung pada kompleksitas struktur bisnis, jumlah modul yang digunakan, dan kesiapan data internal perusahaan. Rentang waktu ini mencakup seluruh tahapan penting seperti analisis kebutuhan, konfigurasi sistem, migrasi data, pelatihan pengguna, hingga pendampingan saat go-live.",
+    "categoryId": 1,
+    "displayOrder": 4,
+    "isActive": true
+  },
+  {
+    "question": "Apakah KelolaAja bisa disesuaikan dengan kebutuhan bisnis saya?",
+    "answer": "KelolaAja telah dirancang untuk langsung mendukung proses bisnis umum tanpa perlu kustomisasi. Jika ada kebutuhan sangat spesifik, kustomisasi dimungkinkan dengan biaya tambahan sesuai kompleksitas. Namun, kami tidak merekomendasikan kustomisasi kecuali benar-benar diperlukan, agar sistem tetap efisien, stabil, dan scalable.",
+    "categoryId": 1,
+    "displayOrder": 5,
+    "isActive": true
+  }
+]
+
+
+

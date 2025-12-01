@@ -399,6 +399,67 @@ export interface Translations {
       }
     }
   }
+  companyProfile?: {
+    hero: {
+      badge: string
+      title: string
+      titleHighlight: string
+    }
+    about: {
+      title: string
+      description1: string
+      description2: string
+      description3: string
+    }
+    vision: {
+      badge: string
+      title: string
+      description: string
+    }
+    mission: {
+      badge: string
+      title: string
+      items: string[]
+    }
+    coreValues: {
+      badge: string
+      title: string
+      impact: string
+      fromImpact: string
+      values: {
+        I: {
+          title: string
+          subtitle: string
+          description: string
+        }
+        M: {
+          title: string
+          subtitle: string
+          description: string
+        }
+        P: {
+          title: string
+          subtitle: string
+          description: string
+        }
+        A: {
+          title: string
+          subtitle: string
+          description: string
+        }
+        C: {
+          title: string
+          subtitle: string
+          description: string
+        }
+        T: {
+          title: string
+          subtitle: string
+          description: string
+        }
+      }
+    }
+  }
 }
 
 export const translations: Record<Locale, Translations> = {
@@ -616,6 +677,26 @@ export const translations: Record<Locale, Translations> = {
       title: 'Pertanyaan Umum',
       subtitle: 'Temukan jawaban atas pertanyaan umum tentang KelolaAja',
       items: [
+        {
+          question: 'Apa itu KelolaAja?',
+          answer: 'KelolaAja adalah software ERP terintegrasi yang dikembangkan khusus untuk menjawab kebutuhan small to growing businesses di Indonesia. Dirancang untuk menyederhanakan proses manajemen keuangan, pembukuan, pelaporan, hingga operasional bisnis lainnya secara menyeluruh, KelolaAja memungkinkan perusahaan untuk mengelola dan memantau aktivitas bisnis secara real-time, dari mana saja, dengan efisiensi tinggi dan akurasi yang konsisten.\n\nMeski dioptimalkan untuk bisnis yang sedang tumbuh, KelolaAja dibangun dengan standar dan kapabilitas enterprise-class. Ini memastikan bahwa perusahaan skala besar sekalipun tetap dapat mengandalkan KelolaAja dalam memenuhi kompleksitas kebutuhan internal mereka.',
+        },
+        {
+          question: 'Apa yang membedakan KelolaAja dari software ERP lain di pasaran?',
+          answer: 'KelolaAja menghadirkan keseimbangan antara kualitas sistem, kedalaman fitur, dan keterjangkauan biaya. Dibanding ERP lokal maupun global, KelolaAja menawarkan solusi yang komprehensif dan efisien secara biaya, tanpa mengorbankan fungsionalitas inti.',
+        },
+        {
+          question: 'Apakah pengguna perlu memiliki pengalaman teknis untuk menggunakan KelolaAja?',
+          answer: 'Tidak. KelolaAja dirancang dengan antarmuka yang intuitif dan alur kerja yang disederhanakan berdasarkan riset langsung terhadap kebutuhan pengguna bisnis di berbagai level. Sistem ini dapat digunakan tanpa pengalaman teknis sebelumnya.',
+        },
+        {
+          question: 'Berapa lama proses implementasi KelolaAja?',
+          answer: 'Proses implementasi KelolaAja umumnya memakan waktu antara 1 hingga 3 bulan, tergantung pada kompleksitas struktur bisnis, jumlah modul yang digunakan, dan kesiapan data internal perusahaan. Rentang waktu ini mencakup seluruh tahapan penting seperti analisis kebutuhan, konfigurasi sistem, migrasi data, pelatihan pengguna, hingga pendampingan saat go-live.',
+        },
+        {
+          question: 'Apakah KelolaAja bisa disesuaikan dengan kebutuhan bisnis saya?',
+          answer: 'KelolaAja telah dirancang untuk langsung mendukung proses bisnis umum tanpa perlu kustomisasi. Jika ada kebutuhan sangat spesifik, kustomisasi dimungkinkan dengan biaya tambahan sesuai kompleksitas. Namun, kami tidak merekomendasikan kustomisasi kecuali benar-benar diperlukan, agar sistem tetap efisien, stabil, dan scalable.',
+        },
         {
           question: 'Apakah ada pelatihan untuk menggunakan KelolaAja?',
           answer: 'Ada, pelatihan baik secara online maupun langsung, termasuk tutorial, webinar, dan dukungan teknis, agar tim Anda dapat memanfaatkan software tersebut secara optimal.',
@@ -847,6 +928,26 @@ export const translations: Record<Locale, Translations> = {
         subtitle: 'Temukan jawaban atas pertanyaan umum tentang KelolaAja',
         items: [
           {
+            question: 'Apa itu KelolaAja?',
+            answer: 'KelolaAja adalah software ERP terintegrasi yang dikembangkan khusus untuk menjawab kebutuhan small to growing businesses di Indonesia. Dirancang untuk menyederhanakan proses manajemen keuangan, pembukuan, pelaporan, hingga operasional bisnis lainnya secara menyeluruh, KelolaAja memungkinkan perusahaan untuk mengelola dan memantau aktivitas bisnis secara real-time, dari mana saja, dengan efisiensi tinggi dan akurasi yang konsisten.\n\nMeski dioptimalkan untuk bisnis yang sedang tumbuh, KelolaAja dibangun dengan standar dan kapabilitas enterprise-class. Ini memastikan bahwa perusahaan skala besar sekalipun tetap dapat mengandalkan KelolaAja dalam memenuhi kompleksitas kebutuhan internal mereka.',
+          },
+          {
+            question: 'Apa yang membedakan KelolaAja dari software ERP lain di pasaran?',
+            answer: 'KelolaAja menghadirkan keseimbangan antara kualitas sistem, kedalaman fitur, dan keterjangkauan biaya. Dibanding ERP lokal maupun global, KelolaAja menawarkan solusi yang komprehensif dan efisien secara biaya, tanpa mengorbankan fungsionalitas inti.',
+          },
+          {
+            question: 'Apakah pengguna perlu memiliki pengalaman teknis untuk menggunakan KelolaAja?',
+            answer: 'Tidak. KelolaAja dirancang dengan antarmuka yang intuitif dan alur kerja yang disederhanakan berdasarkan riset langsung terhadap kebutuhan pengguna bisnis di berbagai level. Sistem ini dapat digunakan tanpa pengalaman teknis sebelumnya.',
+          },
+          {
+            question: 'Berapa lama proses implementasi KelolaAja?',
+            answer: 'Proses implementasi KelolaAja umumnya memakan waktu antara 1 hingga 3 bulan, tergantung pada kompleksitas struktur bisnis, jumlah modul yang digunakan, dan kesiapan data internal perusahaan. Rentang waktu ini mencakup seluruh tahapan penting seperti analisis kebutuhan, konfigurasi sistem, migrasi data, pelatihan pengguna, hingga pendampingan saat go-live.',
+          },
+          {
+            question: 'Apakah KelolaAja bisa disesuaikan dengan kebutuhan bisnis saya?',
+            answer: 'KelolaAja telah dirancang untuk langsung mendukung proses bisnis umum tanpa perlu kustomisasi. Jika ada kebutuhan sangat spesifik, kustomisasi dimungkinkan dengan biaya tambahan sesuai kompleksitas. Namun, kami tidak merekomendasikan kustomisasi kecuali benar-benar diperlukan, agar sistem tetap efisien, stabil, dan scalable.',
+          },
+          {
             question: 'Apakah ada pelatihan untuk menggunakan KelolaAja?',
             answer: 'Ada, pelatihan baik secara online maupun langsung, termasuk tutorial, webinar, dan dukungan teknis, agar tim Anda dapat memanfaatkan software tersebut secara optimal.',
           },
@@ -873,6 +974,72 @@ export const translations: Record<Locale, Translations> = {
         subtitle: 'KelolaAja hadir dengan solusi ERP yang disesuaikan untuk berbagai industri. Dari restoran hingga manufaktur, kami membantu bisnis Anda tumbuh lebih efisien dan profesional.',
       },
       learnMore: 'Pelajari Selengkapnya',
+    },
+    companyProfile: {
+      hero: {
+        badge: 'Tentang Kami',
+        title: 'Profil',
+        titleHighlight: 'Perusahaan',
+      },
+      about: {
+        title: 'Sekilas Tentang Kami',
+        description1: 'KelolaAja merupakan langkah transformasi digital Dawang Group dalam menghadirkan solusi teknologi untuk dunia usaha. Sejak 1999, Dawang Group telah berkiprah selama lebih dari 26 tahun sebagai pemain utama di industri telekomunikasi nasional.',
+        description2: 'Memasuki 2024, Dawang Group melalui entitas PT Tiga Inspirasi Bersama memulai pengembangan KelolaAja, sebuah software ERP terintegrasi yang dirancang untuk menjawab kebutuhan bisnis modern. Diluncurkan secara resmi pada akhir tahun 2025, KelolaAja hadir sebagai solusi lokal yang menjembatani kesenjangan antara sistem ERP konvensional yang terlalu kompleks dan mahal, serta kebutuhan bisnis yang menuntut kecepatan, kesederhanaan, dan kepatuhan terhadap regulasi nasional.',
+        description3: 'Inisiatif ini menjadi bagian dari komitmen kami untuk terus berinovasi dan menciptakan nilai tambah bagi ekosistem usaha di Indonesia melalui solusi digital yang relevan, scalable, dan terjangkau. Dengan KelolaAja, Dawang Group tidak hanya berekspansi ke sektor teknologi digital, tetapi juga menetapkan fondasi jangka panjang untuk menjadi pemain utama dalam digitalisasi operasional bisnis di Indonesia.',
+      },
+      vision: {
+        badge: 'VISI KAMI',
+        title: 'VISI',
+        description: 'Terwujudnya keberkahan dan kesejahteraan pada umat manusia melalui solusi digital',
+      },
+      mission: {
+        badge: 'MISI KAMI',
+        title: 'MISI',
+        items: [
+          'Menyediakan solusi digital yang memudahkan pengelolaan bisnis',
+          'Membantu usaha tumbuh dengan produktif, efisien, dan berkelanjutan',
+          'Menghadirkan teknologi yang terjangkau untuk semua skala usaha',
+          'Menjaga nilai keberkahan dalam setiap inovasi dan layanan',
+        ],
+      },
+      coreValues: {
+        badge: 'NILAI INTI PERUSAHAAN',
+        title: 'IMPACT',
+        impact: 'IMPACT',
+        fromImpact: 'dari IMPACT',
+        values: {
+          I: {
+            title: 'Innovation',
+            subtitle: 'Inovasi Berkelanjutan',
+            description: 'Kami terus mengembangkan KelolaAja agar selalu relevan, modern, dan mampu menjawab kebutuhan bisnis yang terus berubah. Setiap pembaruan dilakukan untuk meningkatkan efektivitas dan menyederhanakan operasional.',
+          },
+          M: {
+            title: 'Measurable Value',
+            subtitle: 'Nilai yang Dapat Diukur',
+            description: 'Setiap fitur yang kami bangun harus memberikan dampak nyata bagi pengguna. Kami fokus pada hasil yang terukur, bukan hanya tampilan atau fitur yang tidak memberikan manfaat langsung.',
+          },
+          P: {
+            title: 'Practical & Simple',
+            subtitle: 'Praktis dan Sederhana',
+            description: 'KelolaAja dirancang agar mudah digunakan oleh siapa pun, tanpa perlu pengalaman teknis ERP. Kami menyederhanakan proses yang kompleks agar bisnis dapat berjalan lebih cepat dan efisien.',
+          },
+          A: {
+            title: 'Accountability & Accuracy',
+            subtitle: 'Akuntabilitas dan Akurasi Data',
+            description: 'Kami menjaga integritas data sebagai prioritas utama. Setiap proses dalam KelolaAja dibangun untuk menjaga kejujuran, ketepatan, dan transparansi data karena keputusan bisnis yang baik selalu dimulai dari informasi yang benar.',
+          },
+          C: {
+            title: 'Customer-Centric',
+            subtitle: 'Berfokus pada Pengguna',
+            description: 'Seluruh pengembangan KelolaAja didesain berdasarkan kebutuhan nyata bisnis di Indonesia. Kami menyediakan pendampingan penuh mulai dari implementasi hingga monitoring, memastikan setiap pengguna memperoleh hasil terbaik dari sistem.',
+          },
+          T: {
+            title: 'Trust & Security',
+            subtitle: 'Kepercayaan dan Keamanan',
+            description: 'Kami membangun KelolaAja dengan standar keamanan modern untuk melindungi data pengguna. Keandalan sistem menjadi komitmen kami agar bisnis dapat berjalan tanpa gangguan.',
+          },
+        },
+      },
     },
   },
   en: {
@@ -1371,6 +1538,72 @@ export const translations: Record<Locale, Translations> = {
         subtitle: 'KelolaAja comes with ERP solutions tailored for various industries. From restaurants to manufacturing, we help your business grow more efficiently and professionally.',
       },
       learnMore: 'Learn More',
+    },
+    companyProfile: {
+      hero: {
+        badge: 'About Us',
+        title: 'Company',
+        titleHighlight: 'Profile',
+      },
+      about: {
+        title: 'About Us at a Glance',
+        description1: 'KelolaAja is a digital transformation step by Dawang Group in bringing technology solutions to the business world. Since 1999, Dawang Group has been operating for more than 26 years as a major player in the national telecommunications industry.',
+        description2: 'Entering 2024, Dawang Group through the entity PT Tiga Inspirasi Bersama began developing KelolaAja, an integrated ERP software designed to meet modern business needs. Officially launched at the end of 2025, KelolaAja comes as a local solution that bridges the gap between conventional ERP systems that are too complex and expensive, and business needs that demand speed, simplicity, and compliance with national regulations.',
+        description3: 'This initiative is part of our commitment to continue innovating and creating added value for the business ecosystem in Indonesia through relevant, scalable, and affordable digital solutions. With KelolaAja, Dawang Group not only expands into the digital technology sector, but also establishes a long-term foundation to become a major player in the digitalization of business operations in Indonesia.',
+      },
+      vision: {
+        badge: 'OUR VISION',
+        title: 'VISION',
+        description: 'Realizing blessings and prosperity for humanity through digital solutions',
+      },
+      mission: {
+        badge: 'OUR MISSION',
+        title: 'MISSION',
+        items: [
+          'Provide digital solutions that facilitate business management',
+          'Help businesses grow productively, efficiently, and sustainably',
+          'Bring affordable technology for all business scales',
+          'Maintain the value of blessings in every innovation and service',
+        ],
+      },
+      coreValues: {
+        badge: 'COMPANY CORE VALUES',
+        title: 'IMPACT',
+        impact: 'IMPACT',
+        fromImpact: 'from IMPACT',
+        values: {
+          I: {
+            title: 'Innovation',
+            subtitle: 'Continuous Innovation',
+            description: 'We continuously develop KelolaAja to always be relevant, modern, and able to meet constantly changing business needs. Every update is made to increase effectiveness and simplify operations.',
+          },
+          M: {
+            title: 'Measurable Value',
+            subtitle: 'Measurable Value',
+            description: 'Every feature we build must provide real impact for users. We focus on measurable results, not just appearance or features that do not provide direct benefits.',
+          },
+          P: {
+            title: 'Practical & Simple',
+            subtitle: 'Practical and Simple',
+            description: 'KelolaAja is designed to be easy to use by anyone, without the need for ERP technical experience. We simplify complex processes so that business can run faster and more efficiently.',
+          },
+          A: {
+            title: 'Accountability & Accuracy',
+            subtitle: 'Data Accountability and Accuracy',
+            description: 'We maintain data integrity as our top priority. Every process in KelolaAja is built to maintain honesty, accuracy, and data transparency because good business decisions always start from correct information.',
+          },
+          C: {
+            title: 'Customer-Centric',
+            subtitle: 'User-Focused',
+            description: 'All KelolaAja development is designed based on real business needs in Indonesia. We provide full support from implementation to monitoring, ensuring every user gets the best results from the system.',
+          },
+          T: {
+            title: 'Trust & Security',
+            subtitle: 'Trust and Security',
+            description: 'We build KelolaAja with modern security standards to protect user data. System reliability is our commitment so that business can run without interruption.',
+          },
+        },
+      },
     },
   },
 }

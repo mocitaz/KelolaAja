@@ -74,7 +74,6 @@ export default function Navbar() {
         { label: t.navDropdown.features.manufacturing, href: '/features/manufacturing', description: locale === 'id' ? 'Sistem manufaktur terintegrasi untuk produksi dan supply chain' : 'Integrated manufacturing system for production and supply chain' },
         { label: t.navDropdown.features.sales, href: '/features/sales', description: locale === 'id' ? 'Proses pembelian dan penjualan dari quotation hingga invoice' : 'Purchase and sales process from quotation to invoice' },
         { label: t.navDropdown.features.inventory, href: '/features/inventory', description: locale === 'id' ? 'Manajemen inventory dengan tracking real-time' : 'Inventory management with real-time tracking' },
-        { label: t.navDropdown.features.hr, href: '/features/hr', description: locale === 'id' ? 'Kelola HR dan payroll dengan mudah, mulai dari data karyawan hingga perhitungan gaji' : 'Manage HR and payroll easily, from employee data to salary calculation' },
       ],
     },
   ]
@@ -97,8 +96,14 @@ export default function Navbar() {
     {
       label: locale === 'id' ? 'Informasi' : 'Information',
       items: [
-        { label: t.navDropdown.company.about, href: '/company', description: locale === 'id' ? 'Tentang KelolaAja dan tim kami' : 'About KelolaAja and our team' },
+        { label: t.navDropdown.company.about, href: '/company/profile', description: locale === 'id' ? 'Tentang KelolaAja dan tim kami' : 'About KelolaAja and our team' },
         { label: t.navDropdown.company.contact, href: '/contact', description: locale === 'id' ? 'Hubungi kami untuk informasi dan dukungan' : 'Contact us for information and support' },
+      ],
+    },
+    {
+      label: locale === 'id' ? 'Karir' : 'Careers',
+      items: [
+        { label: locale === 'id' ? 'Karir' : 'Careers', href: '/company/careers', description: locale === 'id' ? 'Bergabung dengan tim KelolaAja dan kembangkan karir Anda' : 'Join KelolaAja team and grow your career' },
       ],
     },
   ]
@@ -889,18 +894,29 @@ export default function Navbar() {
                 </button>
                 {isCompanyDropdownOpen && (
                   <div className="ml-4 mt-1 space-y-1">
-                    {companyCategories[0].items.map((item) => (
-                      <a
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => {
-                          setIsCompanyDropdownOpen(false)
-                          setIsMobileMenuOpen(false)
-                        }}
-                        className="block px-4 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition-colors"
-                      >
-                        {item.label}
-                      </a>
+                    {companyCategories.map((category, catIndex) => (
+                      <div key={catIndex}>
+                        {catIndex > 0 && (
+                          <div className="px-4 py-1 mt-2 mb-1">
+                            <span className="text-xs font-semibold text-gray-500 uppercase">
+                              {category.label}
+                            </span>
+                          </div>
+                        )}
+                        {category.items.map((item) => (
+                          <a
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => {
+                              setIsCompanyDropdownOpen(false)
+                              setIsMobileMenuOpen(false)
+                            }}
+                            className="block px-4 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition-colors"
+                          >
+                            {item.label}
+                          </a>
+                        ))}
+                      </div>
                     ))}
                   </div>
                 )}

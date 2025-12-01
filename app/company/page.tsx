@@ -1,14 +1,6 @@
-import Navbar from '@/components/Navbar'
-import AboutPage from '@/components/AboutPage'
-import Footer from '@/components/Footer'
+import { redirect } from 'next/navigation'
 
 export default function CompanyPage() {
-  return (
-    <main className="min-h-screen bg-white">
-      <Navbar />
-      <AboutPage />
-      <Footer />
-    </main>
-  )
+  redirect('/company/profile')
 }
 

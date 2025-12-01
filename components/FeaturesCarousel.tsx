@@ -131,7 +131,16 @@ export default function FeaturesCarousel({ features, title }: FeaturesCarouselPr
                         duration={500}
                         className="flex"
                       >
-                        <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-primary-300 group flex flex-col w-full h-full">
+                        <a
+                          href={feature.link}
+                          onClick={(e) => {
+                            if (feature.link === '#') {
+                              e.preventDefault()
+                              e.stopPropagation()
+                            }
+                          }}
+                          className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-primary-300 group flex flex-col w-full h-full"
+                        >
                           {/* Image - 16:9 aspect ratio */}
                           <div className="relative w-full aspect-video bg-gradient-to-br from-primary-50 to-secondary-50 flex-shrink-0">
                             <Image
@@ -157,10 +166,7 @@ export default function FeaturesCarousel({ features, title }: FeaturesCarouselPr
                               <p className="text-gray-600 leading-relaxed mb-4 text-sm lg:text-base flex-1">
                                 {feature.description}
                               </p>
-                              <a
-                                href={feature.link}
-                                className="text-primary-600 hover:text-primary-700 font-medium text-sm lg:text-base inline-flex items-center gap-1.5 transition-colors duration-300 group/link w-fit flex-shrink-0 mt-auto"
-                              >
+                              <div className="text-primary-600 hover:text-primary-700 font-medium text-sm lg:text-base inline-flex items-center gap-1.5 transition-colors duration-300 group/link w-fit flex-shrink-0 mt-auto">
                                 Pelajari Selengkapnya
                                 <svg 
                                   className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" 
@@ -170,10 +176,10 @@ export default function FeaturesCarousel({ features, title }: FeaturesCarouselPr
                                 >
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                 </svg>
-                              </a>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        </a>
                       </ScrollAnimation>
                     ))}
                   </div>

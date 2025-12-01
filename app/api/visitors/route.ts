@@ -26,11 +26,15 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('Error saving visitor data:', error)
-    // Don't fail the request if visitor tracking fails
+    // Silently fail - visitor tracking is not critical
+    // Don't log error in production to avoid console noise
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error saving visitor data:', error)
+    }
+    // Return success to not break the frontend
     return NextResponse.json(
-      { success: false, error: 'Failed to save visitor data' },
-      { status: 500 }
+      { success: false, message: 'Visitor tracking unavailable' },
+      { status: 200 }
     )
   }
 }
@@ -54,11 +58,17 @@ export async function GET() {
       },
     })
   } catch (error) {
-    console.error('Error fetching visitor statistics:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch visitor statistics' },
-      { status: 500 }
-    )
+    // Silently fail - return default values
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching visitor statistics:', error)
+    }
+    return NextResponse.json({
+      success: true,
+      data: {
+        total: 0,
+        today: 0,
+      },
+    })
   }
 }
 

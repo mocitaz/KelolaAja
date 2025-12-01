@@ -113,12 +113,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/features/hr"
-                  className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
+                <a
+                  href="#"
+                  onClick={(e) => e.preventDefault()}
+                  className="text-gray-600 hover:text-primary-600 transition-colors duration-200 cursor-default"
                 >
                   {t.navDropdown.features.hr}
-                </Link>
+                </a>
               </li>
             </ul>
           </div>

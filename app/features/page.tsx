@@ -3,6 +3,7 @@
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import ScrollAnimation from '@/components/ScrollAnimation'
+import FAQSection from '@/components/FAQSection'
 import Image from 'next/image'
 import { createWhatsAppLink } from '@/lib/whatsapp'
 import { useLanguage } from '@/contexts/LanguageContext'
@@ -69,7 +70,7 @@ export default function FeaturesPage() {
           '/features/project',
           '/features/sales',
           '/features/inventory',
-          '/features/hr',
+          '#', // HR page tidak ada
         ]
         return {
           ...feature,
@@ -98,20 +99,58 @@ export default function FeaturesPage() {
     <main className="min-h-screen bg-white">
       <Navbar />
       
-      {/* Hero Section */}
-      <section className="pt-32 lg:pt-40 pb-12 lg:pb-16 bg-gradient-to-b from-primary-50 via-white to-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary-50 to-transparent pointer-events-none"></div>
+      {/* Hero Section - Enhanced */}
+      <section className="relative pt-32 lg:pt-40 pb-16 lg:pb-20 bg-gradient-to-br from-[#0498da]/5 via-white to-[#71bf44]/5 overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -left-40 w-80 h-80 bg-[#0498da]/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#71bf44]/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute -bottom-40 left-1/2 w-80 h-80 bg-[#0498da]/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
+        </div>
+        
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <ScrollAnimation direction="fade" delay={0} duration={600}>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-gray-900 mb-6">
-                {hero?.title || 'Fitur KelolaAja'}
+          <ScrollAnimation direction="fade" delay={0} duration={800}>
+            <div className="text-center max-w-5xl mx-auto">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#0498da]/10 rounded-full mb-6">
+                <div className="w-2 h-2 bg-[#0498da] rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold text-[#0498da]">
+                  {locale === 'id' ? 'Fitur Lengkap' : 'Complete Features'}
+                </span>
+              </div>
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-extrabold text-gray-900 mb-6 leading-tight">
+                {hero?.title ? (
+                  hero.title.includes('KelolaAja') ? (
+                    <>
+                      {hero.title.split('KelolaAja').map((part, index, array) => (
+                        <span key={index}>
+                          {part}
+                          {index < array.length - 1 && (
+                            <span className="bg-gradient-to-r from-[#0498da] to-[#71bf44] bg-clip-text text-transparent">
+                              KelolaAja
+                            </span>
+                          )}
+                        </span>
+                      ))}
+                    </>
+                  ) : (
+                    hero.title
+                  )
+                ) : (
+                  <>
+                    Fitur{' '}
+                    <span className="bg-gradient-to-r from-[#0498da] to-[#71bf44] bg-clip-text text-transparent">
+                      KelolaAja
+                    </span>
+                  </>
+                )}
               </h1>
-              <p className="text-lg lg:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              <p className="text-lg lg:text-xl xl:text-2xl text-gray-600 leading-relaxed max-w-3xl mx-auto font-light">
                 {hero?.subtitle || 'Solusi ERP lengkap untuk mengelola seluruh aspek bisnis Anda dalam satu platform terintegrasi'}
               </p>
-            </ScrollAnimation>
-          </div>
+            </div>
+          </ScrollAnimation>
         </div>
       </section>
 
@@ -270,45 +309,7 @@ export default function FeaturesPage() {
             
             {/* Right: FAQ Section */}
             <div>
-              <ScrollAnimation direction="left" delay={200} duration={600}>
-                <div>
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-4">
-                    {faq?.title || 'Pertanyaan Umum'}
-                  </h2>
-                  <p className="text-sm lg:text-base text-gray-600 mb-4">
-                    {faq?.subtitle || 'Temukan jawaban atas pertanyaan umum tentang KelolaAja'}
-                  </p>
-                  <div className="space-y-3">
-                    {(faq?.items || []).map((item, index) => (
-                      <div
-                        key={index}
-                        className="border border-gray-200 rounded-lg overflow-hidden"
-                      >
-                        <details className="group">
-                          <summary className="px-4 py-3 cursor-pointer list-none flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200">
-                            <span className="font-semibold text-sm text-gray-900 pr-4">
-                              {index + 1}. {item.question}
-                            </span>
-                            <svg
-                              className="w-4 h-4 text-gray-500 flex-shrink-0 transform transition-transform duration-200 group-open:rotate-180"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                          </summary>
-                          <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-                            <p className="text-xs text-gray-700 leading-relaxed">
-                              {item.answer}
-                            </p>
-                          </div>
-                        </details>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </ScrollAnimation>
+              <FAQSection />
             </div>
           </div>
         </div>

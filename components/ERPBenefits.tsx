@@ -31,8 +31,20 @@ export default function ERPBenefits() {
 
   const fetchERPBenefits = async () => {
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+      
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/erp-benefits`)
+      const response = await fetch(`${baseUrl}/api/v1/erp-benefits`, {
+        signal: controller.signal,
+      })
+      
+      clearTimeout(timeoutId)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
       const data = await response.json()
       
       if (data.success && Array.isArray(data.data)) {
@@ -42,9 +54,12 @@ export default function ERPBenefits() {
           setExpandedIndex(0)
         }
       }
-    } catch (error) {
-      console.error('Error fetching ERP benefits:', error)
-      setBenefits([])
+    } catch (error: any) {
+      // Silently fail - only log in development
+      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
+        console.error('Error fetching ERP benefits:', error)
+      }
+      setBenefits([]) // Will use fallback data
     } finally {
       setLoading(false)
     }
@@ -94,18 +109,7 @@ export default function ERPBenefits() {
   const activeIndex = expandedIndex ?? 0
   const activeBenefit = displayBenefits[activeIndex]
 
-  if (loading) {
-    return (
-      <section className="py-12 lg:py-16 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]"></div>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
+  // Don't show loading spinner - directly use fallback data
   if (displayBenefits.length === 0) {
     return null
   }

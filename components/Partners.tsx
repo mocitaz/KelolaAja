@@ -106,29 +106,17 @@ export default function Partners({ partners: propPartners, title, className = ""
   const partnersList = partners.length > 0 ? partners : defaultPartners;
   const sectionTitle = title || (locale === "id" ? "Mitra kami" : "Our Partners");
 
-  if (loading) {
-    return (
-      <section className={`py-6 lg:py-8 bg-gray-50 ${className}`}>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center py-8">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]" />
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (partnersList.length === 0) {
-    return null;
-  }
+  // Touch/swipe handlers - MUST be before early returns (Rules of Hooks)
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   // Duplicate partners for seamless infinite scroll
   const duplicatedPartners = [...partnersList, ...partnersList, ...partnersList];
 
-  // Auto-scroll effect
+  // Auto-scroll effect - MUST be before early returns (Rules of Hooks)
   useEffect(
     () => {
-      if (!scrollContainerRef.current || isPaused) return;
+      if (!scrollContainerRef.current || isPaused || partnersList.length === 0) return;
 
       const container = scrollContainerRef.current;
       let scrollPosition = 0;
@@ -159,9 +147,22 @@ export default function Partners({ partners: propPartners, title, className = ""
     [isPaused, partnersList.length]
   );
 
-  // Touch/swipe handlers
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
+  // Early returns AFTER all hooks
+  if (loading) {
+    return (
+      <section className={`py-6 lg:py-8 bg-gray-50 ${className}`}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center py-8">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (partnersList.length === 0) {
+    return null;
+  }
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);

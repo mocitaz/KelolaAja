@@ -29,15 +29,30 @@ export default function AboutKelolaAja() {
 
   const fetchAboutCards = async () => {
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+      
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/about-cards`)
+      const response = await fetch(`${baseUrl}/api/v1/about-cards`, {
+        signal: controller.signal,
+      })
+      
+      clearTimeout(timeoutId)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
       const data = await response.json()
       
       if (data.success && Array.isArray(data.data)) {
         setAboutCards(data.data.filter((card: AboutCard) => card.isActive))
       }
-    } catch (error) {
-      console.error('Error fetching about cards:', error)
+    } catch (error: any) {
+      // Silently fail - only log in development
+      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
+        console.error('Error fetching about cards:', error)
+      }
       setAboutCards([])
     } finally {
       setLoading(false)
@@ -58,13 +73,7 @@ export default function AboutKelolaAja() {
   const highlight = getCardContent('highlight') || t.aboutKelolaAja?.highlight || 'Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.'
   const ctaText = getCardContent('cta') || t.aboutKelolaAja?.ctaText || 'Coba Gratis Sekarang'
 
-  if (loading) {
-    return (
-      <div className="h-full flex items-center justify-center py-12">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]"></div>
-      </div>
-    )
-  }
+  // Don't show loading spinner - directly use fallback data from translations
 
   return (
     <div className="h-full">

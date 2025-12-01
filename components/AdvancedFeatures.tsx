@@ -3,7 +3,7 @@
 import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 interface AdvancedFeature {
   featureId: number
@@ -20,42 +20,13 @@ interface AdvancedFeature {
 
 export default function AdvancedFeatures() {
   const { t, locale } = useLanguage()
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const carouselRef = useRef<HTMLDivElement>(null)
   const [features, setFeatures] = useState<AdvancedFeature[]>([])
   const [loading, setLoading] = useState(true)
+  const [currentIndex, setCurrentIndex] = useState(0)
   
   useEffect(() => {
     fetchAdvancedFeatures()
   }, [])
-
-  const fetchAdvancedFeatures = async () => {
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/advanced-features`)
-      const data = await response.json()
-      
-      if (data.success && Array.isArray(data.data)) {
-        setFeatures(data.data.filter((f: AdvancedFeature) => f.isActive))
-      }
-    } catch (error) {
-      console.error('Error fetching advanced features:', error)
-      setFeatures([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const getFeatureContent = (feature: AdvancedFeature, index: number) => {
-    const translation = feature.translations?.find(t => t.locale === locale)
-    return {
-      title: translation?.title || '',
-      description: translation?.description || '',
-      image: feature.imageUrl,
-      link: feature.linkUrl,
-      icon: icons[index % icons.length]
-    }
-  }
 
   const icons = [
     <svg key="finance" className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -78,55 +49,162 @@ export default function AdvancedFeatures() {
     </svg>
   ]
 
-  // Fallback features
-  const fallbackFeaturesData = t.advancedFeatures?.features || [
-    {
-      title: 'Keuangan & Akuntansi',
-      description: 'Buat laporan keuangan seperti laba rugi, neraca, dan arus kas secara real-time. Pemantauan buku besar, serta utang dan piutang, menjadi lebih sederhana. Dapatkan laporan kinerja perusahaan yang selalu terkini dan menyeluruh.',
-      image: '/images/finance/feature-finance.jpg',
-      link: '/features/finance',
-    },
-    {
-      title: 'Manufaktur',
-      description: 'KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis. Rencanakan produksi, Bill of Material, serta hitung biaya bahan baku dan overhead produksi pabrik secara otomatis dengan modul manufaktur.',
-      image: '/images/manufacturing/feature-manufacturing.jpg',
-      link: '/features/manufacturing',
-    },
-    {
-      title: 'Manajement Proyek',
-      description: 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim kelolaAja akan selalu membantu sampai Anda bisa.',
-      image: '/images/project/feature-project.jpg',
-      link: '/features/project',
-    },
-    {
-      title: 'Pembelian & Penjualan',
-      description: 'Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi. Dilengkapi fitur DP dan diskon bertingkat. Pantau pengiriman barang, buat tagihan, hingga dengan mudah dalam satu software.',
-      image: '/images/sales/feature-sales.jpg',
-      link: '/features/sales',
-    },
-    {
-      title: 'Produk & Inventory',
-      description: 'KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman. Pantau stok secara real-time, atur harga, dan optimalkan alur distribusi menggunakan satu platform.',
-      image: '/images/inventory/feature-inventory.jpg',
-      link: '/features/inventory',
-    },
-    {
-      title: 'HR & Payroll',
-      description: 'KelolaAja HR dan payroll dengan mudah, mulai dari pengelolaan data karyawan, absensi, hingga perhitungan gaji. Semua proses otomatis, akurat, dan dapat diakses kapan saja, memudahkan manajemen SDM di perusahaan Anda.',
-      image: '/images/hr/feature-hr.jpg',
-      link: '/features/hr',
-    },
-  ]
+  // Use featuresPage data (same as page fitur) with shortDesc
+  const featuresPageData = t.featuresPage?.features || []
+  
+  // Fallback features - same structure as page fitur
+  const fallbackFeaturesData = featuresPageData.length > 0
+    ? featuresPageData.map((feature, index) => {
+        const images = [
+          '/images/finance/feature-finance.jpg',
+          '/images/manufacturing/feature-manufacturing.jpg',
+          '/images/project/feature-project.jpg',
+          '/images/sales/feature-sales.jpg',
+          '/images/inventory/feature-inventory.jpg',
+          '/images/hr/feature-hr.jpg',
+        ]
+        const links = [
+          '/features/finance',
+          '/features/manufacturing',
+          '/features/project',
+          '/features/sales',
+          '/features/inventory',
+          '/features/hr',
+        ]
+        return {
+          title: feature.title,
+          description: feature.shortDesc || feature.description,
+          image: images[index] || '/images/common/default.jpg',
+          link: index === 5 ? '#' : (links[index] || '#'), // HR & Payroll (index 5) tidak navigasi
+        }
+      })
+    : [
+        {
+          title: 'Keuangan & Akuntansi',
+          description: 'Buat laporan keuangan seperti laba rugi, neraca, dan arus kas secara real-time. Pemantauan buku besar, serta utang dan piutang, menjadi lebih sederhana. Dapatkan laporan kinerja perusahaan yang selalu terkini dan menyeluruh.',
+          image: '/images/finance/feature-finance.jpg',
+          link: '/features/finance',
+        },
+        {
+          title: 'Manufaktur',
+          description: 'KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis. Rencanakan produksi, Bill of Material, serta hitung biaya bahan baku dan overhead produksi pabrik secara otomatis dengan modul manufaktur.',
+          image: '/images/manufacturing/feature-manufacturing.jpg',
+          link: '/features/manufacturing',
+        },
+        {
+          title: 'Manajement Proyek',
+          description: 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim kelolaAja akan selalu membantu sampai Anda bisa.',
+          image: '/images/project/feature-project.jpg',
+          link: '/features/project',
+        },
+        {
+          title: 'Pembelian & Penjualan',
+          description: 'Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi. Dilengkapi fitur DP dan diskon bertingkat. Pantau pengiriman barang, buat tagihan, hingga dengan mudah dalam satu software.',
+          image: '/images/sales/feature-sales.jpg',
+          link: '/features/sales',
+        },
+        {
+          title: 'Produk & Inventory',
+          description: 'KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman. Pantau stok secara real-time, atur harga, dan optimalkan alur distribusi menggunakan satu platform.',
+          image: '/images/inventory/feature-inventory.jpg',
+          link: '/features/inventory',
+        },
+        {
+          title: 'HR & Payroll',
+          description: 'KelolaAja HR dan payroll dengan mudah, mulai dari pengelolaan data karyawan, absensi, hingga perhitungan gaji. Semua proses otomatis, akurat, dan dapat diakses kapan saja, memudahkan manajemen SDM di perusahaan Anda.',
+          image: '/images/hr/feature-hr.jpg',
+          link: '#', // HR page tidak ada, jadi link tidak navigasi
+        },
+      ]
+
+  const fetchAdvancedFeatures = async () => {
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+      
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+      const response = await fetch(`${baseUrl}/api/v1/advanced-features`, {
+        signal: controller.signal,
+      })
+      
+      clearTimeout(timeoutId)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      
+      if (data.success && Array.isArray(data.data)) {
+        setFeatures(data.data.filter((f: AdvancedFeature) => f.isActive))
+      }
+    } catch (error: any) {
+      // Silently fail - only log in development
+      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
+        console.error('Error fetching advanced features:', error)
+      }
+      setFeatures([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Mapping gambar fallback berdasarkan title
+  const getFallbackImage = (title: string, index: number): string => {
+    const titleLower = title.toLowerCase()
+    if (titleLower.includes('keuangan') || titleLower.includes('akuntansi') || titleLower.includes('finance')) {
+      return '/images/finance/feature-finance.jpg'
+    }
+    if (titleLower.includes('manufaktur') || titleLower.includes('manufacturing')) {
+      return '/images/manufacturing/feature-manufacturing.jpg'
+    }
+    if (titleLower.includes('proyek') || titleLower.includes('project')) {
+      return '/images/project/feature-project.jpg'
+    }
+    if (titleLower.includes('inventory') || titleLower.includes('produk')) {
+      return '/images/inventory/feature-inventory.jpg'
+    }
+    if (titleLower.includes('hr') || titleLower.includes('payroll')) {
+      return '/images/hr/feature-hr.jpg'
+    }
+    if (titleLower.includes('pembelian') || titleLower.includes('penjualan') || titleLower.includes('sales')) {
+      return '/images/sales/feature-sales.jpg'
+    }
+    // Default fallback berdasarkan index
+    return fallbackFeaturesData[index]?.image || ''
+  }
+
+  const getFeatureContent = (feature: AdvancedFeature, index: number) => {
+    const translation = feature.translations?.find(t => t.locale === locale)
+    const title = translation?.title || fallbackFeaturesData[index]?.title || ''
+    // SELALU gunakan gambar fallback yang sudah ditentukan
+    const fallbackImage = getFallbackImage(title, index)
+    
+    // Use shortDesc if available from featuresPage, otherwise use description
+    const featuresPageItem = featuresPageData[index]
+    const shortDesc = featuresPageItem?.shortDesc || featuresPageItem?.description || translation?.description || fallbackFeaturesData[index]?.description || ''
+    
+    const link = feature.linkUrl || fallbackFeaturesData[index]?.link || '#'
+    const isHR = title.toLowerCase().includes('hr') || title.toLowerCase().includes('payroll') || link.includes('/hr')
+    
+    return {
+      title: title,
+      description: shortDesc, // Use shortDesc like page fitur
+      image: fallbackImage, // Selalu gunakan fallback image
+      link: isHR ? '#' : link, // HR link menjadi # (tidak navigasi)
+      icon: icons[index % icons.length]
+    }
+  }
 
   const fallbackFeatures = fallbackFeaturesData.map((feature, index) => ({
     ...feature,
     icon: icons[index]
   }))
 
-  const displayFeatures = features.length > 0
-    ? features.map((f, i) => getFeatureContent(f, i))
-    : fallbackFeatures
-  
+  // Always use fallback features to ensure consistent order and images
+  // This matches exactly with page fitur structure
+  const displayFeatures = fallbackFeatures
+
   const totalSlides = Math.ceil(displayFeatures.length / 3)
   const maxIndex = totalSlides - 1
 
@@ -174,15 +252,9 @@ export default function AdvancedFeatures() {
     }
   }
 
-  // Get visible features for current slide
-  const getVisibleFeatures = () => {
-    const start = currentIndex * 3
-    return displayFeatures.slice(start, start + 3)
-  }
-
   if (loading) {
     return (
-      <section className="py-16 lg:py-24 bg-gray-50">
+      <section className="py-12 lg:py-20 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center py-12">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]"></div>
@@ -196,8 +268,10 @@ export default function AdvancedFeatures() {
     return null
   }
 
+  const learnMore = t.advancedFeatures?.learnMore || 'Pelajari Selengkapnya'
+
   return (
-    <section className="py-16 lg:py-24 bg-gray-50">
+    <section className="py-12 lg:py-20 bg-gray-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Carousel Container */}
@@ -226,7 +300,6 @@ export default function AdvancedFeatures() {
 
             {/* Carousel */}
             <div
-              ref={carouselRef}
               className="overflow-hidden"
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
@@ -251,20 +324,35 @@ export default function AdvancedFeatures() {
                         duration={500}
                         className="flex"
                       >
-                        <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-primary-300 group flex flex-col w-full h-full">
-                          {/* Image - Using object-contain to prevent cropping */}
+                        <a
+                          href={feature.link}
+                          onClick={(e) => {
+                            if (feature.link === '#') {
+                              e.preventDefault()
+                              e.stopPropagation()
+                            }
+                          }}
+                          className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-primary-300 group flex flex-col w-full h-full"
+                        >
+                          {/* Image - 16:9 aspect ratio */}
                           <div className="relative w-full aspect-video bg-gradient-to-br from-primary-50 to-secondary-50 flex-shrink-0">
-                            <Image
-                              src={feature.image}
-                              alt={feature.title}
-                              fill
-                              className="object-contain group-hover:scale-105 transition-transform duration-300"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 33vw"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement
-                                target.style.display = 'none'
-                              }}
-                            />
+                            {feature.image ? (
+                              <Image
+                                src={feature.image}
+                                alt={feature.title}
+                                fill
+                                className="object-contain group-hover:scale-105 transition-transform duration-300"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 33vw"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement
+                                  target.style.display = 'none'
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                                <div className="text-gray-400 text-sm">No image</div>
+                              </div>
+                            )}
                           </div>
 
                           {/* Content Section */}
@@ -279,9 +367,15 @@ export default function AdvancedFeatures() {
                               </p>
                               <a
                                 href={feature.link}
+                                onClick={(e) => {
+                                  if (feature.link === '#') {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                  }
+                                }}
                                 className="text-primary-600 hover:text-primary-700 font-medium text-sm lg:text-base inline-flex items-center gap-1.5 transition-colors duration-300 group/link w-fit flex-shrink-0 mt-auto"
                               >
-                                {t.advancedFeatures?.learnMore || 'Pelajari Selengkapnya'}
+                                {learnMore}
                                 <svg 
                                   className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" 
                                   fill="none" 
@@ -293,7 +387,7 @@ export default function AdvancedFeatures() {
                               </a>
                             </div>
                           </div>
-                        </div>
+                        </a>
                       </ScrollAnimation>
                     ))}
                   </div>

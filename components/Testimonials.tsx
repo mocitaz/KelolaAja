@@ -30,16 +30,31 @@ export default function Testimonials() {
 
   const fetchTestimonials = async () => {
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+      
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/testimonials`)
+      const response = await fetch(`${baseUrl}/api/v1/testimonials`, {
+        signal: controller.signal,
+      })
+      
+      clearTimeout(timeoutId)
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
       const data = await response.json()
       
       if (data.success && Array.isArray(data.data)) {
         setTestimonials(data.data.filter((t: Testimonial) => t.isActive))
       }
-    } catch (error) {
-      console.error('Error fetching testimonials:', error)
-      setTestimonials([])
+    } catch (error: any) {
+      // Silently fail - only log in development
+      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
+        console.error('Error fetching testimonials:', error)
+      }
+      setTestimonials([]) // Will use fallback data
     } finally {
       setLoading(false)
     }
@@ -110,16 +125,9 @@ export default function Testimonials() {
     return visible
   }
 
-  if (loading) {
-    return (
-      <section className="pt-12 lg:pt-16 pb-16 lg:pb-24 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#0498da]"></div>
-          </div>
-        </div>
-      </section>
-    )
+  // Don't show loading spinner - directly use fallback data
+  if (displayTestimonials.length === 0) {
+    return null
   }
 
   if (displayTestimonials.length === 0) {
