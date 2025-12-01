@@ -167,6 +167,8 @@ export interface Translations {
   faq?: {
     title: string
     subtitle: string
+    showAll: string
+    showLess: string
     items: Array<{
       question: string
       answer: string
@@ -676,6 +678,8 @@ export const translations: Record<Locale, Translations> = {
     faq: {
       title: 'Pertanyaan Umum',
       subtitle: 'Temukan jawaban atas pertanyaan umum tentang KelolaAja',
+      showAll: 'Lihat Semua FAQ',
+      showLess: 'Tampilkan Lebih Sedikit',
       items: [
         {
           question: 'Apa itu KelolaAja?',
@@ -926,6 +930,8 @@ export const translations: Record<Locale, Translations> = {
       faq: {
         title: 'Pertanyaan Umum',
         subtitle: 'Temukan jawaban atas pertanyaan umum tentang KelolaAja',
+        showAll: 'Lihat Semua FAQ',
+        showLess: 'Tampilkan Lebih Sedikit',
         items: [
           {
             question: 'Apa itu KelolaAja?',
@@ -1257,7 +1263,29 @@ export const translations: Record<Locale, Translations> = {
     faq: {
       title: 'Frequently Asked Questions',
       subtitle: 'Find answers to common questions about KelolaAja',
+      showAll: 'Show All FAQs',
+      showLess: 'Show Less',
       items: [
+        {
+          question: 'What is KelolaAja?',
+          answer: 'KelolaAja is an integrated ERP software developed specifically to meet the needs of small to growing businesses in Indonesia. Designed to simplify financial management, bookkeeping, reporting, and other business operations comprehensively, KelolaAja enables companies to manage and monitor business activities in real-time, from anywhere, with high efficiency and consistent accuracy.\n\nAlthough optimized for growing businesses, KelolaAja is built with enterprise-class standards and capabilities. This ensures that even large-scale companies can rely on KelolaAja to meet their internal complexity needs.',
+        },
+        {
+          question: 'What distinguishes KelolaAja from other ERP software in the market?',
+          answer: 'KelolaAja brings a balance between system quality, feature depth, and cost affordability. Compared to local or global ERPs, KelolaAja offers comprehensive and cost-efficient solutions without sacrificing core functionality.',
+        },
+        {
+          question: 'Do users need technical experience to use KelolaAja?',
+          answer: 'No. KelolaAja is designed with an intuitive interface and simplified workflow based on direct research on business user needs at various levels. This system can be used without prior technical experience.',
+        },
+        {
+          question: 'How long does the KelolaAja implementation process take?',
+          answer: 'The KelolaAja implementation process generally takes between 1 to 3 months, depending on business structure complexity, number of modules used, and internal company data readiness. This timeframe covers all important stages such as needs analysis, system configuration, data migration, user training, to support during go-live.',
+        },
+        {
+          question: 'Can KelolaAja be customized to my business needs?',
+          answer: 'KelolaAja has been designed to directly support common business processes without the need for customization. If there are very specific needs, customization is possible at an additional cost according to complexity. However, we do not recommend customization unless absolutely necessary, to keep the system efficient, stable, and scalable.',
+        },
         {
           question: 'Is there training to use KelolaAja?',
           answer: 'Yes, training both online and in person, including tutorials, webinars, and technical support, so your team can utilize the software optimally.',

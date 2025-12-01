@@ -157,14 +157,14 @@ export default function FAQSection() {
               >
                 {showAll ? (
                   <>
-                    <span>Tampilkan Lebih Sedikit</span>
+                    <span>{t.faq?.showLess || 'Tampilkan Lebih Sedikit'}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                     </svg>
                   </>
                 ) : (
                   <>
-                    <span>Lihat Semua FAQ ({displayFaqs.length})</span>
+                    <span>{t.faq?.showAll || 'Lihat Semua FAQ'} ({displayFaqs.length})</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
