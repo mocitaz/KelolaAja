@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import AnimatedCounter from '@/components/AnimatedCounter'
 import { useEffect, useState } from 'react'
+import { fetchPublicData, API_ENDPOINTS } from '@/lib/api-config'
 
 interface BenefitStat {
   statId: number
@@ -27,35 +28,17 @@ export default function Benefits() {
   }, [])
 
   const fetchBenefitStats = async () => {
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
-      
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/benefit-stats`, {
-        signal: controller.signal,
-      })
-      
-      clearTimeout(timeoutId)
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      
-      if (data.success && Array.isArray(data.data)) {
-        setStats(data.data.filter((stat: BenefitStat) => stat.isActive))
-      }
-    } catch (error: any) {
-      // Silently fail - only log in development
-      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
-        console.error('Error fetching benefit stats:', error)
-      }
+    const result = await fetchPublicData<BenefitStat[]>(
+      API_ENDPOINTS.PUBLIC.BENEFIT_STATS.LIST
+    )
+    
+    if (result.success && Array.isArray(result.data)) {
+      setStats(result.data.filter((stat: BenefitStat) => stat.isActive))
+    } else {
       setStats([])
-    } finally {
-      setLoading(false)
     }
+    
+    setLoading(false)
   }
 
   const getLabel = (stat: BenefitStat) => {

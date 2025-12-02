@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { fetchPublicData, API_ENDPOINTS } from '@/lib/api-config'
 
 interface FAQ {
   faqId: number
@@ -25,36 +26,18 @@ export default function FAQSection() {
   }, [])
 
   const fetchFAQs = async () => {
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
-      
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/faqs`, {
-        signal: controller.signal,
-      })
-      
-      clearTimeout(timeoutId)
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      
-      if (data.success && Array.isArray(data.data)) {
-        // Only get active FAQs and limit to 9 items (or show all if less than 9)
-        setFaqs(data.data.filter((faq: FAQ) => faq.isActive).slice(0, 9))
-      }
-    } catch (error: any) {
-      // Silently fail - only log in development
-      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
-        console.error('Error fetching FAQs:', error)
-      }
+    const result = await fetchPublicData<FAQ[]>(
+      API_ENDPOINTS.PUBLIC.FAQS.LIST
+    )
+    
+    if (result.success && Array.isArray(result.data)) {
+      // Only get active FAQs and limit to 9 items (or show all if less than 9)
+      setFaqs(result.data.filter((faq: FAQ) => faq.isActive).slice(0, 9))
+    } else {
       setFaqs([])
-    } finally {
-      setLoading(false)
     }
+    
+    setLoading(false)
   }
 
   // Fallback FAQs - Updated with new FAQ content

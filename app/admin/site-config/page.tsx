@@ -45,7 +45,7 @@ export default function SiteConfigPage() {
 
   const fetchConfigs = async () => {
     try {
-      const response = await apiFetch(API_ENDPOINTS.SITE_CONFIG.LIST);
+      const response = await apiFetch(API_ENDPOINTS.ADMIN.SITE_CONFIG.LIST);
       const data = await response.json();
       if (data.success) {
         setConfigs(data.data || []);
@@ -60,7 +60,7 @@ export default function SiteConfigPage() {
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await apiFetch(API_ENDPOINTS.SITE_CONFIG.CREATE, {
+      await apiFetch(API_ENDPOINTS.ADMIN.SITE_CONFIG.CREATE, {
         method: 'POST',
         body: JSON.stringify(formData),
       });
@@ -78,7 +78,7 @@ export default function SiteConfigPage() {
     if (!selectedConfig) return;
 
     try {
-      await apiFetch(API_ENDPOINTS.SITE_CONFIG.UPDATE(selectedConfig.configId), {
+      await apiFetch(API_ENDPOINTS.ADMIN.SITE_CONFIG.UPDATE(selectedConfig.configId), {
         method: 'PUT',
         body: JSON.stringify({
           configValue: formData.configValue,
@@ -100,7 +100,7 @@ export default function SiteConfigPage() {
     if (!confirm('Are you sure you want to delete this configuration?')) return;
 
     try {
-      await apiFetch(API_ENDPOINTS.SITE_CONFIG.DELETE(id), {
+      await apiFetch(API_ENDPOINTS.ADMIN.SITE_CONFIG.DELETE(id), {
         method: 'DELETE',
       });
       fetchConfigs();

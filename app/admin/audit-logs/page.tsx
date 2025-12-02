@@ -56,7 +56,7 @@ export default function AuditLogsPage() {
         ...(filters.endDate && { endDate: filters.endDate }),
       });
 
-      const response = await apiFetch(`${API_ENDPOINTS.AUDIT_LOGS.LIST}?${params}`);
+      const response = await apiFetch(`${API_ENDPOINTS.ADMIN.AUDIT_LOGS.LIST}?${params}`);
       const data = await response.json();
       
       if (data.success) {

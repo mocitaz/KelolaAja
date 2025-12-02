@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import { useEffect, useState } from 'react'
+import { fetchPublicData, API_ENDPOINTS } from '@/lib/api-config'
 
 interface ProcessStep {
   stepId: number
@@ -27,35 +28,17 @@ export default function ProcessSteps() {
   }, [])
 
   const fetchProcessSteps = async () => {
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
-      
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/process-steps`, {
-        signal: controller.signal,
-      })
-      
-      clearTimeout(timeoutId)
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      
-      if (data.success && Array.isArray(data.data)) {
-        setSteps(data.data.filter((step: ProcessStep) => step.isActive))
-      }
-    } catch (error: any) {
-      // Silently fail - only log in development
-      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
-        console.error('Error fetching process steps:', error)
-      }
+    const result = await fetchPublicData<ProcessStep[]>(
+      API_ENDPOINTS.PUBLIC.PROCESS_STEPS.LIST
+    )
+    
+    if (result.success && Array.isArray(result.data)) {
+      setSteps(result.data.filter((step: ProcessStep) => step.isActive))
+    } else {
       setSteps([]) // Will use fallback data
-    } finally {
-      setLoading(false)
     }
+    
+    setLoading(false)
   }
 
   const getStepContent = (step: ProcessStep) => {

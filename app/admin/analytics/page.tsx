@@ -32,7 +32,7 @@ export default function AnalyticsPage() {
     setLoading(true);
     try {
       // Fetch overview
-      const overviewRes = await apiFetch(API_ENDPOINTS.ANALYTICS.OVERVIEW);
+      const overviewRes = await apiFetch(API_ENDPOINTS.ADMIN.ANALYTICS.OVERVIEW);
       const overviewData = await overviewRes.json();
       
       // Fetch top pages

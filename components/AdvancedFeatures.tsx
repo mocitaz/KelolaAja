@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import { useState, useEffect } from 'react'
+import { fetchPublicData, API_ENDPOINTS } from '@/lib/api-config'
 
 interface AdvancedFeature {
   featureId: number
@@ -118,35 +119,17 @@ export default function AdvancedFeatures() {
       ]
 
   const fetchAdvancedFeatures = async () => {
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
-      
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/advanced-features`, {
-        signal: controller.signal,
-      })
-      
-      clearTimeout(timeoutId)
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      
-      if (data.success && Array.isArray(data.data)) {
-        setFeatures(data.data.filter((f: AdvancedFeature) => f.isActive))
-      }
-    } catch (error: any) {
-      // Silently fail - only log in development
-      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
-        console.error('Error fetching advanced features:', error)
-      }
+    const result = await fetchPublicData<AdvancedFeature[]>(
+      API_ENDPOINTS.PUBLIC.ADVANCED_FEATURES.LIST
+    )
+    
+    if (result.success && Array.isArray(result.data)) {
+      setFeatures(result.data.filter((f: AdvancedFeature) => f.isActive))
+    } else {
       setFeatures([])
-    } finally {
-      setLoading(false)
     }
+    
+    setLoading(false)
   }
 
   // Mapping gambar fallback berdasarkan title

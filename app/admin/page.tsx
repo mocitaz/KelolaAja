@@ -43,15 +43,15 @@ export default function AdminDashboard() {
       const usersData = await usersRes.json();
       
       // Fetch analytics
-      const analyticsRes = await apiFetch(API_ENDPOINTS.ANALYTICS.OVERVIEW);
+      const analyticsRes = await apiFetch(API_ENDPOINTS.ADMIN.ANALYTICS.OVERVIEW);
       const analyticsData = await analyticsRes.json();
       
       // Fetch contact submissions
-      const contactsRes = await apiFetch(`${API_ENDPOINTS.CONTACTS.LIST}?limit=1`);
+      const contactsRes = await apiFetch(`${API_ENDPOINTS.ADMIN.CONTACTS.LIST}?limit=1`);
       const contactsData = await contactsRes.json();
       
       // Fetch recent audit logs
-      const logsRes = await apiFetch(`${API_ENDPOINTS.AUDIT_LOGS.LIST}?limit=10`);
+      const logsRes = await apiFetch(`${API_ENDPOINTS.ADMIN.AUDIT_LOGS.LIST}?limit=10`);
       const logsData = await logsRes.json();
 
       setStats({

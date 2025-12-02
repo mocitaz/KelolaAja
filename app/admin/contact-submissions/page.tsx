@@ -37,7 +37,7 @@ export default function ContactSubmissionsPage() {
         ...(filterRead && { isRead: filterRead }),
       });
 
-      const response = await apiFetch(`${API_ENDPOINTS.CONTACTS.LIST}?${params}`);
+      const response = await apiFetch(`${API_ENDPOINTS.ADMIN.CONTACTS.LIST}?${params}`);
       const data = await response.json();
       
       if (data.success) {
@@ -58,7 +58,7 @@ export default function ContactSubmissionsPage() {
 
   const markAsRead = async (submissionId: number) => {
     try {
-      await apiFetch(API_ENDPOINTS.CONTACTS.MARK_READ(submissionId), {
+      await apiFetch(API_ENDPOINTS.ADMIN.CONTACTS.MARK_READ(submissionId), {
         method: 'PUT',
       });
       fetchSubmissions();

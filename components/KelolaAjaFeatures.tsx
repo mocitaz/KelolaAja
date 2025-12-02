@@ -3,6 +3,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import ScrollAnimation from "@/components/ScrollAnimation";
 import { useEffect, useState } from "react";
+import { fetchPublicData, API_ENDPOINTS } from "@/lib/api-config";
 
 interface KelolaAjaFeature {
   featureId: number;
@@ -129,31 +130,18 @@ export default function KelolaAjaFeatures() {
   );
 
   const fetchFeatures = async () => {
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      const response = await fetch(`${baseUrl}/api/kelolaaja-features?locale=${locale}`, {
-        signal: AbortSignal.timeout(5000),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success && Array.isArray(data.data)) {
-        setFeatures(data.data.filter((f: KelolaAjaFeature) => f.isActive));
-      }
-    } catch (error: any) {
-      // Silently fail - only log in development
-      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
-        console.error("Error fetching KelolaAja features:", error);
-      }
-      setFeatures([]);
-    } finally {
-      setLoading(false);
+    const result = await fetchPublicData<KelolaAjaFeature[]>(
+      `${API_ENDPOINTS.PUBLIC.KELOLAAJA_FEATURES.LIST}?locale=${locale}`
+    )
+    
+    if (result.success && Array.isArray(result.data)) {
+      setFeatures(result.data.filter((f: KelolaAjaFeature) => f.isActive))
+    } else {
+      setFeatures([])
     }
-  };
+    
+    setLoading(false)
+  }
 
   // Fallback data dari translations
   const fallbackFeaturesData = t.kelolaAjaFeatures || {

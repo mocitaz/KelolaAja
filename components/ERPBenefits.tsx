@@ -5,6 +5,7 @@ import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import { useState, useEffect } from 'react'
 import { createWhatsAppLink } from '@/lib/whatsapp'
+import { fetchPublicData, API_ENDPOINTS } from '@/lib/api-config'
 
 interface ERPBenefit {
   benefitId: number
@@ -30,39 +31,21 @@ export default function ERPBenefits() {
   }, [])
 
   const fetchERPBenefits = async () => {
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
-      
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/erp-benefits`, {
-        signal: controller.signal,
-      })
-      
-      clearTimeout(timeoutId)
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+    const result = await fetchPublicData<ERPBenefit[]>(
+      API_ENDPOINTS.PUBLIC.ERP_BENEFITS.LIST
+    )
+    
+    if (result.success && Array.isArray(result.data)) {
+      const activeBenefits = result.data.filter((b: ERPBenefit) => b.isActive)
+      setBenefits(activeBenefits)
+      if (activeBenefits.length > 0) {
+        setExpandedIndex(0)
       }
-      
-      const data = await response.json()
-      
-      if (data.success && Array.isArray(data.data)) {
-        const activeBenefits = data.data.filter((b: ERPBenefit) => b.isActive)
-        setBenefits(activeBenefits)
-        if (activeBenefits.length > 0) {
-          setExpandedIndex(0)
-        }
-      }
-    } catch (error: any) {
-      // Silently fail - only log in development
-      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
-        console.error('Error fetching ERP benefits:', error)
-      }
+    } else {
       setBenefits([]) // Will use fallback data
-    } finally {
-      setLoading(false)
     }
+    
+    setLoading(false)
   }
 
   const getBenefitContent = (benefit: ERPBenefit) => {

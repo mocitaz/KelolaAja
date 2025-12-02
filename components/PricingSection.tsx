@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { createWhatsAppLink } from "@/lib/whatsapp";
 import ScrollAnimation from "@/components/ScrollAnimation";
 import { useEffect, useState } from "react";
+import { fetchPublicData, API_ENDPOINTS } from "@/lib/api-config";
 
 interface PricingPlan {
   planId: number;
@@ -30,21 +31,18 @@ export default function PricingSection() {
   );
 
   const fetchPricingPlans = async () => {
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      const response = await fetch(`${baseUrl}/api/pricing-plans?locale=${locale}`);
-      const data = await response.json();
-
-      if (data.success && Array.isArray(data.data)) {
-        setPricingPlans(data.data.filter((p: PricingPlan) => p.isActive));
-      }
-    } catch (error) {
-      console.error("Error fetching pricing plans:", error);
-      setPricingPlans([]);
-    } finally {
-      setLoading(false);
+    const result = await fetchPublicData<PricingPlan[]>(
+      `${API_ENDPOINTS.PUBLIC.PRICING_PLANS.LIST}?locale=${locale}`
+    )
+    
+    if (result.success && Array.isArray(result.data)) {
+      setPricingPlans(result.data.filter((p: PricingPlan) => p.isActive))
+    } else {
+      setPricingPlans([])
     }
-  };
+    
+    setLoading(false)
+  }
 
   // Fallback data dari translations
   const fallbackPricingData = t.pricing || {

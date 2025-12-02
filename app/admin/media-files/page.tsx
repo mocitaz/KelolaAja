@@ -66,7 +66,7 @@ export default function MediaFilesPage() {
 
   const fetchMediaFiles = async () => {
     try {
-      const response = await apiFetch(API_ENDPOINTS.MEDIA_FILES.LIST);
+      const response = await apiFetch(API_ENDPOINTS.ADMIN.MEDIA_FILES.LIST);
       const data = await response.json();
       if (data.success) {
         setMediaFiles(data.data || []);
@@ -80,7 +80,7 @@ export default function MediaFilesPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await apiFetch(API_ENDPOINTS.MEDIA_FILES.STATS);
+      const response = await apiFetch(API_ENDPOINTS.ADMIN.MEDIA_FILES.STATS);
       const data = await response.json();
       if (data.success) {
         setStats(data.data || null);
@@ -101,13 +101,8 @@ export default function MediaFilesPage() {
     if (formData.caption) formDataObj.append('caption', formData.caption);
 
     try {
-      const token = localStorage.getItem('accessToken');
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-      const response = await fetch(`${baseUrl}/api/v1/media-files/admin/upload`, {
+      const response = await apiFetch(API_ENDPOINTS.ADMIN.MEDIA_FILES.UPLOAD, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: formDataObj,
       });
 
@@ -126,7 +121,7 @@ export default function MediaFilesPage() {
   const handleDelete = async (fileId: number) => {
     if (!confirm('Are you sure you want to delete this file?')) return;
     try {
-      await apiFetch(API_ENDPOINTS.MEDIA_FILES.DELETE(fileId), {
+      await apiFetch(API_ENDPOINTS.ADMIN.MEDIA_FILES.DELETE(fileId), {
         method: 'DELETE',
       });
       fetchMediaFiles();
@@ -440,7 +435,7 @@ export default function MediaFilesPage() {
                 type="button"
                 onClick={async () => {
                   try {
-                    await apiFetch(API_ENDPOINTS.MEDIA_FILES.UPDATE(selectedFile.mediaFileId), {
+                    await apiFetch(API_ENDPOINTS.ADMIN.MEDIA_FILES.UPDATE(selectedFile.mediaFileId), {
                       method: 'PUT',
                       body: JSON.stringify({
                         altText: editData.altText,

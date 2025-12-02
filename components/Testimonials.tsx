@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
+import { fetchPublicData, API_ENDPOINTS } from '@/lib/api-config'
 
 interface Testimonial {
   testimonialId: number
@@ -29,35 +30,17 @@ export default function Testimonials() {
   }, [])
 
   const fetchTestimonials = async () => {
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
-      
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-      const response = await fetch(`${baseUrl}/api/v1/testimonials`, {
-        signal: controller.signal,
-      })
-      
-      clearTimeout(timeoutId)
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      
-      if (data.success && Array.isArray(data.data)) {
-        setTestimonials(data.data.filter((t: Testimonial) => t.isActive))
-      }
-    } catch (error: any) {
-      // Silently fail - only log in development
-      if (process.env.NODE_ENV === 'development' && error.name !== 'AbortError') {
-        console.error('Error fetching testimonials:', error)
-      }
+    const result = await fetchPublicData<Testimonial[]>(
+      API_ENDPOINTS.PUBLIC.TESTIMONIALS.LIST
+    )
+    
+    if (result.success && Array.isArray(result.data)) {
+      setTestimonials(result.data.filter((t: Testimonial) => t.isActive))
+    } else {
       setTestimonials([]) // Will use fallback data
-    } finally {
-      setLoading(false)
     }
+    
+    setLoading(false)
   }
 
   // Fallback testimonials
