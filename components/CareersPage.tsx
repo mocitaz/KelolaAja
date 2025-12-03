@@ -170,6 +170,9 @@ export default function CareersPage() {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.applicantEmail)) {
       newErrors.applicantEmail = locale === 'id' ? 'Format email tidak valid' : 'Invalid email format'
     }
+    if (!formData.applicantPhone || !formData.applicantPhone.trim()) {
+      newErrors.applicantPhone = locale === 'id' ? 'Nomor telepon wajib diisi' : 'Phone number is required'
+    }
     if (!formData.cv) {
       newErrors.cv = locale === 'id' ? 'CV wajib diupload' : 'CV is required'
     } else if (formData.cv.size > 10 * 1024 * 1024) {
@@ -185,34 +188,149 @@ export default function CareersPage() {
     setErrors({})
 
     try {
-      const formDataToSend = new FormData()
-      formDataToSend.append('jobId', formData.jobId.toString())
-      formDataToSend.append('applicantName', formData.applicantName)
-      formDataToSend.append('applicantEmail', formData.applicantEmail)
-      
-      if (formData.applicantPhone) formDataToSend.append('applicantPhone', formData.applicantPhone)
-      if (formData.currentCompany) formDataToSend.append('currentCompany', formData.currentCompany)
-      if (formData.currentPosition) formDataToSend.append('currentPosition', formData.currentPosition)
-      if (formData.yearsOfExperience) formDataToSend.append('yearsOfExperience', formData.yearsOfExperience.toString())
-      if (formData.expectedSalary) formDataToSend.append('expectedSalary', formData.expectedSalary.toString())
-      if (formData.salaryCurrency) formDataToSend.append('salaryCurrency', formData.salaryCurrency)
-      if (formData.availableFrom) formDataToSend.append('availableFrom', formData.availableFrom)
-      if (formData.coverLetter) formDataToSend.append('coverLetter', formData.coverLetter)
-      if (formData.portfolioUrl) formDataToSend.append('portfolioUrl', formData.portfolioUrl)
-      if (formData.linkedinUrl) formDataToSend.append('linkedinUrl', formData.linkedinUrl)
-      if (formData.githubUrl) formDataToSend.append('githubUrl', formData.githubUrl)
-      if (formData.referralSource) formDataToSend.append('referralSource', formData.referralSource)
-      
-      if (formData.cv) {
-        formDataToSend.append('cv', formData.cv)
+      // Validate jobId
+      if (!formData.jobId || formData.jobId === 0) {
+        setErrors({ submit: locale === 'id' ? 'Pilih posisi yang akan dilamar' : 'Please select a job position' })
+        setIsSubmitting(false)
+        return
       }
+
+      const formDataToSend = new FormData()
+      
+      // Required fields
+      formDataToSend.append('jobId', formData.jobId.toString())
+      formDataToSend.append('applicantName', formData.applicantName.trim())
+      formDataToSend.append('applicantEmail', formData.applicantEmail.trim())
+      formDataToSend.append('applicantPhone', formData.applicantPhone.trim())
+      
+      // Optional fields - hanya append jika ada value
+      if (formData.currentCompany && formData.currentCompany.trim()) {
+        formDataToSend.append('currentCompany', formData.currentCompany.trim())
+      }
+      if (formData.currentPosition && formData.currentPosition.trim()) {
+        formDataToSend.append('currentPosition', formData.currentPosition.trim())
+      }
+      if (formData.yearsOfExperience !== undefined && formData.yearsOfExperience !== null) {
+        formDataToSend.append('yearsOfExperience', formData.yearsOfExperience.toString())
+      }
+      if (formData.expectedSalary !== undefined && formData.expectedSalary !== null) {
+        formDataToSend.append('expectedSalary', formData.expectedSalary.toString())
+      }
+      if (formData.salaryCurrency && formData.salaryCurrency.trim()) {
+        formDataToSend.append('salaryCurrency', formData.salaryCurrency.trim())
+      }
+      if (formData.availableFrom && formData.availableFrom.trim()) {
+        formDataToSend.append('availableFrom', formData.availableFrom.trim())
+      }
+      if (formData.coverLetter && formData.coverLetter.trim()) {
+        formDataToSend.append('coverLetter', formData.coverLetter.trim())
+      }
+      if (formData.portfolioUrl && formData.portfolioUrl.trim()) {
+        formDataToSend.append('portfolioUrl', formData.portfolioUrl.trim())
+      }
+      if (formData.linkedinUrl && formData.linkedinUrl.trim()) {
+        formDataToSend.append('linkedinUrl', formData.linkedinUrl.trim())
+      }
+      if (formData.githubUrl && formData.githubUrl.trim()) {
+        formDataToSend.append('githubUrl', formData.githubUrl.trim())
+      }
+      if (formData.referralSource && formData.referralSource.trim()) {
+        formDataToSend.append('referralSource', formData.referralSource.trim())
+      }
+      
+      // CV file - required
+      if (formData.cv) {
+        formDataToSend.append('cv', formData.cv, formData.cv.name)
+      } else {
+        setErrors({ cv: locale === 'id' ? 'CV wajib diupload' : 'CV is required' })
+        setIsSubmitting(false)
+        return
+      }
+
+      // Log form data untuk debugging (tanpa file)
+      console.log('Submitting job application:', {
+        jobId: formData.jobId,
+        applicantName: formData.applicantName,
+        applicantEmail: formData.applicantEmail,
+        applicantPhone: formData.applicantPhone,
+        hasCV: !!formData.cv,
+        cvFileName: formData.cv?.name,
+        cvFileSize: formData.cv?.size,
+      })
 
       const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.PUBLIC.JOB_APPLICATIONS.APPLY}`, {
         method: 'POST',
         body: formDataToSend,
       })
 
-      const result = await response.json()
+      // Log response untuk debugging
+      console.log('Response status:', response.status)
+      console.log('Response headers:', response.headers)
+
+      let result = {}
+      try {
+        const text = await response.text()
+        console.log('=== RESPONSE RECEIVED ===')
+        console.log('Status:', response.status)
+        console.log('Status Text:', response.statusText)
+        console.log('Response Text (raw):', text)
+        
+        if (text) {
+          try {
+            result = JSON.parse(text)
+            console.log('Parsed Response:', JSON.stringify(result, null, 2))
+          } catch (parseError) {
+            console.error('Error parsing JSON:', parseError)
+            console.error('Raw text:', text)
+            result = { error: text, raw: text }
+          }
+        }
+        console.log('========================')
+      } catch (error) {
+        console.error('Error reading response:', error)
+        setErrors({ submit: locale === 'id' ? 'Terjadi kesalahan saat memproses response dari server' : 'Error processing server response' })
+        setIsSubmitting(false)
+        return
+      }
+
+      if (!response.ok) {
+        // Handle error response - tampilkan detail error dengan jelas
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`
+        
+        // Extract error message dari berbagai format response
+        if (result.message) {
+          errorMessage = result.message
+        } else if (result.error) {
+          errorMessage = result.error
+        } else if (result.errors) {
+          // Handle validation errors
+          if (typeof result.errors === 'object') {
+            const errorArray = Object.entries(result.errors).map(([field, messages]) => {
+              if (Array.isArray(messages)) {
+                return `${field}: ${messages.join(', ')}`
+              }
+              return `${field}: ${messages}`
+            })
+            errorMessage = errorArray.join('; ')
+          } else if (typeof result.errors === 'string') {
+            errorMessage = result.errors
+          }
+        }
+        
+        // Log error dengan detail lengkap
+        console.error('=== SUBMISSION ERROR ===')
+        console.error('Status:', response.status)
+        console.error('Status Text:', response.statusText)
+        console.error('Full Response:', JSON.stringify(result, null, 2))
+        console.error('Error Message:', errorMessage)
+        console.error('=======================')
+        
+        setErrors({ 
+          submit: errorMessage || (locale === 'id' ? 'Gagal mengirim aplikasi. Silakan coba lagi.' : 'Failed to submit application. Please try again.') 
+        })
+        setIsSubmitting(false)
+        return
+      }
 
       if (result.success) {
         setSubmitSuccess(true)
@@ -223,10 +341,16 @@ export default function CareersPage() {
         // Refresh job list to update application count
         fetchJobPostings()
       } else {
-        setErrors({ submit: result.message || (locale === 'id' ? 'Gagal mengirim aplikasi' : 'Failed to submit application') })
+        const errorMessage = result.message || result.error || 
+          (result.errors ? Object.values(result.errors).flat().join(', ') : null) ||
+          (locale === 'id' ? 'Gagal mengirim aplikasi' : 'Failed to submit application')
+        setErrors({ submit: errorMessage })
       }
     } catch (error: any) {
-      setErrors({ submit: error.message || (locale === 'id' ? 'Terjadi kesalahan saat mengirim aplikasi' : 'An error occurred while submitting application') })
+      console.error('Network error:', error)
+      setErrors({ 
+        submit: error.message || (locale === 'id' ? 'Terjadi kesalahan saat mengirim aplikasi. Pastikan koneksi internet Anda stabil.' : 'An error occurred while submitting application. Please check your internet connection.') 
+      })
     } finally {
       setIsSubmitting(false)
     }

@@ -158,6 +158,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       icon: EnvelopeIcon
     },
     {
+      name: "Recruitment",
+      icon: BriefcaseIcon,
+      children: [
+        { name: "Job Postings", href: "/admin/job-postings", icon: BriefcaseIcon },
+        { name: "Job Applications", href: "/admin/job-applications", icon: DocumentTextIcon }
+      ]
+    },
+    {
       name: "Audit Logs",
       href: "/admin/audit-logs",
       icon: ClipboardDocumentListIcon
