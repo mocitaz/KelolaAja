@@ -6,13 +6,30 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import FAQSection from '@/components/FAQSection'
 import Image from 'next/image'
 import Partners from '@/components/Partners'
+import { useEffect, useState } from 'react'
+import { fetchIndustry, type IndustryData } from '@/lib/fetch-pages'
 
 export default function FnBPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
+  const [industryData, setIndustryData] = useState<IndustryData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const introText = 'Setiap aspek pengelolaan keuangan restoran Anda tercatat dan terpantau dengan akurat. Fokus pada menyajikan hidangan lezat, biarkan KelolaAja yang mengurus pembukuan dan laporan keuangan Anda secara otomatis dan efisien.'
+  useEffect(() => {
+    const loadIndustryData = async () => {
+      setLoading(true)
+      const data = await fetchIndustry('fnb', locale)
+      if (data) {
+        setIndustryData(data)
+      }
+      setLoading(false)
+    }
+    loadIndustryData()
+  }, [locale])
 
+  // Fallback data
+  const introText = industryData?.heroDescription || 'Setiap aspek pengelolaan keuangan restoran Anda tercatat dan terpantau dengan akurat. Fokus pada menyajikan hidangan lezat, biarkan KelolaAja yang mengurus pembukuan dan laporan keuangan Anda secara otomatis dan efisien.'
+  const pageTitle = industryData?.heroTitle || 'Food and Beverages'
   const title = 'Masalah Bisnis Restoran dan Cafe Anda Kewalahan?'
   const description = 'Setiap bahan baku dari menu yang Anda sajikan perlu dicatat dan dihitung dengan teliti untuk menjaga profitabilitas restoran. Namun, banyak pemilik restoran di Indonesia yang belum memiliki sistem akuntansi yang efektif.'
 
@@ -85,7 +102,7 @@ export default function FnBPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-gray-900 mb-6">
-                    Food & Beverage
+                    {industryData?.name || pageTitle}
                   </h1>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify mb-6">
                     {introText}

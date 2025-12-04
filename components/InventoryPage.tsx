@@ -6,15 +6,31 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import FAQSection from '@/components/FAQSection'
 import Image from 'next/image'
 import FeaturesCarousel from '@/components/FeaturesCarousel'
+import { useEffect, useState } from 'react'
+import { fetchFeaturePage, type FeaturePageData } from '@/lib/fetch-pages'
 
 export default function InventoryPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
+  const [pageData, setPageData] = useState<FeaturePageData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const introText = 'Manajemen inventory dengan tracking real-time. KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman dengan optimasi alur distribusi.'
+  useEffect(() => {
+    const loadPageData = async () => {
+      setLoading(true)
+      const data = await fetchFeaturePage('inventory', locale)
+      if (data) {
+        setPageData(data)
+      }
+      setLoading(false)
+    }
+    loadPageData()
+  }, [locale])
 
-  const title = 'Produk dan Inventory'
-  const description = 'Dapatkan kontrol penuh atas manajemen inventory Anda dengan sistem yang lengkap dan terintegrasi. Dari tracking stok hingga laporan inventory real-time, semua tersedia dalam satu platform.'
+  // Fallback data
+  const introText = pageData?.heroDescription || 'Manajemen inventory dengan tracking real-time. KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman dengan optimasi alur distribusi.'
+  const title = pageData?.heroTitle || 'Produk dan Inventory'
+  const description = pageData?.description || 'Dapatkan kontrol penuh atas manajemen inventory Anda dengan sistem yang lengkap dan terintegrasi. Dari tracking stok hingga laporan inventory real-time, semua tersedia dalam satu platform.'
 
   const features = [
     {

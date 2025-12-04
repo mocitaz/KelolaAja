@@ -6,13 +6,30 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import FAQSection from '@/components/FAQSection'
 import Image from 'next/image'
 import Partners from '@/components/Partners'
+import { useEffect, useState } from 'react'
+import { fetchIndustry, type IndustryData } from '@/lib/fetch-pages'
 
 export default function RetailPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
+  const [industryData, setIndustryData] = useState<IndustryData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const introText = 'Setiap tahapan mulai dari perencanaan hingga penyelesaian produksi dapat dilakukan secara lebih efisien. Proses pengambilan keputusan menjadi lebih cepat, memungkinkan Anda untuk merespons tantangan dengan lebih sigap, sekaligus meningkatkan produktivitas dan kualitas di setiap langkah produksi bisnis Anda.'
+  useEffect(() => {
+    const loadIndustryData = async () => {
+      setLoading(true)
+      const data = await fetchIndustry('retail', locale)
+      if (data) {
+        setIndustryData(data)
+      }
+      setLoading(false)
+    }
+    loadIndustryData()
+  }, [locale])
 
+  // Fallback data
+  const introText = industryData?.heroDescription || 'Setiap tahapan mulai dari perencanaan hingga penyelesaian produksi dapat dilakukan secara lebih efisien. Proses pengambilan keputusan menjadi lebih cepat, memungkinkan Anda untuk merespons tantangan dengan lebih sigap, sekaligus meningkatkan produktivitas dan kualitas di setiap langkah produksi bisnis Anda.'
+  const pageTitle = industryData?.heroTitle || 'Retail'
   const title = 'Masalah Bisnis Retail Anda Kewalahan?'
   const description = 'Akuntansi merupakan bagian yang vital bagi kelangsungan bisnis ritel Anda. Tanpa pencatatan yang tepat, Anda akan kesulitan untuk mengevaluasi kemajuan dan mengambil keputusan yang mendukung pertumbuhan bisnis secara maksimal.'
 
@@ -58,7 +75,7 @@ export default function RetailPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-gray-900 mb-6">
-                    Retail
+                    {industryData?.name || pageTitle}
                   </h1>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify mb-6">
                     {introText}

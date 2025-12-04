@@ -6,15 +6,31 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import FAQSection from '@/components/FAQSection'
 import Image from 'next/image'
 import FeaturesCarousel from '@/components/FeaturesCarousel'
+import { useEffect, useState } from 'react'
+import { fetchFeaturePage, type FeaturePageData } from '@/lib/fetch-pages'
 
 export default function ProjectPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
+  const [pageData, setPageData] = useState<FeaturePageData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const introText = 'Kelola proyek, track progress, dan monitor timeline dengan mudah. Sistem manajemen proyek terintegrasi untuk memastikan setiap proyek berjalan sesuai rencana dan budget.'
+  useEffect(() => {
+    const loadPageData = async () => {
+      setLoading(true)
+      const data = await fetchFeaturePage('project', locale)
+      if (data) {
+        setPageData(data)
+      }
+      setLoading(false)
+    }
+    loadPageData()
+  }, [locale])
 
-  const title = 'Manajement Proyek'
-  const description = 'Dapatkan kontrol penuh atas manajemen proyek Anda dengan sistem yang lengkap dan terintegrasi. Dari tracking progress hingga laporan proyek real-time, semua tersedia dalam satu platform.'
+  // Fallback data
+  const introText = pageData?.heroDescription || 'Kelola proyek, track progress, dan monitor timeline dengan mudah. Sistem manajemen proyek terintegrasi untuk memastikan setiap proyek berjalan sesuai rencana dan budget.'
+  const title = pageData?.heroTitle || 'Manajement Proyek'
+  const description = pageData?.description || 'Dapatkan kontrol penuh atas manajemen proyek Anda dengan sistem yang lengkap dan terintegrasi. Dari tracking progress hingga laporan proyek real-time, semua tersedia dalam satu platform.'
 
   const features = [
     {

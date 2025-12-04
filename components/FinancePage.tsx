@@ -6,15 +6,31 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import FAQSection from '@/components/FAQSection'
 import Image from 'next/image'
 import FeaturesCarousel from '@/components/FeaturesCarousel'
+import { useEffect, useState } from 'react'
+import { fetchFeaturePage, type FeaturePageData } from '@/lib/fetch-pages'
 
 export default function FinancePage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
+  const [pageData, setPageData] = useState<FeaturePageData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const introText = 'Sistem keuangan lengkap untuk arus kas, pembukuan, dan laporan. KelolaAja menyediakan solusi terintegrasi untuk mengelola seluruh aspek keuangan bisnis Anda dengan mudah dan efisien.'
+  useEffect(() => {
+    const loadPageData = async () => {
+      setLoading(true)
+      const data = await fetchFeaturePage('finance', locale)
+      if (data) {
+        setPageData(data)
+      }
+      setLoading(false)
+    }
+    loadPageData()
+  }, [locale])
 
-  const title = 'Keuangan dan Akuntansi'
-  const description = 'Dapatkan kontrol penuh atas keuangan bisnis Anda dengan sistem akuntansi yang lengkap dan terintegrasi. Dari pencatatan transaksi hingga laporan keuangan real-time, semua tersedia dalam satu platform.'
+  // Fallback data
+  const introText = pageData?.heroDescription || 'Sistem keuangan lengkap untuk arus kas, pembukuan, dan laporan. KelolaAja menyediakan solusi terintegrasi untuk mengelola seluruh aspek keuangan bisnis Anda dengan mudah dan efisien.'
+  const title = pageData?.heroTitle || 'Keuangan dan Akuntansi'
+  const description = pageData?.description || 'Dapatkan kontrol penuh atas keuangan bisnis Anda dengan sistem akuntansi yang lengkap dan terintegrasi. Dari pencatatan transaksi hingga laporan keuangan real-time, semua tersedia dalam satu platform.'
 
   const features = [
     {

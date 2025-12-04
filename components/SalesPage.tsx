@@ -6,15 +6,31 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import FAQSection from '@/components/FAQSection'
 import Image from 'next/image'
 import FeaturesCarousel from '@/components/FeaturesCarousel'
+import { useEffect, useState } from 'react'
+import { fetchFeaturePage, type FeaturePageData } from '@/lib/fetch-pages'
 
 export default function SalesPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
+  const [pageData, setPageData] = useState<FeaturePageData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const introText = 'Proses pembelian dan penjualan dari quotation hingga invoice. Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi dengan fitur DP dan diskon bertingkat.'
+  useEffect(() => {
+    const loadPageData = async () => {
+      setLoading(true)
+      const data = await fetchFeaturePage('sales', locale)
+      if (data) {
+        setPageData(data)
+      }
+      setLoading(false)
+    }
+    loadPageData()
+  }, [locale])
 
-  const title = 'Pembelian dan Penjualan'
-  const description = 'Dapatkan kontrol penuh atas proses pembelian dan penjualan Anda dengan sistem yang lengkap dan terintegrasi. Dari quotation hingga invoice, semua tersedia dalam satu platform.'
+  // Fallback data
+  const introText = pageData?.heroDescription || 'Proses pembelian dan penjualan dari quotation hingga invoice. Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi dengan fitur DP dan diskon bertingkat.'
+  const title = pageData?.heroTitle || 'Pembelian dan Penjualan'
+  const description = pageData?.description || 'Dapatkan kontrol penuh atas proses pembelian dan penjualan Anda dengan sistem yang lengkap dan terintegrasi. Dari quotation hingga invoice, semua tersedia dalam satu platform.'
 
   const features = [
     {

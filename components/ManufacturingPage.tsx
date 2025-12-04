@@ -6,15 +6,31 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import FAQSection from '@/components/FAQSection'
 import Image from 'next/image'
 import FeaturesCarousel from '@/components/FeaturesCarousel'
+import { useEffect, useState } from 'react'
+import { fetchFeaturePage, type FeaturePageData } from '@/lib/fetch-pages'
 
 export default function ManufacturingPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
+  const [pageData, setPageData] = useState<FeaturePageData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const introText = 'Sistem manufaktur terintegrasi untuk produksi dan supply chain. KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis dan optimalkan efisiensi produksi.'
+  useEffect(() => {
+    const loadPageData = async () => {
+      setLoading(true)
+      const data = await fetchFeaturePage('manufacturing', locale)
+      if (data) {
+        setPageData(data)
+      }
+      setLoading(false)
+    }
+    loadPageData()
+  }, [locale])
 
-  const title = 'Fitur Manufaktur'
-  const description = 'Dapatkan kontrol penuh atas proses manufaktur Anda dengan sistem yang lengkap dan terintegrasi. Dari perencanaan produksi hingga laporan manufaktur real-time, semua tersedia dalam satu platform.'
+  // Fallback data
+  const introText = pageData?.heroDescription || 'Sistem manufaktur terintegrasi untuk produksi dan supply chain. KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis dan optimalkan efisiensi produksi.'
+  const title = pageData?.heroTitle || 'Fitur Manufaktur'
+  const description = pageData?.description || 'Dapatkan kontrol penuh atas proses manufaktur Anda dengan sistem yang lengkap dan terintegrasi. Dari perencanaan produksi hingga laporan manufaktur real-time, semua tersedia dalam satu platform.'
 
   const features = [
     {

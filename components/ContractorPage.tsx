@@ -6,13 +6,30 @@ import ScrollAnimation from '@/components/ScrollAnimation'
 import FAQSection from '@/components/FAQSection'
 import Image from 'next/image'
 import Partners from '@/components/Partners'
+import { useEffect, useState } from 'react'
+import { fetchIndustry, type IndustryData } from '@/lib/fetch-pages'
 
 export default function ContractorPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
+  const [industryData, setIndustryData] = useState<IndustryData | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const introText = 'KelolaAja setiap proyek dengan lebih efisien dan optimalkan keuntungan bisnis Anda menggunakan software ERP KelolaAja. Dirancang khusus untuk memenuhi kebutuhan semua jenis usaha kontraktor di Indonesia, KelolaAja memudahkan pengelolaan keuangan dan operasional Proyek Anda.'
+  useEffect(() => {
+    const loadIndustryData = async () => {
+      setLoading(true)
+      const data = await fetchIndustry('contractor', locale)
+      if (data) {
+        setIndustryData(data)
+      }
+      setLoading(false)
+    }
+    loadIndustryData()
+  }, [locale])
 
+  // Fallback data
+  const introText = industryData?.heroDescription || 'KelolaAja setiap proyek dengan lebih efisien dan optimalkan keuntungan bisnis Anda menggunakan software ERP KelolaAja. Dirancang khusus untuk memenuhi kebutuhan semua jenis usaha kontraktor di Indonesia, KelolaAja memudahkan pengelolaan keuangan dan operasional Proyek Anda.'
+  const pageTitle = industryData?.heroTitle || 'Kontraktor'
   const title = 'Apakah Masalah Ini Sering Menghambat Bisnis Kontraktor Anda?'
   const description = 'Seringkali, jumlah proyek yang Anda tangani tidak berbanding lurus dengan keuntungan yang diperoleh. Ini terutama terjadi jika sistem pencatatan akuntansi untuk kontraktor Anda tidak terstruktur dengan baik atau tidak sesuai dengan standar yang seharusnya.'
 
@@ -59,7 +76,7 @@ export default function ContractorPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-gray-900 mb-6">
-                    Kontraktor
+                    {industryData?.name || pageTitle}
                   </h1>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify mb-6">
                     {introText}
