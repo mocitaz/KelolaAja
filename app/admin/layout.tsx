@@ -122,7 +122,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: "Partners", href: "/admin/partners", icon: BuildingOfficeIcon },
         { name: "Testimonials", href: "/admin/testimonials", icon: ChatBubbleLeftRightIcon },
         { name: "FAQs", href: "/admin/faqs", icon: QuestionMarkCircleIcon },
-        { name: "FAQ Categories", href: "/admin/faq-categories", icon: QuestionMarkCircleIcon }
+        { name: "FAQ Categories", href: "/admin/faq-categories", icon: QuestionMarkCircleIcon },
+        { name: "Company Profile", href: "/admin/company-profile", icon: BuildingOfficeIcon }
       ]
     },
     {
