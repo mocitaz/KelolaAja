@@ -1008,11 +1008,43 @@ export const translations: Record<Locale, Translations> = {
           'Menjaga nilai keberkahan dalam setiap inovasi dan layanan',
         ],
       },
+      agileValues: {
+        badge: 'Core Values',
+        title: 'AGILE',
+        subtitle: '(Lincah; Tangkas; Gesit; Cekatan)',
+        values: {
+          A: {
+            title: 'Add Value',
+            subtitle: 'Menciptakan Nilai Tambah',
+            description: 'Kami selalu memberikan nilai tambah bagi para mitra bisnis, lingkungan sekitar dan masyarakat',
+          },
+          G: {
+            title: 'Grateful & Prosperous',
+            subtitle: 'Bersyukur & Sejahtera',
+            description: 'Kami selalu bersyukur atas segala hal yang kami terima, Segala usaha kami lakukan untuk menciptakan berbagai keberlimpahan dan kesejahteraan yang seimbang antara materi, kemampuan, etika, dan spiritual',
+          },
+          I: {
+            title: 'Integrity & Commitment',
+            subtitle: 'Amanah & Berkomitmen',
+            description: 'Kami adalah pribadi-pribadi yang amanah, bertanggung jawab dan berdisiplin tinggi. Kami selalu siap memberikan komitmen dan hasil yang terbaik',
+          },
+          L: {
+            title: 'Learn, Growth & Fun',
+            subtitle: 'Senantiasa Belajar, Mengembangkan Diri & Menuntaskan Tugas dengan Riang Gembira',
+            description: 'Segala kejadian yang kami alami adalah pelajaran bagi kami untuk menjadi pribadi yang senantiasa melakukan perbaikan',
+          },
+          E: {
+            title: 'Enthusiast & High Performance',
+            subtitle: 'Bersemangat & Kinerja Tinggi',
+            description: 'Kami selalu bersemangat dan aktif memancarkan energi positif dalam setiap kesempatan. Meraih hasil yang telah direncanakan dengan efektivitas dan efisiensi tinggi',
+          },
+        },
+      },
       coreValues: {
-        badge: 'NILAI INTI PERUSAHAAN',
-        title: 'IMPACT',
-        impact: 'IMPACT',
-        fromImpact: 'dari IMPACT',
+        badge: 'Our Philosophy',
+        title: 'Our Philosophy',
+        impact: 'Our Philosophy',
+        fromImpact: 'dari Our Philosophy',
         values: {
           I: {
             title: 'Innovation',
@@ -1594,11 +1626,43 @@ export const translations: Record<Locale, Translations> = {
           'Maintain the value of blessings in every innovation and service',
         ],
       },
+      agileValues: {
+        badge: 'Core Values',
+        title: 'AGILE',
+        subtitle: '(Agile; Quick; Swift; Prompt)',
+        values: {
+          A: {
+            title: 'Add Value',
+            subtitle: 'Creating Added Value',
+            description: 'We always provide added value for business partners, the surrounding environment, and society',
+          },
+          G: {
+            title: 'Grateful & Prosperous',
+            subtitle: 'Grateful & Prosperous',
+            description: 'We are always grateful for everything we receive. We make every effort to create abundance and well-being that is balanced between material, ability, ethics, and spiritual',
+          },
+          I: {
+            title: 'Integrity & Commitment',
+            subtitle: 'Trustworthy & Committed',
+            description: 'We are trustworthy, responsible, and highly disciplined individuals. We are always ready to provide commitment and the best results',
+          },
+          L: {
+            title: 'Learn, Growth & Fun',
+            subtitle: 'Always Learning, Developing Self & Completing Tasks with Joy',
+            description: 'All experiences we encounter are lessons for us to continuously improve ourselves',
+          },
+          E: {
+            title: 'Enthusiast & High Performance',
+            subtitle: 'Enthusiastic & High Performance',
+            description: 'We are always enthusiastic and actively radiate positive energy in every opportunity. Achieving planned results with high effectiveness and efficiency',
+          },
+        },
+      },
       coreValues: {
-        badge: 'COMPANY CORE VALUES',
-        title: 'IMPACT',
-        impact: 'IMPACT',
-        fromImpact: 'from IMPACT',
+        badge: 'Our Philosophy',
+        title: 'Our Philosophy',
+        impact: 'Our Philosophy',
+        fromImpact: 'from Our Philosophy',
         values: {
           I: {
             title: 'Innovation',

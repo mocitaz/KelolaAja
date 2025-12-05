@@ -80,3 +80,4 @@ Lihat `DATABASE_SEEDING_GUIDE.md` untuk dokumentasi lengkap.
 
 **Selamat! Database Anda sekarang terisi dan siap digunakan! 🎉**
 
+

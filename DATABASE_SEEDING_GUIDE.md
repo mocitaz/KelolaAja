@@ -290,3 +290,4 @@ Gunakan checklist ini untuk memastikan semua data ter-seed:
 
 Setelah semua checklist tercentang, database siap digunakan! 🎉
 
+

@@ -9,9 +9,19 @@ import { useState } from 'react'
 export default function CompanyProfilePage() {
   const { locale, t } = useLanguage()
   const [activeValue, setActiveValue] = useState('I')
+  const [activeAgile, setActiveAgile] = useState('A')
 
   // Get translations
   const companyProfile = t.companyProfile
+
+  // AGILE Values Data from translations
+  const agileValues = companyProfile?.agileValues?.values || {
+    A: { title: '', subtitle: '', description: '' },
+    G: { title: '', subtitle: '', description: '' },
+    I: { title: '', subtitle: '', description: '' },
+    L: { title: '', subtitle: '', description: '' },
+    E: { title: '', subtitle: '', description: '' },
+  }
 
   // Core Values Images Mapping
   const coreValueImages = {
@@ -202,111 +212,186 @@ export default function CompanyProfilePage() {
         </div>
       </section>
 
-      {/* Core Values Section - Enhanced */}
-      <section className="py-16 lg:py-20 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
-        {/* Animated Background Elements */}
+      {/* AGILE Core Values Section - Ultra Modern & Compact */}
+      <section className="py-12 lg:py-16 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
+        {/* Animated Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 -left-20 w-96 h-96 bg-[#0498da]/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 -right-20 w-96 h-96 bg-[#71bf44]/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#0498da]/3 to-[#71bf44]/3 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[#0498da]/8 to-transparent rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#71bf44]/8 to-transparent rounded-full blur-3xl"></div>
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            {/* Header */}
-            <ScrollAnimation direction="fade" delay={0} duration={800}>
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#0498da]/10 to-[#71bf44]/10 rounded-full mb-6 shadow-lg">
-                  <div className="w-2 h-2 bg-[#0498da] rounded-full animate-pulse"></div>
-                  <span className="text-xs font-bold text-gray-800 uppercase tracking-wider">
-                    {companyProfile?.coreValues.badge || 'NILAI INTI PERUSAHAAN'}
+          <div className="max-w-6xl mx-auto">
+            {/* Compact Header */}
+            <ScrollAnimation direction="fade" delay={0} duration={600}>
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-full mb-4 shadow-sm">
+                  <div className="w-1.5 h-1.5 bg-[#0498da] rounded-full animate-pulse"></div>
+                  <span className="text-[10px] font-bold text-gray-700 uppercase tracking-[0.15em]">
+                    {companyProfile?.agileValues.badge || 'Core Values'}
                   </span>
-                  <div className="w-2 h-2 bg-[#71bf44] rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
+                  <div className="w-1.5 h-1.5 bg-[#71bf44] rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
                 </div>
-                <h2 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-black mb-0 relative inline-block">
-                  <span className="relative z-10 text-gray-900 px-8">
-                    {companyProfile?.coreValues.impact || 'IMPACT'}
-                  </span>
-                  <div className="absolute top-1/2 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-gray-300 to-transparent -translate-y-1/2 -z-0"></div>
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black mb-2 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+                  {companyProfile?.agileValues.title || 'AGILE'}
                 </h2>
+                {companyProfile?.agileValues.subtitle && (
+                  <p className="text-sm sm:text-base text-gray-500 italic font-light">
+                    {companyProfile.agileValues.subtitle}
+                  </p>
+                )}
               </div>
             </ScrollAnimation>
 
-            {/* Navigation Tabs - Compact */}
-            <ScrollAnimation direction="fade" delay={100} duration={800}>
-              <div className="flex flex-wrap justify-center gap-2 mb-10">
-                {['I', 'M', 'P', 'A', 'C', 'T'].map((letter) => (
+            {/* Compact Navigation Pills */}
+            <ScrollAnimation direction="fade" delay={100} duration={600}>
+              <div className="flex flex-wrap justify-center gap-1.5 mb-8">
+                {['A', 'G', 'I', 'L', 'E'].map((letter) => (
                   <button
                     key={letter}
-                    onClick={() => setActiveValue(letter)}
-                    className={`px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 ${
-                      activeValue === letter
-                        ? 'bg-[#0498da] text-white shadow-md'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    onClick={() => setActiveAgile(letter)}
+                    className={`relative px-5 py-2.5 rounded-full font-black text-sm transition-all duration-300 transform hover:scale-105 ${
+                      activeAgile === letter
+                        ? 'bg-gradient-to-r from-[#0498da] to-[#71bf44] text-white shadow-lg shadow-[#0498da]/30 scale-105'
+                        : 'bg-white text-gray-400 hover:text-gray-600 hover:bg-gray-50 border border-gray-200/50 shadow-sm'
                     }`}
                   >
                     {letter}
+                    {activeAgile === letter && (
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#0498da] to-[#71bf44] opacity-20 animate-ping"></div>
+                    )}
                   </button>
                 ))}
               </div>
             </ScrollAnimation>
 
-            {/* Content Area - Enhanced */}
-            <ScrollAnimation direction="fade" delay={200} duration={800}>
-              <div className="relative bg-white rounded-3xl p-8 lg:p-12 shadow-2xl border border-gray-100 overflow-hidden">
-                {/* Decorative gradient overlay */}
-                <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#0498da]/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-[#71bf44]/5 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+            {/* Compact Content Card */}
+            <ScrollAnimation direction="fade" delay={200} duration={600}>
+              <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 lg:p-8 shadow-xl border border-gray-100/50 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+                {/* Animated gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#0498da]/5 via-transparent to-[#71bf44]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-start relative z-10">
-                  {/* Left - Text */}
-                  <div className="relative min-h-[350px]">
-                    {/* Large Background Letter - Enhanced with gradient */}
-                    <div className="absolute -top-12 -left-12 text-[220px] lg:text-[280px] font-black select-none pointer-events-none leading-none opacity-20 bg-clip-text text-transparent bg-gradient-to-br from-[#0498da] to-[#71bf44]">
+                {/* Large letter background */}
+                <div className="absolute -top-8 -right-8 text-[180px] lg:text-[220px] font-black select-none pointer-events-none leading-none opacity-[0.03] text-gray-900">
+                  {activeAgile}
+                </div>
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-1 h-6 bg-gradient-to-b from-[#0498da] to-[#71bf44] rounded-full"></div>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                      {activeAgile} {locale === 'id' ? 'dari AGILE' : 'from AGILE'}
+                    </span>
+                  </div>
+                  <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-black text-gray-900 mb-2 leading-tight">
+                    {agileValues[activeAgile as keyof typeof agileValues].title}
+                  </h3>
+                  <h4 className="text-lg sm:text-xl font-bold mb-4 bg-gradient-to-r from-[#0498da] to-[#71bf44] bg-clip-text text-transparent">
+                    {agileValues[activeAgile as keyof typeof agileValues].subtitle}
+                  </h4>
+                  <div className="w-16 h-0.5 bg-gradient-to-r from-[#0498da] to-[#71bf44] rounded-full mb-4"></div>
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                    {agileValues[activeAgile as keyof typeof agileValues].description}
+                  </p>
+                </div>
+              </div>
+            </ScrollAnimation>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Philosophy Section - Ultra Modern & Compact */}
+      <section className="py-12 lg:py-16 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-gradient-to-br from-[#0498da]/8 to-transparent rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#71bf44]/8 to-transparent rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-6xl mx-auto">
+            {/* Compact Header */}
+            <ScrollAnimation direction="fade" delay={0} duration={600}>
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-full mb-4 shadow-sm">
+                  <div className="w-1.5 h-1.5 bg-[#0498da] rounded-full animate-pulse"></div>
+                  <span className="text-[10px] font-bold text-gray-700 uppercase tracking-[0.15em]">
+                    {companyProfile?.coreValues.badge || 'Our Philosophy'}
+                  </span>
+                  <div className="w-1.5 h-1.5 bg-[#71bf44] rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                </div>
+                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black mb-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+                  {companyProfile?.coreValues.impact || 'Our Philosophy'}
+                </h2>
+              </div>
+            </ScrollAnimation>
+
+            {/* Compact Navigation Pills */}
+            <ScrollAnimation direction="fade" delay={100} duration={600}>
+              <div className="flex flex-wrap justify-center gap-1.5 mb-8">
+                {['I', 'M', 'P', 'A', 'C', 'T'].map((letter) => (
+                  <button
+                    key={letter}
+                    onClick={() => setActiveValue(letter)}
+                    className={`relative px-5 py-2.5 rounded-full font-black text-sm transition-all duration-300 transform hover:scale-105 ${
+                      activeValue === letter
+                        ? 'bg-gradient-to-r from-[#0498da] to-[#71bf44] text-white shadow-lg shadow-[#0498da]/30 scale-105'
+                        : 'bg-white text-gray-400 hover:text-gray-600 hover:bg-gray-50 border border-gray-200/50 shadow-sm'
+                    }`}
+                  >
+                    {letter}
+                    {activeValue === letter && (
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#0498da] to-[#71bf44] opacity-20 animate-ping"></div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </ScrollAnimation>
+
+            {/* Compact Content Card with Image */}
+            <ScrollAnimation direction="fade" delay={200} duration={600}>
+              <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 lg:p-8 shadow-xl border border-gray-100/50 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+                {/* Animated gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#0498da]/5 via-transparent to-[#71bf44]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 relative z-10">
+                  {/* Left - Text Content */}
+                  <div className="relative">
+                    {/* Large letter background */}
+                    <div className="absolute -top-6 -left-6 text-[140px] lg:text-[180px] font-black select-none pointer-events-none leading-none opacity-[0.03] text-gray-900">
                       {activeValue}
                     </div>
-                    <div className="relative z-10 pt-8">
-                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0498da]/10 to-[#71bf44]/10 rounded-lg mb-4">
-                        <div className="w-1.5 h-1.5 bg-[#0498da] rounded-full"></div>
-                        <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                          {activeValue} {companyProfile?.coreValues.fromImpact || 'dari IMPACT'}
+                    
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-1 h-6 bg-gradient-to-b from-[#0498da] to-[#71bf44] rounded-full"></div>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                          {activeValue} {companyProfile?.coreValues.fromImpact || 'dari Our Philosophy'}
                         </span>
                       </div>
-                      <h3 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black text-gray-900 mb-4 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
+                      <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-black text-gray-900 mb-2 leading-tight">
                         {coreValues[activeValue as keyof typeof coreValues].title}
                       </h3>
-                      <h4 className="text-2xl sm:text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-[#0498da] to-[#71bf44]">
+                      <h4 className="text-lg sm:text-xl font-bold mb-4 bg-gradient-to-r from-[#0498da] to-[#71bf44] bg-clip-text text-transparent">
                         {coreValues[activeValue as keyof typeof coreValues].subtitle}
                       </h4>
-                      <div className="w-20 h-1 bg-gradient-to-r from-[#0498da] to-[#71bf44] rounded-full mb-6"></div>
-                      <p className="text-base lg:text-lg text-gray-700 leading-relaxed font-light text-justify">
+                      <div className="w-16 h-0.5 bg-gradient-to-r from-[#0498da] to-[#71bf44] rounded-full mb-4"></div>
+                      <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                         {coreValues[activeValue as keyof typeof coreValues].description}
                       </p>
                     </div>
                   </div>
 
-                  {/* Right - Image with Unique Frame */}
-                  <div className="relative w-full">
-                    {/* Modern frame with multiple layers */}
-                    <div className="relative w-full aspect-[4/5]">
-                      {/* Outer glow effect */}
-                      <div className="absolute -inset-4 bg-gradient-to-br from-[#0498da]/20 via-[#71bf44]/20 to-[#0498da]/20 rounded-3xl blur-xl opacity-50"></div>
-                      
-                      {/* Decorative frame layers */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-[#0498da]/10 via-white to-[#71bf44]/10 rounded-3xl transform rotate-3"></div>
-                      <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50/50 to-white rounded-3xl transform -rotate-2"></div>
-                      
-                      {/* Main image container */}
-                      <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl bg-white border-4 border-white">
-                        <Image
-                          src={coreValueImages[activeValue as keyof typeof coreValueImages]}
-                          alt={coreValues[activeValue as keyof typeof coreValues].title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 1024px) 100vw, 50vw"
-                        />
-                      </div>
-                    </div>
+                  {/* Right - Image */}
+                  <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow duration-500">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#0498da]/10 to-[#71bf44]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+                    <Image
+                      src={coreValueImages[activeValue as keyof typeof coreValueImages]}
+                      alt={coreValues[activeValue as keyof typeof coreValues].title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
                   </div>
                 </div>
               </div>
