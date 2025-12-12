@@ -486,14 +486,15 @@ export async function fetchPublicData<T = any>(
     };
   } catch (error) {
     // Silently fail - only log in development
-    if (process.env.NODE_ENV === "development" && error.name !== "AbortError") {
+    const err = error as Error;
+    if (process.env.NODE_ENV === "development" && err.name !== "AbortError") {
       console.error(`Error fetching ${endpoint}:`, error);
     }
 
     return {
       success: false,
       data: null,
-      error: error.name === "AbortError" ? "Request timeout" : error.message
+      error: err.name === "AbortError" ? "Request timeout" : err.message
     };
   }
 }
