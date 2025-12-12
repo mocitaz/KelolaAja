@@ -1,9 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import { fetchPublicData, API_ENDPOINTS, API_BASE_URL } from '@/lib/api-config'
+
+interface ApiResponse {
+  success?: boolean
+  message?: string
+  error?: string
+  errors?: Record<string, string | string[]> | string
+  data?: any
+  raw?: string
+}
 
 interface JobPosting {
   jobId: number
@@ -80,11 +89,7 @@ export default function CareersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
-  useEffect(() => {
-    fetchJobPostings()
-  }, [locale])
-
-  const fetchJobPostings = async () => {
+  const fetchJobPostings = useCallback(async () => {
     setLoading(true)
     try {
       const result = await fetchPublicData<JobPosting[]>(
@@ -102,7 +107,11 @@ export default function CareersPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [locale])
+
+  useEffect(() => {
+    fetchJobPostings()
+  }, [fetchJobPostings])
 
   const handleOpenApplicationForm = (job: JobPosting) => {
     setSelectedJob(job)
@@ -267,7 +276,7 @@ export default function CareersPage() {
       console.log('Response status:', response.status)
       console.log('Response headers:', response.headers)
 
-      let result = {}
+      let result: ApiResponse = {}
       try {
         const text = await response.text()
         console.log('=== RESPONSE RECEIVED ===')
@@ -277,7 +286,7 @@ export default function CareersPage() {
         
         if (text) {
           try {
-            result = JSON.parse(text)
+            result = JSON.parse(text) as ApiResponse
             console.log('Parsed Response:', JSON.stringify(result, null, 2))
           } catch (parseError) {
             console.error('Error parsing JSON:', parseError)

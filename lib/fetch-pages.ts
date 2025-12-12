@@ -2,7 +2,7 @@
  * Utility functions untuk fetch feature pages dan industry pages
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://kelolaaja-be-production.up.railway.app'
 
 interface FeaturePageItem {
   itemId: number

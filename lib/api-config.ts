@@ -4,7 +4,7 @@
  */
 
 // Backend API Base URL
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://kelolaaja-be-production.up.railway.app";
 
 // API Endpoints
 export const API_ENDPOINTS = {
@@ -410,19 +410,19 @@ export function getAuthHeaders(): HeadersInit {
  */
 export async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const url = getProxyUrl(endpoint);
-  
+
   // Don't set Content-Type for FormData (file uploads)
   const isFormData = options.body instanceof FormData;
   const headers: HeadersInit = {
     ...getAuthHeaders(),
     ...options.headers
   };
-  
+
   // Set Content-Type only if not FormData and not already set
   if (!isFormData && !(headers instanceof Headers) && !Array.isArray(headers)) {
     const headersObj = headers as Record<string, string>;
-    if (!headersObj['Content-Type']) {
-      headersObj['Content-Type'] = 'application/json';
+    if (!headersObj["Content-Type"]) {
+      headersObj["Content-Type"] = "application/json";
     }
   }
 
@@ -457,12 +457,12 @@ export async function fetchPublicData<T = any>(
     // Don't set Content-Type for FormData (file uploads)
     const isFormData = options.body instanceof FormData;
     const headers: HeadersInit = { ...options.headers };
-    
+
     // Set Content-Type only if not FormData and not already set
     if (!isFormData && !(headers instanceof Headers) && !Array.isArray(headers)) {
       const headersObj = headers as Record<string, string>;
-      if (!headersObj['Content-Type']) {
-        headersObj['Content-Type'] = 'application/json';
+      if (!headersObj["Content-Type"]) {
+        headersObj["Content-Type"] = "application/json";
       }
     }
 
@@ -484,7 +484,7 @@ export async function fetchPublicData<T = any>(
       success: true,
       data: data.success ? data.data : data
     };
-  } catch (error: any) {
+  } catch (error) {
     // Silently fail - only log in development
     if (process.env.NODE_ENV === "development" && error.name !== "AbortError") {
       console.error(`Error fetching ${endpoint}:`, error);
