@@ -219,29 +219,29 @@ export interface Translations {
     }
     title: string
     benefits: string[]
-      form: {
-        fullName: string
-        companyName: string
-        demoDate: string
-        demoSession: string
-        morning: string
-        afternoon: string
-        companyEmail: string
-        companyPhone: string
-        message: string
-        submitButton: string
-      }
-      errors: {
-        fullNameRequired: string
-        companyNameRequired: string
-        demoDateRequired: string
-        demoSessionRequired: string
-        companyEmailRequired: string
-        companyEmailInvalid: string
-        companyPhoneRequired: string
-        messageRequired: string
-      }
-      notes: string[]
+    form: {
+      fullName: string
+      companyName: string
+      demoDate: string
+      demoSession: string
+      morning: string
+      afternoon: string
+      companyEmail: string
+      companyPhone: string
+      message: string
+      submitButton: string
+    }
+    errors: {
+      fullNameRequired: string
+      companyNameRequired: string
+      demoDateRequired: string
+      demoSessionRequired: string
+      companyEmailRequired: string
+      companyEmailInvalid: string
+      companyPhoneRequired: string
+      messageRequired: string
+    }
+    notes: string[]
   }
   featuresPage?: {
     hero: {
@@ -268,6 +268,8 @@ export interface Translations {
     faq: {
       title: string
       subtitle: string
+      showAll: string
+      showLess: string
       items: Array<{
         question: string
         answer: string
@@ -422,6 +424,38 @@ export interface Translations {
       badge: string
       title: string
       items: string[]
+    }
+    agileValues: {
+      badge: string
+      title: string
+      subtitle?: string
+      values: {
+        A: {
+          title: string
+          subtitle: string
+          description: string
+        }
+        G: {
+          title: string
+          subtitle: string
+          description: string
+        }
+        I: {
+          title: string
+          subtitle: string
+          description: string
+        }
+        L: {
+          title: string
+          subtitle: string
+          description: string
+        }
+        E: {
+          title: string
+          subtitle: string
+          description: string
+        }
+      }
     }
     coreValues: {
       badge: string
@@ -1570,6 +1604,8 @@ export const translations: Record<Locale, Translations> = {
       faq: {
         title: 'Frequently Asked Questions',
         subtitle: 'Find answers to common questions about KelolaAja',
+        showAll: 'View All FAQ',
+        showLess: 'Show Less',
         items: [
           {
             question: 'Is there training to use KelolaAja?',

@@ -114,7 +114,7 @@ export default function JobPostingsPage() {
 
   const handleDelete = async (jobId: number) => {
     if (!confirm('Apakah Anda yakin ingin menghapus lowongan ini?')) return;
-    
+
     try {
       await apiFetch(API_ENDPOINTS.ADMIN.JOB_POSTINGS.DELETE(jobId), {
         method: 'DELETE',
@@ -197,14 +197,14 @@ export default function JobPostingsPage() {
       ) : (
         <div className="grid grid-cols-1 gap-3">
           {filteredJobs.map((job) => {
-            const translation = job.translations?.[0] || {};
+            const translation = job.translations?.[0];
             return (
               <AdminCard key={job.jobId} compact>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-sm font-semibold text-gray-900 truncate">
-                        {translation.title || job.jobCode}
+                        {translation?.title || job.jobCode}
                       </h3>
                       {job.isFeatured && (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] border border-[#039edb]/20">
@@ -218,7 +218,7 @@ export default function JobPostingsPage() {
                       )}
                     </div>
                     <p className="text-xs text-gray-600 mb-2 line-clamp-1">
-                      {translation.shortDescription || job.department}
+                      {translation?.shortDescription || job.department}
                     </p>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
                       <span className="bg-gray-100 px-2 py-0.5 rounded">{job.department}</span>
