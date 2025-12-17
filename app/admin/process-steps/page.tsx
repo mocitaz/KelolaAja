@@ -104,11 +104,10 @@ export default function ProcessStepsPage() {
     {
       header: 'Status',
       render: (step: ProcessStep) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          step.isActive
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${step.isActive
             ? 'bg-green-50 text-green-700 border border-green-200'
             : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+          }`}>
           {step.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -221,8 +220,6 @@ function ProcessStepModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
-    stepNumber: step?.stepNumber || 1,
-    iconName: step?.iconName || '',
     displayOrder: step?.displayOrder || 0,
     isActive: step?.isActive ?? true,
     translations: step?.translations || [
@@ -236,8 +233,6 @@ function ProcessStepModal({
   useEffect(() => {
     if (step) {
       setFormData({
-        stepNumber: step.stepNumber,
-        iconName: step.iconName,
         displayOrder: step.displayOrder,
         isActive: step.isActive,
         translations: step.translations || [
@@ -258,9 +253,23 @@ function ProcessStepModal({
         ? `/api/v1/process-steps/admin/${step.stepId}`
         : '/api/v1/process-steps/admin';
 
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach(t => {
+        translationsMap[t.locale] = {
+          title: t.title,
+          description: t.description
+        };
+      });
+
+      const submitData = {
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: translationsMap
+      };
+
       const response = await apiFetch(endpoint, {
         method: step ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -311,27 +320,7 @@ function ProcessStepModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Step Number</label>
-              <input
-                type="number"
-                required
-                min="1"
-                value={formData.stepNumber}
-                onChange={(e) => setFormData({ ...formData, stepNumber: parseInt(e.target.value) })}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Icon Name</label>
-              <input
-                type="text"
-                value={formData.iconName}
-                onChange={(e) => setFormData({ ...formData, iconName: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-              />
-            </div>
+          <div className="grid grid-cols-1 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Display Order</label>
               <input
@@ -357,6 +346,7 @@ function ProcessStepModal({
                 <div className="space-y-2">
                   <input
                     type="text"
+                    required={trans.locale === 'id'}
                     placeholder="Title"
                     value={trans.title}
                     onChange={(e) => {

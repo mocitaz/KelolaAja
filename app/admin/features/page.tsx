@@ -53,7 +53,7 @@ export default function FeaturesPage() {
 
   const handleDelete = async (featureId: number) => {
     if (!confirm('Are you sure you want to delete this feature?')) return;
-    
+
     try {
       await apiFetch(`/api/v1/features/admin/${featureId}`, {
         method: 'DELETE',
@@ -141,6 +141,7 @@ export default function FeaturesPage() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-bold text-gray-900 truncate">{feature.featureName}</h3>
+                    <p className="text-[10px] text-gray-500 font-mono">{feature.featureCode}</p>
                     <span className="inline-block mt-1 px-2 py-0.5 text-xs font-semibold rounded-md bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] border border-[#039edb]/20 capitalize">
                       {feature.category}
                     </span>
@@ -235,6 +236,17 @@ export default function FeaturesPage() {
   );
 }
 
+interface Feature {
+  featureId: number;
+  featureCode: string;
+  featureName: string;
+  category: string;
+  iconName: string;
+  displayOrder: number;
+  isActive: boolean;
+  translations?: Translation[];
+}
+
 function FeatureModal({
   feature,
   onClose,
@@ -245,6 +257,7 @@ function FeatureModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
+    featureCode: feature?.featureCode || '',
     featureName: feature?.featureName || '',
     category: feature?.category || '',
     iconName: feature?.iconName || '',
@@ -261,6 +274,7 @@ function FeatureModal({
   useEffect(() => {
     if (feature) {
       setFormData({
+        featureCode: feature.featureCode,
         featureName: feature.featureName,
         category: feature.category,
         iconName: feature.iconName,
@@ -284,9 +298,27 @@ function FeatureModal({
         ? `/api/v1/features/admin/${feature.featureId}`
         : '/api/v1/features/admin';
 
+      // Transform translations array to object map expected by backend
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach(t => {
+        translationsMap[t.locale] = {
+          featureName: t.title,
+          description: t.description
+        };
+      });
+
+      const submitData = {
+        featureCode: formData.featureCode,
+        category: formData.category,
+        iconName: formData.iconName,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: translationsMap
+      };
+
       const response = await apiFetch(endpoint, {
         method: feature ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -337,15 +369,29 @@ function FeatureModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Feature Name</label>
-            <input
-              type="text"
-              required
-              value={formData.featureName}
-              onChange={(e) => setFormData({ ...formData, featureName: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Feature Code (Unique)</label>
+              <input
+                type="text"
+                required
+                value={formData.featureCode}
+                onChange={(e) => setFormData({ ...formData, featureCode: e.target.value.toUpperCase().replace(/\s+/g, '_') })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                placeholder="e.g. JOB_MANAGEMENT"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Feature Name (Display)</label>
+              <input
+                type="text"
+                required
+                value={formData.featureName}
+                onChange={(e) => setFormData({ ...formData, featureName: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                placeholder="e.g. Job Management"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

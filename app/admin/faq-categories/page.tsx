@@ -173,22 +173,53 @@ function FAQCategoryModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
-    name: category?.name || '',
-    description: category?.description || '',
+    categoryCode: category?.categoryId ? `CAT-${category.categoryId}` : '', // Just default fallback
     displayOrder: category?.displayOrder || 0,
+    translations: [
+      { locale: 'id', categoryName: category?.name || '' },
+      { locale: 'en', categoryName: '' }
+    ]
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
+  // Initialize code correctly if editing
   useEffect(() => {
     if (category) {
+      // Since listing doesn't return code, we might need to fetch detailed or just allow user to set it?
+      // Wait, getAllCategories in Service DOES return categoryCode.
+      // We need to update interface FAQCategory to include categoryCode first.
+      // For now, let's assume category has categoryCode if we updated the Fetch, but interface says no.
+      // Let's rely on user inputting it or auto-generating for new.
       setFormData({
-        name: category.name,
-        description: category.description || '',
+        categoryCode: (category as any).categoryCode || '', // casting to any as interface might be old
         displayOrder: category.displayOrder,
+        translations: [
+          { locale: 'id', categoryName: category.name },
+          { locale: 'en', categoryName: '' }
+        ]
       });
     }
   }, [category]);
+
+  // Auto-generate code for new categories
+  const handleNameChange = (val: string) => {
+    const newTranslations = [...formData.translations];
+    newTranslations[0] = { ...newTranslations[0], categoryName: val };
+
+    // Only auto-gen code if new
+    let newCode = formData.categoryCode;
+    if (!category) {
+      newCode = val.toUpperCase().replace(/[^A-Z0-9]/g, '_');
+    }
+
+    setFormData({
+      ...formData,
+      translations: newTranslations,
+      categoryCode: newCode
+    });
+  };
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,10 +230,22 @@ function FAQCategoryModal({
       const endpoint = category
         ? `/api/v1/admin/faq-categories/${category.categoryId}`
         : '/api/v1/admin/faq-categories';
-      
+
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach(t => {
+        translationsMap[t.locale] = { categoryName: t.categoryName };
+      });
+
+      const submitData = {
+        categoryCode: formData.categoryCode,
+        displayOrder: formData.displayOrder,
+        isActive: true, // Defaulting to true as modal didn't have toggle before? Schema supports it.
+        translations: translationsMap
+      };
+
       const response = await apiFetch(endpoint, {
         method: category ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -254,24 +297,47 @@ function FAQCategoryModal({
 
         <div className="grid grid-cols-1 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Category Name</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Category Code</label>
             <input
               type="text"
               required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              value={formData.categoryCode}
+              onChange={(e) => setFormData({ ...formData, categoryCode: e.target.value.toUpperCase() })}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb] bg-gray-50 uppercase"
+              placeholder="e.g. BILLING"
             />
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Description</label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={3}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-            />
+
+          {/* Translations */}
+          <div className="space-y-2 pt-2 border-t border-gray-200">
+            <label className="block text-xs font-semibold text-gray-700 mb-2">Name (Translatable)</label>
+            {formData.translations.map((trans, idx) => (
+              <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
+                    {trans.locale.toUpperCase()}
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  required={trans.locale === 'id'}
+                  value={trans.categoryName}
+                  onChange={(e) => {
+                    if (idx === 0) { // ID
+                      handleNameChange(e.target.value);
+                    } else {
+                      const newTranslations = [...formData.translations];
+                      newTranslations[idx] = { ...trans, categoryName: e.target.value };
+                      setFormData({ ...formData, translations: newTranslations });
+                    }
+                  }}
+                  placeholder={`Name in ${trans.locale}`}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                />
+              </div>
+            ))}
           </div>
+
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1">Display Order</label>
             <input

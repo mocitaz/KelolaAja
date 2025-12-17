@@ -114,11 +114,10 @@ export default function FAQsPage() {
     {
       header: 'Status',
       render: (faq: FAQ) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          faq.isActive
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${faq.isActive
             ? 'bg-green-50 text-green-700 border border-green-200'
             : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+          }`}>
           {faq.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -248,11 +247,13 @@ function FAQModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
-    question: faq?.question || '',
-    answer: faq?.answer || '',
     categoryId: faq?.categoryId || (categories[0]?.categoryId || 0),
     displayOrder: faq?.displayOrder || 0,
     isActive: faq?.isActive ?? true,
+    translations: [
+      { locale: 'id', question: faq?.question || '', answer: faq?.answer || '' },
+      { locale: 'en', question: '', answer: '' },
+    ],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -260,11 +261,13 @@ function FAQModal({
   useEffect(() => {
     if (faq) {
       setFormData({
-        question: faq.question,
-        answer: faq.answer,
         categoryId: faq.categoryId,
         displayOrder: faq.displayOrder,
         isActive: faq.isActive,
+        translations: [
+          { locale: 'id', question: faq.question || '', answer: faq.answer || '' },
+          { locale: 'en', question: '', answer: '' }
+        ]
       });
     } else if (categories.length > 0) {
       setFormData(prev => ({
@@ -283,21 +286,23 @@ function FAQModal({
       const endpoint = faq
         ? `/api/v1/admin/faqs/${faq.faqId}`
         : '/api/v1/admin/faqs';
-      
-      // Format request body with translations (API expects this format)
+
+      // Transform translations map
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach((t) => {
+        translationsMap[t.locale] = {
+          question: t.question,
+          answer: t.answer
+        };
+      });
+
       const requestBody = {
         categoryId: formData.categoryId,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
-        translations: [
-          {
-            locale: 'id',
-            question: formData.question,
-            answer: formData.answer
-          }
-        ]
+        translations: translationsMap
       };
-      
+
       const response = await apiFetch(endpoint, {
         method: faq ? 'PUT' : 'POST',
         body: JSON.stringify(requestBody),
@@ -351,26 +356,6 @@ function FAQModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Question</label>
-            <input
-              type="text"
-              required
-              value={formData.question}
-              onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Answer</label>
-            <textarea
-              required
-              value={formData.answer}
-              onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-              rows={4}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-            />
-          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Category</label>
@@ -399,6 +384,49 @@ function FAQModal({
               />
             </div>
           </div>
+
+          {/* Translations */}
+          <div className="space-y-2 pt-2 border-t border-gray-200">
+            <label className="block text-xs font-semibold text-gray-700 mb-2">Content (Translatable)</label>
+            {formData.translations.map((trans, idx) => (
+              <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200 space-y-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
+                    {trans.locale.toUpperCase()}
+                  </span>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-1">Question ({trans.locale})</label>
+                  <input
+                    type="text"
+                    required={trans.locale === 'id'}
+                    value={trans.question}
+                    onChange={(e) => {
+                      const newTranslations = [...formData.translations];
+                      newTranslations[idx] = { ...trans, question: e.target.value };
+                      setFormData({ ...formData, translations: newTranslations });
+                    }}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-1">Answer ({trans.locale})</label>
+                  <textarea
+                    required={trans.locale === 'id'}
+                    value={trans.answer}
+                    onChange={(e) => {
+                      const newTranslations = [...formData.translations];
+                      newTranslations[idx] = { ...trans, answer: e.target.value };
+                      setFormData({ ...formData, translations: newTranslations });
+                    }}
+                    rows={3}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
           <div className="flex items-center gap-2 pt-1">
             <input
               type="checkbox"

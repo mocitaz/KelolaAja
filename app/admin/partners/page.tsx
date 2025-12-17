@@ -161,11 +161,10 @@ export default function PartnersPage() {
                 {/* Meta */}
                 <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
                   <span>Order: {partner.displayOrder}</span>
-                  <span className={`px-2 py-0.5 rounded-md font-semibold ${
-                    partner.isActive
+                  <span className={`px-2 py-0.5 rounded-md font-semibold ${partner.isActive
                       ? 'bg-green-50 text-green-700 border border-green-200'
                       : 'bg-red-50 text-red-700 border border-red-200'
-                  }`}>
+                    }`}>
                     {partner.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </div>
@@ -229,18 +228,30 @@ function PartnerModal({
     websiteUrl: partner?.websiteUrl || '',
     displayOrder: partner?.displayOrder || 0,
     isActive: partner?.isActive ?? true,
+    translations: partner?.translations && partner.translations.length > 0 ? partner.translations : [
+      { locale: 'id', description: '' },
+      { locale: 'en', description: '' },
+    ],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (partner) {
+      const initialTranslations = partner.translations && Array.isArray(partner.translations)
+        ? partner.translations
+        : [
+          { locale: 'id', description: partner['description'] || '' }, // Fallback if flattened
+          { locale: 'en', description: '' }
+        ];
+
       setFormData({
         partnerName: partner.partnerName,
         logoUrl: partner.logoUrl,
         websiteUrl: partner.websiteUrl || '',
         displayOrder: partner.displayOrder,
         isActive: partner.isActive,
+        translations: initialTranslations
       });
     }
   }, [partner]);
@@ -255,9 +266,26 @@ function PartnerModal({
         ? `/api/v1/partners/admin/${partner.partnerId}`
         : '/api/v1/partners/admin';
 
+      // Transform translations to object map
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach((t: any) => {
+        translationsMap[t.locale] = {
+          description: t.description
+        };
+      });
+
+      const submitData = {
+        partnerName: formData.partnerName,
+        websiteUrl: formData.websiteUrl,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: translationsMap,
+        // logoFileId: 1, // TODO: Implement File Upload. Currently Logo URL text input cannot be saved as File ID.
+      };
+
       const response = await apiFetch(endpoint, {
         method: partner ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -320,10 +348,9 @@ function PartnerModal({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Logo URL</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Logo URL (Display Only - Not Saved)</label>
             <input
               type="url"
-              required
               value={formData.logoUrl}
               onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
@@ -364,6 +391,31 @@ function PartnerModal({
               onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
             />
+          </div>
+
+          {/* Translations */}
+          <div className="space-y-2 pt-2 border-t border-gray-200">
+            <label className="block text-xs font-semibold text-gray-700 mb-2">Description (Translatable)</label>
+            {formData.translations.map((trans: any, idx: number) => (
+              <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
+                    {trans.locale.toUpperCase()}
+                  </span>
+                </div>
+                <textarea
+                  placeholder="Description"
+                  value={trans.description}
+                  onChange={(e) => {
+                    const newTranslations = [...formData.translations] as any[];
+                    newTranslations[idx] = { ...trans, description: e.target.value };
+                    setFormData({ ...formData, translations: newTranslations });
+                  }}
+                  rows={2}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                />
+              </div>
+            ))}
           </div>
 
           <div className="flex items-center gap-2 pt-1">

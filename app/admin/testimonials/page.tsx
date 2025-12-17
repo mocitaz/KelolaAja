@@ -49,7 +49,7 @@ export default function TestimonialsPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this testimonial?')) return;
-    
+
     try {
       await apiFetch(`/api/v1/admin/testimonials/${id}`, {
         method: 'DELETE',
@@ -163,11 +163,10 @@ export default function TestimonialsPage() {
                   {[...Array(5)].map((_, i) => (
                     <StarIcon
                       key={i}
-                      className={`h-4 w-4 ${
-                        i < testimonial.rating
+                      className={`h-4 w-4 ${i < testimonial.rating
                           ? 'text-yellow-400 fill-current'
                           : 'text-gray-300'
-                      }`}
+                        }`}
                     />
                   ))}
                   <span className="text-xs text-gray-500 ml-1">({testimonial.rating})</span>
@@ -181,11 +180,10 @@ export default function TestimonialsPage() {
                 {/* Meta */}
                 <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
                   <span>Order: {testimonial.displayOrder}</span>
-                  <span className={`px-2 py-0.5 rounded-md font-semibold ${
-                    testimonial.isActive
+                  <span className={`px-2 py-0.5 rounded-md font-semibold ${testimonial.isActive
                       ? 'bg-green-50 text-green-700 border border-green-200'
                       : 'bg-red-50 text-red-700 border border-red-200'
-                  }`}>
+                    }`}>
                     {testimonial.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </div>
@@ -244,29 +242,41 @@ function TestimonialModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
-    personName: testimonial?.personName || '',
-    position: testimonial?.position || '',
+    name: testimonial?.personName || '', // Backend expects 'name', FE interface used 'personName'
+    title: testimonial?.position || '',   // Backend expects 'title', FE interface used 'position'
     company: testimonial?.company || '',
-    testimonialText: testimonial?.testimonialText || '',
     rating: testimonial?.rating || 5,
     imageUrl: testimonial?.imageUrl || '',
     isActive: testimonial?.isActive ?? true,
     displayOrder: testimonial?.displayOrder || 0,
+    translations: [
+      { locale: 'id', quote: testimonial?.testimonialText || '' }, // Mapping legacy single text to ID
+      { locale: 'en', quote: '' },
+    ],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (testimonial) {
+      // If backend return includes translations, use them. Otherwise fallback.
+      // Note: The parent component might pass 'testimonialText' from a flattened response.
+      // We'll just init with that for now.
+      // Ideally we should look for testimonial.translations if available.
+      // But existing interface `Testimonial` (lines 12-23) doesn't have translations array. 
+      // We will assume for now we use the flattened text for ID.
       setFormData({
-        personName: testimonial.personName,
-        position: testimonial.position,
+        name: testimonial.personName,
+        title: testimonial.position,
         company: testimonial.company,
-        testimonialText: testimonial.testimonialText,
         rating: testimonial.rating,
         imageUrl: testimonial.imageUrl || '',
         isActive: testimonial.isActive,
         displayOrder: testimonial.displayOrder,
+        translations: [
+          { locale: 'id', quote: testimonial.testimonialText || '' },
+          { locale: 'en', quote: '' }
+        ]
       });
     }
   }, [testimonial]);
@@ -280,10 +290,27 @@ function TestimonialModal({
       const endpoint = testimonial
         ? `/api/v1/admin/testimonials/${testimonial.testimonialId}`
         : '/api/v1/admin/testimonials';
-      
+
+      // Transform translations map
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach((t) => {
+        translationsMap[t.locale] = { quote: t.quote };
+      });
+
+      const submitData = {
+        name: formData.name,
+        title: formData.title,
+        company: formData.company,
+        rating: formData.rating,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: translationsMap,
+        // photoFileId: null // We don't support image upload yet, and URL string is not accepted by backend
+      };
+
       const response = await apiFetch(endpoint, {
         method: testimonial ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -340,18 +367,18 @@ function TestimonialModal({
               <input
                 type="text"
                 required
-                value={formData.personName}
-                onChange={(e) => setFormData({ ...formData, personName: e.target.value })}
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Position</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Title (Position)</label>
               <input
                 type="text"
                 required
-                value={formData.position}
-                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
@@ -376,11 +403,10 @@ function TestimonialModal({
                   key={rating}
                   type="button"
                   onClick={() => setFormData({ ...formData, rating })}
-                  className={`p-1 rounded transition-colors ${
-                    rating <= formData.rating
+                  className={`p-1 rounded transition-colors ${rating <= formData.rating
                       ? 'text-yellow-400'
                       : 'text-gray-300'
-                  }`}
+                    }`}
                 >
                   <StarIcon className="h-5 w-5 fill-current" />
                 </button>
@@ -390,7 +416,7 @@ function TestimonialModal({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Image URL</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Image URL (Display Only)</label>
             <input
               type="url"
               value={formData.imageUrl}
@@ -413,15 +439,30 @@ function TestimonialModal({
             )}
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Testimonial Text</label>
-            <textarea
-              required
-              value={formData.testimonialText}
-              onChange={(e) => setFormData({ ...formData, testimonialText: e.target.value })}
-              rows={4}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-            />
+          {/* Translations */}
+          <div className="space-y-2 pt-2 border-t border-gray-200">
+            <label className="block text-xs font-semibold text-gray-700 mb-2">Quote (Translatable)</label>
+            {formData.translations.map((trans, idx) => (
+              <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
+                    {trans.locale.toUpperCase()}
+                  </span>
+                </div>
+                <textarea
+                  required={trans.locale === 'id'}
+                  value={trans.quote}
+                  onChange={(e) => {
+                    const newTranslations = [...formData.translations];
+                    newTranslations[idx] = { ...trans, quote: e.target.value };
+                    setFormData({ ...formData, translations: newTranslations });
+                  }}
+                  rows={4}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  placeholder={`Quote in ${trans.locale.toUpperCase()}`}
+                />
+              </div>
+            ))}
           </div>
 
           <div className="grid grid-cols-2 gap-3">

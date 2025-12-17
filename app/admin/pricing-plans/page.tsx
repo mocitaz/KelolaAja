@@ -11,11 +11,14 @@ import AdminModal from '@/components/admin/AdminModal';
 
 interface PricingPlan {
   planId: number;
+  planCode: string;
   planName: string;
-  price: number;
-  billingCycle: string;
+  pricePerUserMonth: number;
+  minUsers: number;
+  maxUsers?: number;
   displayOrder: number;
   isActive: boolean;
+  badgeColor?: string;
   translations?: any[];
 }
 
@@ -49,7 +52,7 @@ export default function PricingPlansPage() {
 
   const handleDelete = async (planId: number) => {
     if (!confirm('Are you sure you want to delete this plan?')) return;
-    
+
     try {
       await apiFetch(`/api/v1/pricing-plans/admin/${planId}`, {
         method: 'DELETE',
@@ -65,28 +68,31 @@ export default function PricingPlansPage() {
 
   const columns = [
     {
-      header: 'Plan Name',
+      header: 'Plan Info',
       render: (plan: PricingPlan) => (
         <div>
           <div className="text-sm font-medium text-gray-900">{plan.planName}</div>
+          <div className="text-[10px] text-gray-500 font-mono">{plan.planCode}</div>
         </div>
       ),
     },
     {
-      header: 'Price',
+      header: 'Price / User',
       render: (plan: PricingPlan) => (
         <div className="flex items-center gap-1">
           <CurrencyDollarIcon className="h-4 w-4 text-gray-400" />
           <span className="text-sm font-semibold text-gray-900">
-            {plan.price != null ? plan.price.toLocaleString() : '0'}
+            {plan.pricePerUserMonth != null ? plan.pricePerUserMonth.toLocaleString() : '0'}
           </span>
         </div>
       ),
     },
     {
-      header: 'Billing Cycle',
+      header: 'Users',
       render: (plan: PricingPlan) => (
-        <span className="text-xs text-gray-600 capitalize">{plan.billingCycle}</span>
+        <span className="text-xs text-gray-600">
+          {plan.minUsers} - {plan.maxUsers || '∞'}
+        </span>
       ),
     },
     {
@@ -98,11 +104,10 @@ export default function PricingPlansPage() {
     {
       header: 'Status',
       render: (plan: PricingPlan) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          plan.isActive
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${plan.isActive
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
           {plan.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -203,6 +208,19 @@ export default function PricingPlansPage() {
   );
 }
 
+interface PricingPlan {
+  planId: number;
+  planCode: string;
+  planName: string;
+  pricePerUserMonth: number;
+  minUsers: number;
+  maxUsers?: number;
+  displayOrder: number;
+  isActive: boolean;
+  badgeColor?: string;
+  translations?: any[]; // The generic response might have this, but flattened is main
+}
+
 function PricingPlanModal({
   plan,
   onClose,
@@ -213,26 +231,62 @@ function PricingPlanModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
-    planName: plan?.planName || '',
-    price: plan?.price || 0,
-    billingCycle: plan?.billingCycle || 'monthly',
+    planCode: plan?.planCode || '',
+    pricePerUserMonth: plan?.pricePerUserMonth || 0,
+    minUsers: plan?.minUsers || 1,
+    maxUsers: plan?.maxUsers || 0,
     displayOrder: plan?.displayOrder || 0,
+    badgeColor: plan?.badgeColor || '',
     isActive: plan?.isActive ?? true,
+    translations: plan?.translations && plan.translations.length > 0 ? plan.translations : [
+      { locale: 'id', planName: '', pricePeriod: 'monthly', description: '' },
+      { locale: 'en', planName: '', pricePeriod: 'monthly', description: '' },
+    ],
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
+  // If plan exists but translations are missing (because we relied on flattened data previously), optimize init
   useEffect(() => {
     if (plan) {
+      // If the plan is from the list, it might only have flattened data. 
+      // We might need to fetch detailed plan to get all translations if the list one implies flattened "current locale" only.
+      // However, `getAllPlans` Service seems to return ALL translations in the `translations` array too?
+      // `include: { translations: { orderBy: { locale: 'asc' } } }`
+      // Yes, so `plan` passed here should have the `translations` array.
+      // But wait, the Frontend `PricingPlan` interface in the original code didn't have `translations`.
+      // We need to verify if the API actually sends `translations` array in the JSON.
+      // The Service `Result` map: `translations: mergeAllTranslations(plan.translations)`. 
+      // Wait, `mergeAllTranslations` usually flattens array to Object or merges one locale?
+      // Let's check `mergeAllTranslations` util.
+      // Assuming it works like Feature service which sends `translations: mergeAllTranslations(...)`.
+      // Actually `getAllPlans` sends `translations: mergeAllTranslations(plan.translations)`.
+      // If `mergeAllTranslations` returns an OBJECT with keys as locales, OR it returns a single merged object?
+      // In `FeatureService`, `getAllFeatures` returns `translations: mergeAllTranslations(feature.translations)`.
+      // Let's assume for now we need an array for UI state. 
+      // Update: I will assume the List endpoint returns the validation data we need.
+      // Construct initial state carefully.
+
+      const initialTranslations = plan.translations && Array.isArray(plan.translations)
+        ? plan.translations
+        : [
+          { locale: 'id', planName: plan.planName || '', pricePeriod: 'monthly', description: '' },
+          { locale: 'en', planName: '', pricePeriod: 'monthly', description: '' }
+        ];
+
       setFormData({
-        planName: plan.planName,
-        price: plan.price,
-        billingCycle: plan.billingCycle,
-        displayOrder: plan.displayOrder,
+        planCode: plan.planCode || '',
+        pricePerUserMonth: plan.pricePerUserMonth || 0,
+        minUsers: plan.minUsers || 1,
+        maxUsers: plan.maxUsers || 0,
+        displayOrder: plan.displayOrder || 0,
+        badgeColor: plan.badgeColor || '',
         isActive: plan.isActive,
+        translations: initialTranslations
       });
     }
   }, [plan]);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -244,9 +298,30 @@ function PricingPlanModal({
         ? `/api/v1/pricing-plans/admin/${plan.planId}`
         : '/api/v1/pricing-plans/admin';
 
+      // Transform translations to object map
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach((t: any) => {
+        translationsMap[t.locale] = {
+          planName: t.planName,
+          pricePeriod: t.pricePeriod,
+          description: t.description
+        };
+      });
+
+      const submitData = {
+        planCode: formData.planCode,
+        pricePerUserMonth: formData.pricePerUserMonth,
+        minUsers: formData.minUsers,
+        maxUsers: formData.maxUsers || undefined,
+        displayOrder: formData.displayOrder,
+        badgeColor: formData.badgeColor,
+        isActive: formData.isActive,
+        translations: translationsMap
+      };
+
       const response = await apiFetch(endpoint, {
         method: plan ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -268,7 +343,7 @@ function PricingPlanModal({
       isOpen={true}
       onClose={onClose}
       title={plan ? 'Edit Pricing Plan' : 'Add New Pricing Plan'}
-      size="md"
+      size="lg"
       footer={
         <div className="flex justify-end gap-2">
           <button
@@ -297,54 +372,127 @@ function PricingPlanModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
+          {/* Main Info */}
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Plan Name</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Plan Code (Unique)</label>
             <input
               type="text"
               required
-              value={formData.planName}
-              onChange={(e) => setFormData({ ...formData, planName: e.target.value })}
+              value={formData.planCode}
+              onChange={(e) => setFormData({ ...formData, planCode: e.target.value.toUpperCase().replace(/\s+/g, '_') })}
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              placeholder="e.g. STARTER_MONTHLY"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Price</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Price / User / Month</label>
               <input
                 type="number"
                 required
                 min="0"
-                step="0.01"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
+                value={formData.pricePerUserMonth}
+                onChange={(e) => setFormData({ ...formData, pricePerUserMonth: parseFloat(e.target.value) })}
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Billing Cycle</label>
-              <select
-                value={formData.billingCycle}
-                onChange={(e) => setFormData({ ...formData, billingCycle: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb] bg-white"
-              >
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-                <option value="one-time">One Time</option>
-              </select>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Badge Color (Optional)</label>
+              <input
+                type="text"
+                value={formData.badgeColor}
+                onChange={(e) => setFormData({ ...formData, badgeColor: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                placeholder="e.g. blue, green"
+              />
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Display Order</label>
-            <input
-              type="number"
-              required
-              min="0"
-              value={formData.displayOrder}
-              onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-            />
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Min Users</label>
+              <input
+                type="number"
+                required
+                min="1"
+                value={formData.minUsers}
+                onChange={(e) => setFormData({ ...formData, minUsers: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Max Users (0 = Unlimited)</label>
+              <input
+                type="number"
+                min="0"
+                value={formData.maxUsers}
+                onChange={(e) => setFormData({ ...formData, maxUsers: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Display Order</label>
+              <input
+                type="number"
+                required
+                min="0"
+                value={formData.displayOrder}
+                onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
+          </div>
+
+          {/* Translations */}
+          <div className="space-y-2 pt-2 border-t border-gray-200">
+            <label className="block text-xs font-semibold text-gray-700 mb-2">Translations</label>
+            {formData.translations.map((trans: any, idx: number) => (
+              <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
+                    {trans.locale.toUpperCase()}
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="Plan Name"
+                      value={trans.planName}
+                      onChange={(e) => {
+                        const newTranslations = [...formData.translations] as any[];
+                        newTranslations[idx] = { ...trans, planName: e.target.value };
+                        setFormData({ ...formData, translations: newTranslations });
+                      }}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Price Period (e.g. /bulan)"
+                      value={trans.pricePeriod}
+                      onChange={(e) => {
+                        const newTranslations = [...formData.translations] as any[];
+                        newTranslations[idx] = { ...trans, pricePeriod: e.target.value };
+                        setFormData({ ...formData, translations: newTranslations });
+                      }}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                    />
+                  </div>
+                  <textarea
+                    placeholder="Description"
+                    value={trans.description}
+                    onChange={(e) => {
+                      const newTranslations = [...formData.translations] as any[];
+                      newTranslations[idx] = { ...trans, description: e.target.value };
+                      setFormData({ ...formData, translations: newTranslations });
+                    }}
+                    rows={2}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="flex items-center gap-2 pt-1">
