@@ -70,7 +70,6 @@ export default function MediaFilesPage() {
       const data = await response.json();
       if (data.success) {
         // Transform data to match interface and generate full URLs
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const transformData = (data.data || []).map((file: any) => ({
           ...file,
           mediaFileId: file.fileId, // Map backend ID to frontend ID
