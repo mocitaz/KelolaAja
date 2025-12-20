@@ -47,16 +47,39 @@ export default function Partners({ partners: propPartners, title, className = ""
       const data = await response.json();
 
       if (data.success && Array.isArray(data.data)) {
-        // Map API response to component format
-        const mappedPartners = data.data.map((p: any) => ({
-          partnerId: p.partnerId,
-          partnerName: p.partnerName,
-          name: p.displayName || p.partnerName,
-          image: p.logoUrl,
-          website: p.websiteUrl,
-          displayOrder: p.displayOrder
-        }));
-        setPartners(mappedPartners);
+        // Map API response to component format and filter invalid logos
+        const mappedPartners = data.data
+          .filter((p: any) => {
+            // Only include partners with valid image URLs (not page URLs)
+            const logoUrl = p.logoUrl || '';
+            return logoUrl && (
+              logoUrl.startsWith('/images/') ||
+              (logoUrl.startsWith('http') && (
+                logoUrl.includes('.png') ||
+                logoUrl.includes('.jpg') ||
+                logoUrl.includes('.jpeg') ||
+                logoUrl.includes('.svg') ||
+                logoUrl.includes('.webp')
+              ))
+            );
+          })
+          .map((p: any) => ({
+            partnerId: p.partnerId,
+            partnerName: p.partnerName,
+            name: p.displayName || p.partnerName,
+            image: p.logoUrl,
+            website: p.websiteUrl,
+            displayOrder: p.displayOrder
+          }));
+
+        // Only use API data if we have valid partners, otherwise use fallback
+        if (mappedPartners.length > 0) {
+          setPartners(mappedPartners);
+        } else {
+          setPartners(defaultPartners);
+        }
+      } else {
+        setPartners(defaultPartners);
       }
     } catch (error) {
       console.error("Error fetching partners:", error);

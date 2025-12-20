@@ -60,13 +60,25 @@ export default function AboutCardsPage() {
     }
   };
 
-  const filteredCards = cards.filter(
-    (card) =>
-      card.iconName?.toLowerCase().includes(search.toLowerCase()) ||
-      (Array.isArray(card.translations) && card.translations.some((t) =>
-        t.title?.toLowerCase().includes(search.toLowerCase())
-      ))
-  );
+  const getCardContent = (card: AboutCard, locale: string) => {
+    const translation = card.translations?.find(t => t.locale === locale);
+    return {
+      title: translation?.title || '',
+      description: translation?.description || '',
+    };
+  };
+
+  const filteredCards = cards.filter((card) => {
+    if (!search) return true;
+    const searchLower = search.toLowerCase();
+
+    const idContent = getCardContent(card, 'id');
+    const enContent = getCardContent(card, 'en');
+    const matchesTrans = idContent.title.toLowerCase().includes(searchLower) ||
+      enContent.title.toLowerCase().includes(searchLower);
+
+    return matchesTrans;
+  });
 
   const activeCount = cards.filter(c => c.isActive).length;
   const inactiveCount = cards.filter(c => !c.isActive).length;
@@ -96,11 +108,10 @@ export default function AboutCardsPage() {
     {
       header: 'Status',
       render: (card: AboutCard) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          card.isActive
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${card.isActive
             ? 'bg-green-50 text-green-700 border border-green-200'
             : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+          }`}>
           {card.isActive ? 'Active' : 'Inactive'}
         </span>
       ),

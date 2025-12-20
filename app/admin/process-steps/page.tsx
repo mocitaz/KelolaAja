@@ -1,13 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
+import { PlusIcon, PencilIcon, TrashIcon, ClipboardDocumentListIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { apiFetch } from '@/lib/api-config';
 import PageHeader from '@/components/admin/PageHeader';
 import AdminCard from '@/components/admin/AdminCard';
 import AdminTable from '@/components/admin/AdminTable';
 import AdminModal from '@/components/admin/AdminModal';
 import SearchBar from '@/components/admin/SearchBar';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 interface Translation {
   locale: string;
@@ -17,11 +19,12 @@ interface Translation {
 
 interface ProcessStep {
   stepId: number;
-  stepNumber: number;
+  stepNumber?: number; // Make optional
   displayOrder: number;
-  iconName: string;
   isActive: boolean;
-  translations?: Translation[];
+  imageFileId?: number | null;
+  imageUrl?: string;
+  translations?: Translation[] | Record<string, any>;
 }
 
 export default function ProcessStepsPage() {
@@ -61,14 +64,38 @@ export default function ProcessStepsPage() {
     }
   };
 
-  const filteredSteps = steps.filter(
-    (step) =>
-      step.stepNumber?.toString().includes(search) ||
-      step.iconName?.toLowerCase().includes(search.toLowerCase()) ||
-      (Array.isArray(step.translations) && step.translations.some((t) =>
-        t.title?.toLowerCase().includes(search.toLowerCase())
-      ))
-  );
+  const getStepContent = (step: ProcessStep, locale: string) => {
+    let content: { title: string; description: string } | undefined;
+
+    if (Array.isArray(step.translations)) {
+      const found = step.translations.find(t => t.locale === locale);
+      if (found) content = found;
+    } else if (step.translations && typeof step.translations === 'object') {
+      // @ts-ignore
+      const trans = step.translations[locale];
+      if (trans) {
+        content = { title: trans.title || '', description: trans.description || '' };
+      }
+    }
+
+    if (!content) return { title: '', description: '' };
+    return content;
+  };
+
+  const filteredSteps = steps.filter((step) => {
+    const searchLower = search.toLowerCase();
+    const matchesNum = (step.stepNumber?.toString() || '').includes(search);
+
+    let matchesTrans = false;
+    if (searchLower) {
+      const idContent = getStepContent(step, 'id');
+      const enContent = getStepContent(step, 'en');
+      matchesTrans = idContent.title.toLowerCase().includes(searchLower) ||
+        enContent.title.toLowerCase().includes(searchLower);
+    }
+
+    return matchesNum || matchesTrans;
+  });
 
   const activeCount = steps.filter(s => s.isActive).length;
   const inactiveCount = steps.filter(s => !s.isActive).length;
@@ -77,22 +104,33 @@ export default function ProcessStepsPage() {
     {
       header: 'Step #',
       render: (step: ProcessStep) => (
-        <span className="text-sm font-semibold text-gray-900">{step.stepNumber}</span>
+        <span className="text-sm font-bold text-[#039edb]">{step.stepNumber || step.displayOrder || '-'}</span>
       ),
     },
     {
-      header: 'Title',
-      render: (step: ProcessStep) => {
-        const idTrans = step.translations?.find(t => t.locale === 'id');
-        return (
-          <span className="text-sm text-gray-900">{idTrans?.title || '-'}</span>
-        );
-      },
+      header: 'Image',
+      render: (step: ProcessStep) => (
+        <div className="relative h-10 w-10 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border border-gray-200">
+          {step.imageUrl ? (
+            <Image
+              src={step.imageUrl}
+              alt="Step"
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <PhotoIcon className="h-5 w-5 text-gray-400" />
+          )}
+        </div>
+      ),
     },
     {
-      header: 'Icon',
+      header: 'Title (ID)',
       render: (step: ProcessStep) => (
-        <span className="text-xs text-gray-600">{step.iconName || '-'}</span>
+        <div className="max-w-xs">
+          <span className="block text-sm font-medium text-gray-900 truncate">{getStepContent(step, 'id').title}</span>
+          <span className="block text-xs text-gray-500 truncate">{getStepContent(step, 'id').description}</span>
+        </div>
       ),
     },
     {
@@ -105,8 +143,8 @@ export default function ProcessStepsPage() {
       header: 'Status',
       render: (step: ProcessStep) => (
         <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${step.isActive
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'
           }`}>
           {step.isActive ? 'Active' : 'Inactive'}
         </span>
@@ -180,7 +218,7 @@ export default function ProcessStepsPage() {
         <SearchBar
           value={search}
           onChange={setSearch}
-          placeholder="Search by step number, icon, or title..."
+          placeholder="Search by step number or title..."
         />
       </AdminCard>
 
@@ -220,9 +258,12 @@ function ProcessStepModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
+    stepNumber: step?.stepNumber || 1, // stepNumber might be undefined
     displayOrder: step?.displayOrder || 0,
     isActive: step?.isActive ?? true,
-    translations: step?.translations || [
+    imageFileId: step?.imageFileId || null,
+    imageUrl: step?.imageUrl || '',
+    translations: [
       { locale: 'id', title: '', description: '' },
       { locale: 'en', title: '', description: '' },
     ],
@@ -232,12 +273,30 @@ function ProcessStepModal({
 
   useEffect(() => {
     if (step) {
+      const getTrans = (locale: string) => {
+        if (Array.isArray(step.translations)) {
+          const found = step.translations.find(t => t.locale === locale);
+          return found ? { title: found.title, description: found.description } : null;
+        } else if (step.translations && typeof step.translations === 'object') {
+          // @ts-ignore
+          const trans = step.translations[locale];
+          if (trans) return { title: trans.title || '', description: trans.description || '' };
+        }
+        return null;
+      };
+
+      const idTrans = getTrans('id');
+      const enTrans = getTrans('en');
+
       setFormData({
+        stepNumber: step.stepNumber || 1,
         displayOrder: step.displayOrder,
         isActive: step.isActive,
-        translations: step.translations || [
-          { locale: 'id', title: '', description: '' },
-          { locale: 'en', title: '', description: '' },
+        imageFileId: step.imageFileId || null,
+        imageUrl: step.imageUrl || '',
+        translations: [
+          { locale: 'id', title: idTrans?.title || '', description: idTrans?.description || '' },
+          { locale: 'en', title: enTrans?.title || '', description: enTrans?.description || '' },
         ],
       });
     }
@@ -262,13 +321,18 @@ function ProcessStepModal({
       });
 
       const submitData = {
+        stepNumber: formData.stepNumber,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
+        imageFileId: formData.imageFileId,
         translations: translationsMap
       };
 
       const response = await apiFetch(endpoint, {
         method: step ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(submitData),
       });
 
@@ -320,7 +384,17 @@ function ProcessStepModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
-          <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Step Number</label>
+              <input
+                type="number"
+                required
+                value={formData.stepNumber}
+                onChange={(e) => setFormData({ ...formData, stepNumber: parseInt(e.target.value) })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              />
+            </div>
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Display Order</label>
               <input
@@ -331,6 +405,27 @@ function ProcessStepModal({
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
+          </div>
+
+          <div>
+            <ImageUpload
+              label="Step Image"
+              currentImage={formData.imageUrl}
+              onUploadComplete={(fileId, filePath) => {
+                setFormData(prev => ({
+                  ...prev,
+                  imageFileId: fileId,
+                  imageUrl: filePath
+                }));
+              }}
+              onRemove={() => {
+                setFormData(prev => ({
+                  ...prev,
+                  imageFileId: null,
+                  imageUrl: ''
+                }));
+              }}
+            />
           </div>
 
           {/* Translations */}

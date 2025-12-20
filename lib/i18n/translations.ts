@@ -120,7 +120,7 @@ export interface Translations {
   erpBenefits?: {
     title: string
     benefits: {
-      purchasing: {
+      sales: {
         title: string
         description: string
       }
@@ -128,7 +128,43 @@ export interface Translations {
         title: string
         description: string
       }
-      importExcel: {
+      darkMode: {
+        title: string
+        description: string
+      }
+      multiExportInvoice: {
+        title: string
+        description: string
+      }
+      documentApproval: {
+        title: string
+        description: string
+      }
+      purchasePriceMovement: {
+        title: string
+        description: string
+      }
+      stockMovementRealtime: {
+        title: string
+        description: string
+      }
+      stockRealtime: {
+        title: string
+        description: string
+      }
+      stockTransfer: {
+        title: string
+        description: string
+      }
+      vendorPayables: {
+        title: string
+        description: string
+      }
+      customerReceivables: {
+        title: string
+        description: string
+      }
+      authorizationGroup: {
         title: string
         description: string
       }
@@ -195,6 +231,10 @@ export interface Translations {
       description: string
       icon: string
     }>
+  }
+  industries?: {
+    title: string
+    subtitle: string
   }
   aboutPage?: {
     subtitle: string
@@ -600,6 +640,60 @@ export const translations: Record<Locale, Translations> = {
         },
       },
     },
+    industries: {
+      title: 'Industri yang Kami Layani',
+      subtitle: 'Solusi terbaik untuk berbagai industri dan kebutuhan bisnis Anda',
+    },
+    kelolaAjaFeatures: {
+      title: 'Fitur KelolaAja',
+      features: [
+        {
+          title: 'Keamanan',
+          description: 'Seluruh komunikasi dengan server dienkripsi dengan 256-bit SSL encryption.',
+          icon: 'shield',
+        },
+        {
+          title: 'Pembatasan Hak Akses',
+          description: 'Atur hak akses untuk setiap karyawan atau akuntan di perusahaanmu. Pastikan hanya memberi hak akses sesuai kebutuhan.',
+          icon: 'lock',
+        },
+        {
+          title: 'Penyusutan Aset Otomatis',
+          description: 'Perhitungan penyusutan aset tetap akan dilakukan secara otomatis oleh KelolaAja.',
+          icon: 'chart',
+        },
+        {
+          title: 'Akses Dari Mana Saja',
+          description: 'iOs, Android, Windows, Mac semua bisa untuk mengakses KelolaAja. Tak perlu khawatir!',
+          icon: 'cloud',
+        },
+        {
+          title: 'Kustom Akun Akuntansi',
+          description: 'Tambah ubah dan hapus akun akuntansi (Chart of Accounts) sesuai kebutuhan bisnismu.',
+          icon: 'document',
+        },
+        {
+          title: 'Perhitungan Pajak',
+          description: 'Pajakmu akan otomatis dikalkulasi secara realtime oleh KelolaAja. Tak perlu lagi ribet hitung-hitung pajak.',
+          icon: 'calculator',
+        },
+        {
+          title: 'Kustomisasi Pajak',
+          description: 'Buat pajak sesuai kebutuhan, berapa persen potongannya dan sebagainya.',
+          icon: 'tax',
+        },
+        {
+          title: 'Statistik Bisnis',
+          description: 'Dapatkan grafik statistik secara realtime untuk memantau performa bisnismu setiap saat.',
+          icon: 'statistics',
+        },
+        {
+          title: 'Import Data Masal Excel',
+          description: 'Import data invoice, purchase order, produk dan sebagainya dengan file excel, bisa ratusan data dalam satu waktu.',
+          icon: 'import',
+        },
+      ],
+    },
     processSteps: {
       title: 'Kelola Usahamu,',
       steps: {
@@ -629,17 +723,53 @@ export const translations: Record<Locale, Translations> = {
     erpBenefits: {
       title: 'Keuntungan Menggunakan Software ERP KelolaAja',
       benefits: {
-        purchasing: {
-          title: 'Purchasing',
-          description: 'Buat purchase order dan faktur dalam satu langkah mudah.',
+        sales: {
+          title: 'Penjualan',
+          description: 'Kelola seluruh proses penjualan secara terintegrasi, mulai dari penawaran, pesanan pelanggan, pengiriman, hingga penagihan dan penerimaan pembayaran. Dengan alur yang jelas dan data yang tercatat rapi, KelolaAja membantu meningkatkan kontrol penjualan, mempercepat siklus penagihan, serta memastikan setiap transaksi tercatat akurat dan mudah dipantau.',
         },
         multiWarehouse: {
           title: 'Multi Gudang',
-          description: 'KelolaAja stok produkmu dibanyak tempat dengan mudah dan pantau stok pergudang secara realtime.',
+          description: 'Kelola stok dan pergerakan barang di berbagai lokasi gudang secara terpusat dan real-time. KelolaAja membantu memastikan kontrol stok yang lebih akurat, meminimalkan selisih persediaan, serta mendukung operasional distribusi yang lebih efisien di setiap gudang.',
         },
-        importExcel: {
-          title: 'Import dari Excel',
-          description: 'Unggah data produk dan stok dari Excel. Semua informasi otomatis terintegrasi ke sistem KelolaAja.',
+        darkMode: {
+          title: 'Dark Mode',
+          description: 'Nikmati tampilan antarmuka yang lebih nyaman untuk penggunaan jangka panjang, terutama saat bekerja di malam hari atau di lingkungan minim cahaya.',
+        },
+        multiExportInvoice: {
+          title: 'Multi Export Invoice',
+          description: 'Ekspor invoice penjualan ke berbagai format sesuai kebutuhan bisnis, seperti PDF A4, kwitansi, maupun format thermal. KelolaAja memudahkan penyesuaian dokumen penagihan untuk kebutuhan administrasi, pencetakan, dan pengiriman ke pelanggan, tanpa proses tambahan yang rumit.',
+        },
+        documentApproval: {
+          title: 'Approval Dokumen',
+          description: 'Kelola proses persetujuan dokumen secara terkontrol sebelum transaksi diproses lebih lanjut. KelolaAja membantu memastikan setiap invoice dan dokumen penting telah melalui tahapan verifikasi yang tepat, mengurangi risiko kesalahan, serta menjaga kepatuhan dan akurasi data dalam operasional bisnis.',
+        },
+        purchasePriceMovement: {
+          title: 'Pergerakan Harga Beli',
+          description: 'Pantau riwayat dan perubahan harga beli barang secara detail berdasarkan transaksi, waktu, dan tipe dokumen. KelolaAja membantu memberikan visibilitas penuh terhadap tren harga pembelian, sehingga bisnis dapat mengambil keputusan pembelian yang lebih tepat, mengontrol biaya, dan menjaga konsistensi margin.',
+        },
+        stockMovementRealtime: {
+          title: 'Pergerakan Stok Real Time',
+          description: 'Pantau setiap pergerakan stok masuk dan keluar secara real-time berdasarkan transaksi, gudang, dan periode tertentu. KelolaAja memberikan visibilitas penuh atas saldo persediaan, membantu mencegah selisih stok, serta memastikan pengambilan keputusan operasional yang lebih cepat dan akurat.',
+        },
+        stockRealtime: {
+          title: 'Stok Real Time',
+          description: 'Pantau ketersediaan stok secara real-time di setiap gudang dan kategori barang. KelolaAja membantu memastikan informasi persediaan selalu akurat, memudahkan perencanaan operasional, serta mencegah kehabisan atau kelebihan stok yang dapat mengganggu kelancaran bisnis.',
+        },
+        stockTransfer: {
+          title: 'Transfer Stok',
+          description: 'Kelola perpindahan stok antar gudang secara terkontrol dan terdokumentasi. KelolaAja memastikan setiap transfer barang tercatat dengan jelas, menjaga akurasi saldo persediaan di setiap lokasi, serta mendukung kelancaran distribusi tanpa risiko selisih stok.',
+        },
+        vendorPayables: {
+          title: 'Hutang Vendor',
+          description: 'Pantau dan kelola kewajiban pembayaran ke vendor secara terstruktur dan transparan. KelolaAja membantu memantau jatuh tempo, umur hutang, serta status pembayaran setiap transaksi, sehingga arus kas lebih terkontrol dan risiko keterlambatan pembayaran dapat diminimalkan.',
+        },
+        customerReceivables: {
+          title: 'Piutang Pelanggan',
+          description: 'Kelola piutang pelanggan secara terstruktur dan real-time. KelolaAja membantu memantau jatuh tempo, umur piutang, serta status pembayaran setiap transaksi penjualan, sehingga arus kas lebih terjaga dan risiko piutang macet dapat diminimalkan.',
+        },
+        authorizationGroup: {
+          title: 'Grup Otorisasi',
+          description: 'Atur hak akses dan kewenangan pengguna sesuai peran dan tanggung jawab masing-masing. KelolaAja membantu memastikan setiap transaksi dan fitur hanya dapat diakses oleh pihak yang berwenang, sehingga kontrol internal lebih terjaga, risiko kesalahan berkurang, dan keamanan operasional tetap terjamin.',
         },
       },
     },
@@ -702,9 +832,9 @@ export const translations: Record<Locale, Translations> = {
     },
     aboutKelolaAja: {
       title: 'Apa Itu KelolaAja?',
-      subtitle: 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia',
-      description: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.',
-      highlight: 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+      subtitle: '',
+      description: 'KelolaAja adalah software ERP terintegrasi yang dikembangkan khusus untuk menjawab kebutuhan small to growing businesses di Indonesia. Dirancang untuk menyederhanakan proses manajemen keuangan, pembukuan, pelaporan, hingga operasional bisnis lainnya secara menyeluruh, KelolaAja memungkinkan perusahaan untuk mengelola dan memantau aktivitas bisnis secara real-time, dari mana saja, dengan efisiensi tinggi dan akurasi yang konsisten.',
+      highlight: 'Meski dioptimalkan untuk bisnis yang sedang tumbuh, KelolaAja dibangun dengan standar dan kapabilitas enterprise-class. Ini memastikan bahwa perusahaan skala besar sekalipun tetap dapat mengandalkan KelolaAja dalam memenuhi kompleksitas kebutuhan internal mereka.',
       question: 'Ada pertanyaan?',
       contactVia: 'Kontak kami via WhatsApp',
       ctaText: 'Coba Gratis Sekarang',
@@ -715,10 +845,6 @@ export const translations: Record<Locale, Translations> = {
       showAll: 'Lihat Semua FAQ',
       showLess: 'Tampilkan Lebih Sedikit',
       items: [
-        {
-          question: 'Apa itu KelolaAja?',
-          answer: 'KelolaAja adalah software ERP terintegrasi yang dikembangkan khusus untuk menjawab kebutuhan small to growing businesses di Indonesia. Dirancang untuk menyederhanakan proses manajemen keuangan, pembukuan, pelaporan, hingga operasional bisnis lainnya secara menyeluruh, KelolaAja memungkinkan perusahaan untuk mengelola dan memantau aktivitas bisnis secara real-time, dari mana saja, dengan efisiensi tinggi dan akurasi yang konsisten.\n\nMeski dioptimalkan untuk bisnis yang sedang tumbuh, KelolaAja dibangun dengan standar dan kapabilitas enterprise-class. Ini memastikan bahwa perusahaan skala besar sekalipun tetap dapat mengandalkan KelolaAja dalam memenuhi kompleksitas kebutuhan internal mereka.',
-        },
         {
           question: 'Apa yang membedakan KelolaAja dari software ERP lain di pasaran?',
           answer: 'KelolaAja menghadirkan keseimbangan antara kualitas sistem, kedalaman fitur, dan keterjangkauan biaya. Dibanding ERP lokal maupun global, KelolaAja menawarkan solusi yang komprehensif dan efisien secara biaya, tanpa mengorbankan fungsionalitas inti.',
@@ -817,56 +943,6 @@ export const translations: Record<Locale, Translations> = {
           ],
           ctaText: 'Coba Gratis Sekarang',
           badgeColor: 'green',
-        },
-      ],
-    },
-    kelolaAjaFeatures: {
-      title: 'Fitur KelolaAja',
-      features: [
-        {
-          title: 'Keamanan',
-          description: 'Seluruh komunikasi dengan server dienkripsi dengan 256-bit SSL encryption.',
-          icon: 'shield',
-        },
-        {
-          title: 'Pembatasan Hak Akses',
-          description: 'Atur hak akses untuk setiap karyawan atau akuntan di perusahaanmu. Pastikan hanya memberi hak akses sesuai kebutuhan.',
-          icon: 'lock',
-        },
-        {
-          title: 'Penyusutan Aset Otomatis',
-          description: 'Perhitungan penyusutan aset tetap akan dilakukan secara otomatis oleh KelolaAja.',
-          icon: 'chart',
-        },
-        {
-          title: 'Akses Dari Mana Saja',
-          description: 'iOs, Android, Windows, Mac semua bisa untuk mengakses KelolaAja. Tak perlu khawatir!',
-          icon: 'cloud',
-        },
-        {
-          title: 'Kustom Akun Akuntansi',
-          description: 'Tambah ubah dan hapus akun akuntansi (Chart of Accounts) sesuai kebutuhan bisnismu.',
-          icon: 'document',
-        },
-        {
-          title: 'Perhitungan Pajak',
-          description: 'Pajakmu akan otomatis dikalkulasi secara realtime oleh KelolaAja. Tak perlu lagi ribet hitung-hitung pajak.',
-          icon: 'calculator',
-        },
-        {
-          title: 'Kustomisasi Pajak',
-          description: 'Buat pajak sesuai kebutuhan, berapa persen potongannya dan sebagainya.',
-          icon: 'tax',
-        },
-        {
-          title: 'Statistik Bisnis',
-          description: 'Dapatkan grafik statistik secara realtime untuk memantau performa bisnismu setiap saat.',
-          icon: 'statistics',
-        },
-        {
-          title: 'Import Data Masal Excel',
-          description: 'Import data invoice, purchase order, produk dan sebagainya dengan file excel, bisa ratusan data dalam satu waktu.',
-          icon: 'import',
         },
       ],
     },
@@ -1076,8 +1152,8 @@ export const translations: Record<Locale, Translations> = {
       },
       coreValues: {
         badge: 'Our Philosophy',
-        title: 'Our Philosophy',
-        impact: 'Our Philosophy',
+        title: 'IMPACT',
+        impact: 'IMPACT',
         fromImpact: 'dari Our Philosophy',
         values: {
           I: {
@@ -1246,17 +1322,53 @@ export const translations: Record<Locale, Translations> = {
     erpBenefits: {
       title: 'Benefits of Using KelolaAja ERP Software',
       benefits: {
-        purchasing: {
-          title: 'Purchasing',
-          description: 'Create purchase orders and invoices in one easy step.',
+        sales: {
+          title: 'Sales',
+          description: 'Manage the entire sales process in an integrated manner, from quotations, customer orders, delivery, to invoicing and payment receipt. With clear flow and neatly recorded data, KelolaAja helps improve sales control, speed up billing cycles, and ensure every transaction is accurately recorded and easy to monitor.',
         },
         multiWarehouse: {
           title: 'Multi Warehouse',
-          description: 'Manage your product stock in many places easily and monitor stock per warehouse in real-time.',
+          description: 'Manage stock and goods movement across various warehouse locations centrally and in real-time. KelolaAja helps ensure more accurate stock control, minimize inventory discrepancies, and support more efficient distribution operations in each warehouse.',
         },
-        importExcel: {
-          title: 'Import from Excel',
-          description: 'Upload product and stock data from Excel. All information automatically integrated into KelolaAja system.',
+        darkMode: {
+          title: 'Dark Mode',
+          description: 'Enjoy a more comfortable interface display for long-term use, especially when working at night or in low-light environments.',
+        },
+        multiExportInvoice: {
+          title: 'Multi Export Invoice',
+          description: 'Export sales invoices to various formats according to business needs, such as A4 PDF, receipts, or thermal format. KelolaAja makes it easy to customize billing documents for administrative needs, printing, and sending to customers, without complicated additional processes.',
+        },
+        documentApproval: {
+          title: 'Document Approval',
+          description: 'Manage document approval processes in a controlled manner before transactions are processed further. KelolaAja helps ensure every invoice and important document has gone through the appropriate verification stages, reducing the risk of errors, and maintaining compliance and data accuracy in business operations.',
+        },
+        purchasePriceMovement: {
+          title: 'Purchase Price Movement',
+          description: 'Monitor the history and changes in purchase prices of goods in detail based on transactions, time, and document type. KelolaAja helps provide full visibility into purchasing price trends, so businesses can make more appropriate purchasing decisions, control costs, and maintain margin consistency.',
+        },
+        stockMovementRealtime: {
+          title: 'Stock Movement Real Time',
+          description: 'Monitor every stock movement in and out in real-time based on transactions, warehouses, and specific periods. KelolaAja provides full visibility over inventory balances, helps prevent stock discrepancies, and ensures faster and more accurate operational decision-making.',
+        },
+        stockRealtime: {
+          title: 'Stock Real Time',
+          description: 'Monitor stock availability in real-time in every warehouse and goods category. KelolaAja helps ensure inventory information is always accurate, facilitates operational planning, and prevents stock shortages or excess that can disrupt business smoothness.',
+        },
+        stockTransfer: {
+          title: 'Stock Transfer',
+          description: 'Manage stock transfers between warehouses in a controlled and documented manner. KelolaAja ensures every goods transfer is clearly recorded, maintains inventory balance accuracy at each location, and supports smooth distribution without the risk of stock discrepancies.',
+        },
+        vendorPayables: {
+          title: 'Vendor Payables',
+          description: 'Monitor and manage payment obligations to vendors in a structured and transparent manner. KelolaAja helps monitor due dates, aging of payables, and payment status of each transaction, so cash flow is more controlled and the risk of late payment can be minimized.',
+        },
+        customerReceivables: {
+          title: 'Customer Receivables',
+          description: 'Manage customer receivables in a structured and real-time manner. KelolaAja helps monitor due dates, aging of receivables, and payment status of each sales transaction, so cash flow is better maintained and the risk of bad debts can be minimized.',
+        },
+        authorizationGroup: {
+          title: 'Authorization Group',
+          description: 'Set user access rights and authorities according to their respective roles and responsibilities. KelolaAja helps ensure every transaction and feature can only be accessed by authorized parties, so internal control is better maintained, the risk of errors is reduced, and operational security remains guaranteed.',
         },
       },
     },
@@ -1313,8 +1425,8 @@ export const translations: Record<Locale, Translations> = {
       ],
     },
     finalCTA: {
-      title: 'Manage Your Business Finance Easily!!!',
-      tryFree: 'Try Free Now',
+      title: 'Manage Your Business Finances Easily!!!',
+      tryFree: 'Try For Free Now',
       scheduleDemo: 'Schedule Demo',
     },
     aboutKelolaAja: {
@@ -1696,8 +1808,8 @@ export const translations: Record<Locale, Translations> = {
       },
       coreValues: {
         badge: 'Our Philosophy',
-        title: 'Our Philosophy',
-        impact: 'Our Philosophy',
+        title: 'IMPACT',
+        impact: 'IMPACT',
         fromImpact: 'from Our Philosophy',
         values: {
           I: {

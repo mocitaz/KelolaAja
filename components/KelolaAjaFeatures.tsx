@@ -117,29 +117,40 @@ const iconMap: Record<string, () => JSX.Element> = {
   import: ImportIcon
 };
 
-export default function KelolaAjaFeatures() {
+interface KelolaAjaFeaturesProps {
+  data?: KelolaAjaFeature[]
+}
+
+export default function KelolaAjaFeatures({ data }: KelolaAjaFeaturesProps) {
   const { t, locale } = useLanguage();
   const [features, setFeatures] = useState<KelolaAjaFeature[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(
     () => {
-      fetchFeatures();
+      if (data && data.length > 0) {
+        setFeatures(data.filter((f: KelolaAjaFeature) => f.isActive));
+        setLoading(false);
+      } else {
+        fetchFeatures();
+      }
     },
-    [locale]
+    [locale, data]
   );
 
   const fetchFeatures = async () => {
+    if (data && data.length > 0) return;
+
     const result = await fetchPublicData<KelolaAjaFeature[]>(
       `${API_ENDPOINTS.PUBLIC.KELOLAAJA_FEATURES.LIST}?locale=${locale}`
     )
-    
+
     if (result.success && Array.isArray(result.data)) {
       setFeatures(result.data.filter((f: KelolaAjaFeature) => f.isActive))
     } else {
       setFeatures([])
     }
-    
+
     setLoading(false)
   }
 
@@ -153,13 +164,13 @@ export default function KelolaAjaFeatures() {
   const featuresData =
     features.length > 0
       ? {
-          title: fallbackFeaturesData.title,
-          features: features.map(f => ({
-            title: f.title || "",
-            description: f.description || "",
-            icon: f.iconName || "shield"
-          }))
-        }
+        title: fallbackFeaturesData.title,
+        features: features.map(f => ({
+          title: f.title || "",
+          description: f.description || "",
+          icon: f.iconName || "shield"
+        }))
+      }
       : fallbackFeaturesData;
 
   if (loading) {

@@ -18,7 +18,11 @@ interface Testimonial {
   displayOrder: number
 }
 
-export default function Testimonials() {
+interface TestimonialsProps {
+  data?: Testimonial[]
+}
+
+export default function Testimonials({ data }: TestimonialsProps) {
   const { t } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -26,20 +30,28 @@ export default function Testimonials() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchTestimonials()
-  }, [])
+    if (data && data.length > 0) {
+      setTestimonials(data.filter((t: Testimonial) => t.isActive))
+      setLoading(false)
+    } else {
+      fetchTestimonials()
+    }
+  }, [data])
 
   const fetchTestimonials = async () => {
+    // Only fetch if data prop is not provided
+    if (data && data.length > 0) return
+
     const result = await fetchPublicData<Testimonial[]>(
       API_ENDPOINTS.PUBLIC.TESTIMONIALS.LIST
     )
-    
+
     if (result.success && Array.isArray(result.data)) {
       setTestimonials(result.data.filter((t: Testimonial) => t.isActive))
     } else {
       setTestimonials([]) // Will use fallback data
     }
-    
+
     setLoading(false)
   }
 
@@ -134,9 +146,8 @@ export default function Testimonials() {
           {/* Testimonials Grid */}
           <div className="relative">
             <div
-              className={`grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6 transition-opacity duration-300 ${
-                isAnimating ? 'opacity-50' : 'opacity-100'
-              }`}
+              className={`grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6 transition-opacity duration-300 ${isAnimating ? 'opacity-50' : 'opacity-100'
+                }`}
             >
               {getVisibleTestimonials().map((testimonial, index) => (
                 <ScrollAnimation
@@ -146,48 +157,47 @@ export default function Testimonials() {
                   duration={500}
                 >
                   <div
-                    className={`bg-white rounded-xl p-5 lg:p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-primary-200 group ${
-                      index === 1 ? 'hidden lg:block' : ''
-                    }`}
+                    className={`bg-white rounded-xl p-5 lg:p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-primary-200 group ${index === 1 ? 'hidden lg:block' : ''
+                      }`}
                   >
-                  {/* Quote Icon */}
-                  <div className="mb-4">
-                    <svg
-                      className="w-6 h-6 text-primary-500 opacity-40"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.996 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.984zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                    </svg>
-                  </div>
-
-                  {/* Quote Text */}
-                  <p className="text-gray-700 leading-relaxed text-sm lg:text-base mb-5">
-                    {testimonial.testimonialText}
-                  </p>
-
-                  {/* Author Info */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-gray-200">
-                      <Image
-                        src={testimonial.imageUrl || "/images/common/default-profile.png"}
-                        alt={testimonial.personName}
-                        fill
-                        className="object-cover"
-                        sizes="40px"
-                      />
+                    {/* Quote Icon */}
+                    <div className="mb-4">
+                      <svg
+                        className="w-6 h-6 text-primary-500 opacity-40"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.996 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.984zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                      </svg>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-gray-900 text-sm lg:text-base truncate">
-                        {testimonial.personName}
-                      </p>
-                      <p className="text-xs lg:text-sm text-gray-600 truncate">
-                        {testimonial.position}
-                        {testimonial.company && `, ${testimonial.company}`}
-                      </p>
+
+                    {/* Quote Text */}
+                    <p className="text-gray-700 leading-relaxed text-sm lg:text-base mb-5">
+                      {testimonial.testimonialText}
+                    </p>
+
+                    {/* Author Info */}
+                    <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 shadow-sm border-2 border-gray-200">
+                        <Image
+                          src={testimonial.imageUrl || "/images/common/default-profile.png"}
+                          alt={testimonial.personName}
+                          fill
+                          className="object-cover"
+                          sizes="40px"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-gray-900 text-sm lg:text-base truncate">
+                          {testimonial.personName}
+                        </p>
+                        <p className="text-xs lg:text-sm text-gray-600 truncate">
+                          {testimonial.position}
+                          {testimonial.company && `, ${testimonial.company}`}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
                 </ScrollAnimation>
               ))}
             </div>
@@ -234,11 +244,10 @@ export default function Testimonials() {
                   key={index}
                   onClick={() => goToTestimonial(index)}
                   disabled={isAnimating}
-                  className={`rounded-full transition-all duration-300 ${
-                    isActive
+                  className={`rounded-full transition-all duration-300 ${isActive
                       ? 'bg-primary-600 w-8 h-2'
                       : 'bg-gray-300 hover:bg-gray-400 w-2 h-2'
-                  }`}
+                    }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
               )

@@ -58,7 +58,7 @@ export default function AuditLogsPage() {
 
       const response = await apiFetch(`${API_ENDPOINTS.ADMIN.AUDIT_LOGS.LIST}?${params}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setLogs(data.data);
         setTotalPages(data.meta.totalPages);
@@ -88,12 +88,16 @@ export default function AuditLogsPage() {
     return 'bg-gray-50 text-gray-700 border border-gray-200';
   };
 
-  const filteredLogs = logs.filter(log =>
-    log.action?.toLowerCase().includes(search.toLowerCase()) ||
-    log.entityType?.toLowerCase().includes(search.toLowerCase()) ||
-    log.user?.fullName?.toLowerCase().includes(search.toLowerCase()) ||
-    (log.entityName && log.entityName.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filteredLogs = logs.filter(log => {
+    if (!search) return true;
+    const searchLower = search.toLowerCase();
+    return (
+      log.action?.toLowerCase().includes(searchLower) ||
+      log.entityType?.toLowerCase().includes(searchLower) ||
+      log.user?.fullName?.toLowerCase().includes(searchLower) ||
+      (log.entityName && log.entityName.toLowerCase().includes(searchLower))
+    );
+  });
 
   const columns = [
     {

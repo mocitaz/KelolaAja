@@ -123,8 +123,12 @@ export default function SiteConfigPage() {
   const categories = Array.from(new Set(configs.map(c => c.category)));
 
   const filteredConfigs = configs.filter(config => {
-    const matchesSearch = config.configKey?.toLowerCase().includes(search.toLowerCase()) ||
-      (config.description && config.description.toLowerCase().includes(search.toLowerCase()));
+    if (!search && selectedCategory === 'all') return true;
+
+    const matchesSearch = !search || (
+      (config.configKey && config.configKey.toLowerCase().includes(search.toLowerCase())) ||
+      (config.description && config.description.toLowerCase().includes(search.toLowerCase()))
+    );
     const matchesCategory = selectedCategory === 'all' || config.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -178,11 +182,10 @@ export default function SiteConfigPage() {
     {
       header: 'Visibility',
       render: (config: SiteConfig) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          config.isPublic
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${config.isPublic
             ? 'bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] border border-[#039edb]/20'
             : 'bg-gray-50 text-gray-700 border border-gray-200'
-        }`}>
+          }`}>
           {config.isPublic ? 'Public' : 'Private'}
         </span>
       ),
@@ -227,7 +230,7 @@ export default function SiteConfigPage() {
           >
             <TrashIcon className="h-4 w-4" />
           </button>
-      </div>
+        </div>
       ),
     },
   ];
@@ -274,8 +277,8 @@ export default function SiteConfigPage() {
           <SearchBar
             value={search}
             onChange={setSearch}
-              placeholder="Search by key or description..."
-            />
+            placeholder="Search by key or description..."
+          />
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -333,13 +336,13 @@ export default function SiteConfigPage() {
         >
           <form onSubmit={handleAdd} className="space-y-3">
             <div className="grid grid-cols-1 gap-3">
-                <div>
+              <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">Config Key</label>
-                  <input
-                    type="text"
+                <input
+                  type="text"
                   required
-                    value={formData.configKey}
-                    onChange={(e) => setFormData({ ...formData, configKey: e.target.value })}
+                  value={formData.configKey}
+                  onChange={(e) => setFormData({ ...formData, configKey: e.target.value })}
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
                   placeholder="config.key.name"
                 />
@@ -348,12 +351,12 @@ export default function SiteConfigPage() {
                 <label className="block text-xs font-semibold text-gray-700 mb-1">Config Value</label>
                 <input
                   type="text"
-                    required
+                  required
                   value={formData.configValue}
                   onChange={(e) => setFormData({ ...formData, configValue: e.target.value })}
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                  />
-                </div>
+                />
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">Value Type</label>
@@ -400,8 +403,8 @@ export default function SiteConfigPage() {
                 />
                 <label htmlFor="isPublic" className="text-xs text-gray-700">Public (accessible via API)</label>
               </div>
-              </div>
-            </form>
+            </div>
+          </form>
         </AdminModal>
       )}
 
@@ -486,8 +489,8 @@ export default function SiteConfigPage() {
                 />
                 <label htmlFor="isPublicEdit" className="text-xs text-gray-700">Public (accessible via API)</label>
               </div>
-              </div>
-            </form>
+            </div>
+          </form>
         </AdminModal>
       )}
 
@@ -516,11 +519,11 @@ export default function SiteConfigPage() {
           }
         >
           <div className="space-y-3">
-              <div>
+            <div>
               <span className="text-xs font-semibold text-gray-700">Key:</span>
               <p className="text-xs font-mono text-gray-900 mt-1">{selectedConfig.configKey}</p>
-              </div>
-              <div>
+            </div>
+            <div>
               <span className="text-xs font-semibold text-gray-700">Value:</span>
               <div className="mt-1 p-2 bg-gray-50 rounded-lg border border-gray-200">
                 {selectedConfig.valueType === 'json' ? (
@@ -531,11 +534,11 @@ export default function SiteConfigPage() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3 text-xs">
-                <div>
+              <div>
                 <span className="font-semibold text-gray-700">Type:</span>
                 <p className="text-gray-600 mt-1">{selectedConfig.valueType}</p>
-                </div>
-                <div>
+              </div>
+              <div>
                 <span className="font-semibold text-gray-700">Category:</span>
                 <p className="text-gray-600 mt-1 capitalize">{selectedConfig.category.replace('_', ' ')}</p>
               </div>
@@ -544,12 +547,12 @@ export default function SiteConfigPage() {
                 <p className="text-gray-600 mt-1">{selectedConfig.isPublic ? 'Public' : 'Private'}</p>
               </div>
             </div>
-              {selectedConfig.description && (
-                <div>
+            {selectedConfig.description && (
+              <div>
                 <span className="text-xs font-semibold text-gray-700">Description:</span>
                 <p className="text-xs text-gray-600 mt-1">{selectedConfig.description}</p>
-                </div>
-              )}
+              </div>
+            )}
           </div>
         </AdminModal>
       )}

@@ -50,34 +50,34 @@ export default function FeaturesPage() {
   // Gunakan data dari API jika ada, jika tidak gunakan fallback dari translation
   const featuresWithImages = featurePagesData.length > 0
     ? featurePagesData.map((page) => ({
-        title: page.title,
-        shortDesc: page.description,
-        image: slugToImage[page.pageSlug] || '/images/common/default.jpg',
-        link: `/features/${page.pageSlug}`,
-      }))
+      title: page.title,
+      shortDesc: page.description,
+      image: slugToImage[page.pageSlug] || '/images/common/default.jpg',
+      link: `/features/${page.pageSlug}`,
+    }))
     : features.map((feature, index) => {
-        const images = [
-          '/images/finance/feature-finance.jpg',
-          '/images/manufacturing/feature-manufacturing.jpg',
-          '/images/project/feature-project.jpg',
-          '/images/sales/feature-sales.jpg',
-          '/images/inventory/feature-inventory.jpg',
-          '/images/hr/feature-hr.jpg',
-        ]
-        const links = [
-          '/features/finance',
-          '/features/manufacturing',
-          '/features/project',
-          '/features/sales',
-          '/features/inventory',
-          '#', // HR page tidak ada
-        ]
-        return {
-          ...feature,
-          image: images[index] || '/images/common/default.jpg',
-          link: links[index] || '#',
-        }
-      })
+      const images = [
+        '/images/finance/feature-finance.jpg',
+        '/images/manufacturing/feature-manufacturing.jpg',
+        '/images/project/feature-project.jpg',
+        '/images/sales/feature-sales.jpg',
+        '/images/inventory/feature-inventory.jpg',
+        '/images/hr/feature-hr.jpg',
+      ]
+      const links = [
+        '/features/finance',
+        '/features/manufacturing',
+        '/features/project',
+        '/features/sales',
+        '/features/inventory',
+        '#', // HR page tidak ada
+      ]
+      return {
+        ...feature,
+        image: images[index] || '/images/common/default.jpg',
+        link: links[index] || '#',
+      }
+    })
 
   if (loading) {
     return (
@@ -98,7 +98,7 @@ export default function FeaturesPage() {
   return (
     <main className="min-h-screen bg-white">
       <Navbar />
-      
+
       {/* Hero Section - Enhanced */}
       <section className="relative pt-32 lg:pt-40 pb-16 lg:pb-20 bg-gradient-to-br from-[#0498da]/5 via-white to-[#71bf44]/5 overflow-hidden">
         {/* Animated background elements */}
@@ -107,7 +107,7 @@ export default function FeaturesPage() {
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#71bf44]/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
           <div className="absolute -bottom-40 left-1/2 w-80 h-80 bg-[#0498da]/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
         </div>
-        
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollAnimation direction="fade" delay={0} duration={800}>
             <div className="text-center max-w-5xl mx-auto">
@@ -118,7 +118,7 @@ export default function FeaturesPage() {
                   {locale === 'id' ? 'Fitur Lengkap' : 'Complete Features'}
                 </span>
               </div>
-              
+
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-extrabold text-gray-900 mb-6 leading-tight">
                 {hero?.title ? (
                   hero.title.includes('KelolaAja') ? (
@@ -198,10 +198,10 @@ export default function FeaturesPage() {
                         </p>
                         <div className="text-primary-600 hover:text-primary-700 font-medium text-sm lg:text-base inline-flex items-center gap-1.5 transition-colors duration-300 group/link w-fit flex-shrink-0 mt-auto">
                           {learnMore}
-                          <svg 
-                            className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" 
-                            fill="none" 
-                            stroke="currentColor" 
+                          <svg
+                            className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300"
+                            fill="none"
+                            stroke="currentColor"
                             viewBox="0 0 24 24"
                           >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -306,7 +306,7 @@ export default function FeaturesPage() {
                 </div>
               </ScrollAnimation>
             </div>
-            
+
             {/* Right: FAQ Section */}
             <div>
               <FAQSection />

@@ -31,12 +31,12 @@ export default function Navbar() {
       }
 
       const target = event.target as HTMLElement
-      
+
       // Skip if clicking on dropdown button
       if (target.closest('button')) {
         return
       }
-      
+
       // Check each dropdown
       if (isFeaturesDropdownOpen && featuresDropdownRef.current && !featuresDropdownRef.current.contains(target)) {
         setIsFeaturesDropdownOpen(false)
@@ -137,397 +137,366 @@ export default function Navbar() {
             {/* Desktop Navigation - Centered */}
             <nav className="hidden lg:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2">
               <div className="flex items-center gap-5 lg:gap-6">
-              {/* Features Dropdown */}
-              <div 
-                className="relative" 
-                ref={featuresDropdownRef}
-                onMouseEnter={() => {
-                  if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-                    setIsFeaturesDropdownOpen(true)
-                    setIsIndustriesDropdownOpen(false)
-                    setIsCompanyDropdownOpen(false)
-                  }
-                }}
-                onMouseLeave={() => {
-                  // Don't close on mouse leave from button, let dropdown handle it
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsFeaturesDropdownOpen(prev => !prev)
-                    setIsIndustriesDropdownOpen(false)
-                    setIsCompanyDropdownOpen(false)
+                {/* Features Dropdown */}
+                <div
+                  className="relative"
+                  ref={featuresDropdownRef}
+                  onMouseEnter={() => {
+                    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+                      setIsFeaturesDropdownOpen(true)
+                      setIsIndustriesDropdownOpen(false)
+                      setIsCompanyDropdownOpen(false)
+                    }
                   }}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${
-                    isFeaturesDropdownOpen
-                      ? 'text-primary-600 border-b-2 border-primary-600'
-                      : 'text-gray-700 hover:text-primary-600'
-                  }`}
+                  onMouseLeave={() => {
+                    // Don't close on mouse leave from button, let dropdown handle it
+                  }}
                 >
-                  <span>{t.nav.features}</span>
-                  <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isFeaturesDropdownOpen ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsFeaturesDropdownOpen(prev => !prev)
+                      setIsIndustriesDropdownOpen(false)
+                      setIsCompanyDropdownOpen(false)
+                    }}
+                    className={`flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${isFeaturesDropdownOpen
+                        ? 'text-primary-600 border-b-2 border-primary-600'
+                        : 'text-gray-700 hover:text-primary-600'
+                      }`}
                   >
-                    <path d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+                    <span>{t.nav.features}</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-200 ${isFeaturesDropdownOpen ? 'rotate-180' : ''
+                        }`}
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
 
-                {/* Dropdown Menu - 2 Column Layout */}
-                {isFeaturesDropdownOpen && (
-                  <div 
-                    className="absolute left-1/2 top-full mt-1 w-[800px] max-w-[calc(100vw-3rem)] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
-                    style={{ 
-                      transform: 'translateX(-50%)',
-                    }}
-                    onMouseEnter={() => {
-                      if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-                        setIsFeaturesDropdownOpen(true)
-                      }
-                    }}
-                    onMouseLeave={() => {
-                      if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-                        setTimeout(() => setIsFeaturesDropdownOpen(false), 200)
-                      }
-                    }}
-                  >
-                    <div className="flex">
-                      {/* Left Sidebar */}
-                      <div className="w-44 bg-gray-50 border-r border-gray-200 flex flex-col">
-                        <div className="p-3 border-b border-gray-200">
-                          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            FITUR
-                          </h3>
+                  {/* Dropdown Menu - 2 Column Layout */}
+                  {isFeaturesDropdownOpen && (
+                    <div
+                      className="absolute left-1/2 top-full mt-1 w-[800px] max-w-[calc(100vw-3rem)] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
+                      style={{
+                        transform: 'translateX(-50%)',
+                      }}
+                      onMouseEnter={() => {
+                        if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+                          setIsFeaturesDropdownOpen(true)
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+                          setTimeout(() => setIsFeaturesDropdownOpen(false), 200)
+                        }
+                      }}
+                    >
+                      <div className="flex">
+                        {/* Left Sidebar */}
+                        <div className="w-44 bg-gray-50 border-r border-gray-200 flex flex-col">
+                          <div className="p-3 border-b border-gray-200">
+                            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                              FITUR
+                            </h3>
+                          </div>
+                          <div className="flex-1 py-1">
+                            {featuresCategories.map((category, index) => (
+                              <button
+                                key={index}
+                                onClick={() => setActiveFeaturesCategory(index)}
+                                onMouseEnter={() => setActiveFeaturesCategory(index)}
+                                className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors rounded-r-lg ${activeFeaturesCategory === index
+                                    ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
+                                    : 'text-gray-700 hover:bg-gray-100'
+                                  }`}
+                              >
+                                {category.label}
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex-1 py-1">
-                          {featuresCategories.map((category, index) => (
-                            <button
-                              key={index}
-                              onClick={() => setActiveFeaturesCategory(index)}
-                              onMouseEnter={() => setActiveFeaturesCategory(index)}
-                              className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors rounded-r-lg ${
-                                activeFeaturesCategory === index
-                                  ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
-                                  : 'text-gray-700 hover:bg-gray-100'
-                              }`}
-                            >
-                              {category.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
 
-                      {/* Right Content Area - Grid Layout */}
-                      <div className="flex-1 p-4 flex flex-col">
-                        <div className="grid grid-cols-2 gap-2.5 flex-1">
-                          {featuresCategories[activeFeaturesCategory].items.map((item, index) => (
-                            <a
-                              key={index}
-                              href={item.href}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setIsFeaturesDropdownOpen(false)
-                              }}
-                              className="block p-3 rounded-lg hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200 cursor-pointer"
-                            >
-                              <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">
-                                {item.label}
-                              </h4>
-                              <p className="text-xs text-gray-600 leading-snug line-clamp-2">
-                                {item.description}
-                              </p>
-                            </a>
-                          ))}
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-gray-200">
-                          <a
-                            href="/features"
-                            className="text-xs text-primary-600 hover:text-primary-700 font-medium inline-flex items-center gap-1 group/link"
-                          >
-                            {locale === 'id' ? 'Lihat semua fitur' : 'View all features'}
-                            <svg className="w-3 h-3 group-hover/link:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </a>
+                        {/* Right Content Area - Grid Layout */}
+                        <div className="flex-1 p-4 flex flex-col">
+                          <div className="grid grid-cols-2 gap-2.5 flex-1">
+                            {featuresCategories[activeFeaturesCategory].items.map((item, index) => (
+                              <a
+                                key={index}
+                                href={item.href}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setIsFeaturesDropdownOpen(false)
+                                }}
+                                className="block p-3 rounded-lg hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200 cursor-pointer"
+                              >
+                                <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">
+                                  {item.label}
+                                </h4>
+                                <p className="text-xs text-gray-600 leading-snug line-clamp-2">
+                                  {item.description}
+                                </p>
+                              </a>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
 
-              {/* Industries Dropdown */}
-              <div 
-                className="relative" 
-                ref={industriesDropdownRef}
-                onMouseEnter={() => {
-                  if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-                    setIsIndustriesDropdownOpen(true)
-                    setIsFeaturesDropdownOpen(false)
-                    setIsCompanyDropdownOpen(false)
-                  }
-                }}
-                onMouseLeave={() => {
-                  // Don't close on mouse leave from button, let dropdown handle it
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsIndustriesDropdownOpen(prev => !prev)
-                    setIsFeaturesDropdownOpen(false)
-                    setIsCompanyDropdownOpen(false)
+                {/* Industries Dropdown */}
+                <div
+                  className="relative"
+                  ref={industriesDropdownRef}
+                  onMouseEnter={() => {
+                    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+                      setIsIndustriesDropdownOpen(true)
+                      setIsFeaturesDropdownOpen(false)
+                      setIsCompanyDropdownOpen(false)
+                    }
                   }}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${
-                    isIndustriesDropdownOpen
-                      ? 'text-primary-600 border-b-2 border-primary-600'
-                      : 'text-gray-700 hover:text-primary-600'
-                  }`}
+                  onMouseLeave={() => {
+                    // Don't close on mouse leave from button, let dropdown handle it
+                  }}
                 >
-                  <span>{t.nav.industries}</span>
-                  <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isIndustriesDropdownOpen ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsIndustriesDropdownOpen(prev => !prev)
+                      setIsFeaturesDropdownOpen(false)
+                      setIsCompanyDropdownOpen(false)
+                    }}
+                    className={`flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${isIndustriesDropdownOpen
+                        ? 'text-primary-600 border-b-2 border-primary-600'
+                        : 'text-gray-700 hover:text-primary-600'
+                      }`}
                   >
-                    <path d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+                    <span>{t.nav.industries}</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-200 ${isIndustriesDropdownOpen ? 'rotate-180' : ''
+                        }`}
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
 
-                {/* Dropdown Menu - 2 Column Layout */}
-                {isIndustriesDropdownOpen && (
-                  <div 
-                    className="absolute left-1/2 top-full mt-1 w-[720px] max-w-[calc(100vw-3rem)] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
-                    style={{ 
-                      transform: 'translateX(-50%)',
-                    }}
-                    onMouseEnter={() => {
-                      if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-                        setIsIndustriesDropdownOpen(true)
-                      }
-                    }}
-                    onMouseLeave={() => {
-                      if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-                        setTimeout(() => setIsIndustriesDropdownOpen(false), 200)
-                      }
-                    }}
-                  >
-                    <div className="flex">
-                      {/* Left Sidebar */}
-                      <div className="w-44 bg-gray-50 border-r border-gray-200 flex flex-col">
-                        <div className="p-3 border-b border-gray-200">
-                          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            INDUSTRI
-                          </h3>
+                  {/* Dropdown Menu - 2 Column Layout */}
+                  {isIndustriesDropdownOpen && (
+                    <div
+                      className="absolute left-1/2 top-full mt-1 w-[720px] max-w-[calc(100vw-3rem)] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
+                      style={{
+                        transform: 'translateX(-50%)',
+                      }}
+                      onMouseEnter={() => {
+                        if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+                          setIsIndustriesDropdownOpen(true)
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+                          setTimeout(() => setIsIndustriesDropdownOpen(false), 200)
+                        }
+                      }}
+                    >
+                      <div className="flex">
+                        {/* Left Sidebar */}
+                        <div className="w-44 bg-gray-50 border-r border-gray-200 flex flex-col">
+                          <div className="p-3 border-b border-gray-200">
+                            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                              INDUSTRI
+                            </h3>
+                          </div>
+                          <div className="flex-1 py-1">
+                            {industriesCategories.map((category, index) => (
+                              <button
+                                key={index}
+                                onClick={() => setActiveIndustriesCategory(index)}
+                                onMouseEnter={() => setActiveIndustriesCategory(index)}
+                                className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors rounded-r-lg ${activeIndustriesCategory === index
+                                    ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
+                                    : 'text-gray-700 hover:bg-gray-100'
+                                  }`}
+                              >
+                                {category.label}
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex-1 py-1">
-                          {industriesCategories.map((category, index) => (
-                            <button
-                              key={index}
-                              onClick={() => setActiveIndustriesCategory(index)}
-                              onMouseEnter={() => setActiveIndustriesCategory(index)}
-                              className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors rounded-r-lg ${
-                                activeIndustriesCategory === index
-                                  ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
-                                  : 'text-gray-700 hover:bg-gray-100'
-                              }`}
-                            >
-                              {category.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
 
-                      {/* Right Content Area - Grid Layout */}
-                      <div className="flex-1 p-4 flex flex-col">
-                        <div className="grid grid-cols-2 gap-2.5 flex-1">
-                          {industriesCategories[activeIndustriesCategory].items.map((item, index) => (
-                            <a
-                              key={index}
-                              href={item.href}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setIsIndustriesDropdownOpen(false)
-                              }}
-                              className="block p-3 rounded-lg hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200 cursor-pointer"
-                            >
-                              <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">
-                                {item.label}
-                              </h4>
-                              <p className="text-xs text-gray-600 leading-snug line-clamp-2">
-                                {item.description}
-                              </p>
-                            </a>
-                          ))}
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-gray-200">
-                          <a
-                            href="/industries"
-                            className="text-xs text-primary-600 hover:text-primary-700 font-medium inline-flex items-center gap-1 group/link"
-                          >
-                            {locale === 'id' ? 'Lihat semua industri' : 'View all industries'}
-                            <svg className="w-3 h-3 group-hover/link:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </a>
+                        {/* Right Content Area - Grid Layout */}
+                        <div className="flex-1 p-4 flex flex-col">
+                          <div className="grid grid-cols-2 gap-2.5 flex-1">
+                            {industriesCategories[activeIndustriesCategory].items.map((item, index) => (
+                              <a
+                                key={index}
+                                href={item.href}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setIsIndustriesDropdownOpen(false)
+                                }}
+                                className="block p-3 rounded-lg hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200 cursor-pointer"
+                              >
+                                <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">
+                                  {item.label}
+                                </h4>
+                                <p className="text-xs text-gray-600 leading-snug line-clamp-2">
+                                  {item.description}
+                                </p>
+                              </a>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
 
-              {/* Pricing Link */}
-              <a
-                href="/pricing"
-                className="px-4 py-1.5 text-sm text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200"
-              >
-                {t.nav.pricing}
-              </a>
-
-              {/* Company Dropdown */}
-              <div 
-                className="relative" 
-                ref={companyDropdownRef}
-                onMouseEnter={() => {
-                  if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-                    setIsCompanyDropdownOpen(true)
-                    setIsFeaturesDropdownOpen(false)
-                    setIsIndustriesDropdownOpen(false)
-                  }
-                }}
-                onMouseLeave={() => {
-                  // Don't close on mouse leave from button, let dropdown handle it
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsCompanyDropdownOpen(prev => !prev)
-                    setIsFeaturesDropdownOpen(false)
-                    setIsIndustriesDropdownOpen(false)
-                  }}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${
-                    isCompanyDropdownOpen
-                      ? 'text-primary-600 border-b-2 border-primary-600'
-                      : 'text-gray-700 hover:text-primary-600'
-                  }`}
+                {/* Pricing Link */}
+                <a
+                  href="/pricing"
+                  className="px-4 py-1.5 text-sm text-gray-700 hover:text-primary-600 font-medium transition-colors duration-200"
                 >
-                  <span>{t.nav.company}</span>
-                  <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isCompanyDropdownOpen ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+                  {t.nav.pricing}
+                </a>
 
-                {/* Dropdown Menu - 2 Column Layout */}
-                {isCompanyDropdownOpen && (
-                  <div 
-                    className="absolute left-1/2 top-full mt-1 w-[600px] max-w-[calc(100vw-3rem)] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
-                    style={{ 
-                      transform: 'translateX(-50%)',
+                {/* Company Dropdown */}
+                <div
+                  className="relative"
+                  ref={companyDropdownRef}
+                  onMouseEnter={() => {
+                    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+                      setIsCompanyDropdownOpen(true)
+                      setIsFeaturesDropdownOpen(false)
+                      setIsIndustriesDropdownOpen(false)
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    // Don't close on mouse leave from button, let dropdown handle it
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsCompanyDropdownOpen(prev => !prev)
+                      setIsFeaturesDropdownOpen(false)
+                      setIsIndustriesDropdownOpen(false)
                     }}
-                    onMouseEnter={() => {
-                      if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-                        setIsCompanyDropdownOpen(true)
-                      }
-                    }}
-                    onMouseLeave={() => {
-                      if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-                        setTimeout(() => setIsCompanyDropdownOpen(false), 200)
-                      }
-                    }}
+                    className={`flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${isCompanyDropdownOpen
+                        ? 'text-primary-600 border-b-2 border-primary-600'
+                        : 'text-gray-700 hover:text-primary-600'
+                      }`}
                   >
-                    <div className="flex">
-                      {/* Left Sidebar */}
-                      <div className="w-44 bg-gray-50 border-r border-gray-200 flex flex-col">
-                        <div className="p-3 border-b border-gray-200">
-                          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            PERUSAHAAN
-                          </h3>
-                        </div>
-                        <div className="flex-1 py-1">
-                          {companyCategories.map((category, index) => (
-                            <button
-                              key={index}
-                              onClick={() => setActiveCompanyCategory(index)}
-                              onMouseEnter={() => setActiveCompanyCategory(index)}
-                              className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors rounded-r-lg ${
-                                activeCompanyCategory === index
-                                  ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
-                                  : 'text-gray-700 hover:bg-gray-100'
-                              }`}
-                            >
-                              {category.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
+                    <span>{t.nav.company}</span>
+                    <svg
+                      className={`w-4 h-4 transition-transform duration-200 ${isCompanyDropdownOpen ? 'rotate-180' : ''
+                        }`}
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
 
-                      {/* Right Content Area - Grid Layout */}
-                      <div className="flex-1 p-4 flex flex-col">
-                        <div className="grid grid-cols-2 gap-2.5 flex-1">
-                          {companyCategories[activeCompanyCategory].items.map((item, index) => (
+                  {/* Dropdown Menu - 2 Column Layout */}
+                  {isCompanyDropdownOpen && (
+                    <div
+                      className="absolute left-1/2 top-full mt-1 w-[600px] max-w-[calc(100vw-3rem)] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50"
+                      style={{
+                        transform: 'translateX(-50%)',
+                      }}
+                      onMouseEnter={() => {
+                        if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+                          setIsCompanyDropdownOpen(true)
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+                          setTimeout(() => setIsCompanyDropdownOpen(false), 200)
+                        }
+                      }}
+                    >
+                      <div className="flex">
+                        {/* Left Sidebar */}
+                        <div className="w-44 bg-gray-50 border-r border-gray-200 flex flex-col">
+                          <div className="p-3 border-b border-gray-200">
+                            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                              PERUSAHAAN
+                            </h3>
+                          </div>
+                          <div className="flex-1 py-1">
+                            {companyCategories.map((category, index) => (
+                              <button
+                                key={index}
+                                onClick={() => setActiveCompanyCategory(index)}
+                                onMouseEnter={() => setActiveCompanyCategory(index)}
+                                className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors rounded-r-lg ${activeCompanyCategory === index
+                                    ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
+                                    : 'text-gray-700 hover:bg-gray-100'
+                                  }`}
+                              >
+                                {category.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Right Content Area - Grid Layout */}
+                        <div className="flex-1 p-4 flex flex-col">
+                          <div className="grid grid-cols-2 gap-2.5 flex-1">
+                            {companyCategories[activeCompanyCategory].items.map((item, index) => (
+                              <a
+                                key={index}
+                                href={item.href}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setIsCompanyDropdownOpen(false)
+                                }}
+                                className="block p-3 rounded-lg hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200 cursor-pointer"
+                              >
+                                <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">
+                                  {item.label}
+                                </h4>
+                                <p className="text-xs text-gray-600 leading-snug line-clamp-2">
+                                  {item.description}
+                                </p>
+                              </a>
+                            ))}
+                          </div>
+                          <div className="mt-4 pt-3 border-t border-gray-200">
                             <a
-                              key={index}
-                              href={item.href}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setIsCompanyDropdownOpen(false)
-                              }}
-                              className="block p-3 rounded-lg hover:bg-gray-50 transition-all duration-200 group border border-transparent hover:border-gray-200 cursor-pointer"
+                              href="/contact"
+                              className="text-xs text-primary-600 hover:text-primary-700 font-medium inline-flex items-center gap-1 group/link"
                             >
-                              <h4 className="text-sm font-semibold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">
-                                {item.label}
-                              </h4>
-                              <p className="text-xs text-gray-600 leading-snug line-clamp-2">
-                                {item.description}
-                              </p>
+                              {locale === 'id' ? 'Hubungi kami' : 'Contact us'}
+                              <svg className="w-3 h-3 group-hover/link:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
                             </a>
-                          ))}
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-gray-200">
-                          <a
-                            href="/contact"
-                            className="text-xs text-primary-600 hover:text-primary-700 font-medium inline-flex items-center gap-1 group/link"
-                          >
-                            {locale === 'id' ? 'Hubungi kami' : 'Contact us'}
-                            <svg className="w-3 h-3 group-hover/link:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </a>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
               </div>
             </nav>
 
@@ -558,9 +527,8 @@ export default function Navbar() {
                   </svg>
                   <span>{locale.toUpperCase()}</span>
                   <svg
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                      isLanguageDropdownOpen ? 'rotate-180' : ''
-                    }`}
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${isLanguageDropdownOpen ? 'rotate-180' : ''
+                      }`}
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -571,17 +539,16 @@ export default function Navbar() {
                     <path d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                
+
                 {/* Language Dropdown */}
                 {isLanguageDropdownOpen && (
                   <div className="absolute right-0 top-full mt-2 w-36 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50">
                     <button
                       onClick={() => toggleLanguage('id')}
-                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${
-                        locale === 'id'
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${locale === 'id'
                           ? 'bg-primary-50 text-primary-600 font-semibold'
                           : 'text-gray-700 hover:bg-gray-50'
-                      }`}
+                        }`}
                     >
                       <svg
                         className="w-4 h-4"
@@ -600,11 +567,10 @@ export default function Navbar() {
                     </button>
                     <button
                       onClick={() => toggleLanguage('en')}
-                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${
-                        locale === 'en'
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${locale === 'en'
                           ? 'bg-primary-50 text-primary-600 font-semibold'
                           : 'text-gray-700 hover:bg-gray-50'
-                      }`}
+                        }`}
                     >
                       <svg
                         className="w-4 h-4"
@@ -684,17 +650,16 @@ export default function Navbar() {
                   </svg>
                   <span className="text-xs">{locale.toUpperCase()}</span>
                 </button>
-                
+
                 {/* Language Dropdown */}
                 {isLanguageDropdownOpen && (
                   <div className="absolute right-0 top-full mt-2 w-32 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50">
                     <button
                       onClick={() => toggleLanguage('id')}
-                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${
-                        locale === 'id'
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${locale === 'id'
                           ? 'bg-primary-50 text-primary-600 font-semibold'
                           : 'text-gray-700 hover:bg-gray-50'
-                      }`}
+                        }`}
                     >
                       <svg
                         className="w-4 h-4"
@@ -713,11 +678,10 @@ export default function Navbar() {
                     </button>
                     <button
                       onClick={() => toggleLanguage('en')}
-                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${
-                        locale === 'en'
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${locale === 'en'
                           ? 'bg-primary-50 text-primary-600 font-semibold'
                           : 'text-gray-700 hover:bg-gray-50'
-                      }`}
+                        }`}
                     >
                       <svg
                         className="w-4 h-4"
@@ -782,9 +746,8 @@ export default function Navbar() {
                 >
                   <span>{t.nav.features}</span>
                   <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isFeaturesDropdownOpen ? 'rotate-180' : ''
-                    }`}
+                    className={`w-4 h-4 transition-transform duration-200 ${isFeaturesDropdownOpen ? 'rotate-180' : ''
+                      }`}
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -826,9 +789,8 @@ export default function Navbar() {
                 >
                   <span>{t.nav.industries}</span>
                   <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isIndustriesDropdownOpen ? 'rotate-180' : ''
-                    }`}
+                    className={`w-4 h-4 transition-transform duration-200 ${isIndustriesDropdownOpen ? 'rotate-180' : ''
+                      }`}
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -879,9 +841,8 @@ export default function Navbar() {
                 >
                   <span>{t.nav.company}</span>
                   <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isCompanyDropdownOpen ? 'rotate-180' : ''
-                    }`}
+                    className={`w-4 h-4 transition-transform duration-200 ${isCompanyDropdownOpen ? 'rotate-180' : ''
+                      }`}
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"

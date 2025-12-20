@@ -10,6 +10,11 @@ import AdminModal from '@/components/admin/AdminModal';
 import SearchBar from '@/components/admin/SearchBar';
 import ImageUpload from '@/components/admin/ImageUpload';
 
+interface Translation {
+  locale: string;
+  description: string;
+}
+
 interface Partner {
   partnerId: number;
   partnerName: string;
@@ -17,8 +22,8 @@ interface Partner {
   websiteUrl: string | null;
   displayOrder: number;
   isActive: boolean;
-  translations?: any[];
-  logoFileId?: number | null; // Added for file handling
+  translations?: Translation[] | Record<string, any>;
+  logoFileId?: number | null;
 }
 
 export default function PartnersPage() {
@@ -58,9 +63,38 @@ export default function PartnersPage() {
     }
   };
 
-  const filteredPartners = partners.filter(p =>
-    (p.partnerName?.toLowerCase() || '').includes(search.toLowerCase())
-  );
+  const getPartnerContent = (partner: Partner, locale: string) => {
+    let content: { description: string } | undefined;
+
+    if (Array.isArray(partner.translations)) {
+      const found = partner.translations.find(t => t.locale === locale);
+      if (found) content = found;
+    } else if (partner.translations && typeof partner.translations === 'object') {
+      // @ts-ignore
+      const trans = partner.translations[locale];
+      if (trans) {
+        content = { description: trans.description || '' };
+      }
+    }
+
+    if (!content) return { description: '' };
+    return content;
+  };
+
+  const filteredPartners = partners.filter(p => {
+    const searchLower = search.toLowerCase();
+    const matchesName = (p.partnerName?.toLowerCase() || '').includes(searchLower);
+
+    let matchesDesc = false;
+    if (searchLower) {
+      const idContent = getPartnerContent(p, 'id');
+      const enContent = getPartnerContent(p, 'en');
+      matchesDesc = idContent.description.toLowerCase().includes(searchLower) ||
+        enContent.description.toLowerCase().includes(searchLower);
+    }
+
+    return matchesName || matchesDesc;
+  });
 
   const activeCount = partners.filter(p => p.isActive).length;
   const inactiveCount = partners.filter(p => !p.isActive).length;
@@ -106,7 +140,7 @@ export default function PartnersPage() {
         <SearchBar
           value={search}
           onChange={setSearch}
-          placeholder="Search partners by name..."
+          placeholder="Search partners by name or description..."
         />
       </AdminCard>
 
@@ -127,73 +161,75 @@ export default function PartnersPage() {
         </AdminCard>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          {filteredPartners.map((partner) => (
-            <AdminCard key={partner.partnerId} compact>
-              <div className="space-y-3">
-                {/* Logo */}
-                <div className="relative h-24 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border border-gray-200">
-                  {partner.logoUrl ? (
-                    <Image
-                      src={partner.logoUrl}
-                      alt={partner.partnerName}
-                      fill
-                      className="object-contain p-2"
-                    />
-                  ) : (
-                    <BuildingOfficeIcon className="h-10 w-10 text-gray-400" />
-                  )}
-                </div>
+          {filteredPartners.map((partner) => {
+            return (
+              <AdminCard key={partner.partnerId} compact>
+                <div className="space-y-3">
+                  {/* Logo */}
+                  <div className="relative h-24 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border border-gray-200">
+                    {partner.logoUrl ? (
+                      <Image
+                        src={partner.logoUrl}
+                        alt={partner.partnerName}
+                        fill
+                        className="object-contain p-2"
+                      />
+                    ) : (
+                      <BuildingOfficeIcon className="h-10 w-10 text-gray-400" />
+                    )}
+                  </div>
 
-                {/* Info */}
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 truncate mb-1">{partner.partnerName}</h3>
-                  {partner.websiteUrl && (
-                    <a
-                      href={partner.websiteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-xs text-[#039edb] hover:underline"
+                  {/* Info */}
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 truncate mb-1">{partner.partnerName}</h3>
+                    {partner.websiteUrl && (
+                      <a
+                        href={partner.websiteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-xs text-[#039edb] hover:underline"
+                      >
+                        <GlobeAltIcon className="h-3.5 w-3.5" />
+                        Visit Website
+                      </a>
+                    )}
+                  </div>
+
+                  {/* Meta */}
+                  <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
+                    <span>Order: {partner.displayOrder}</span>
+                    <span className={`px-2 py-0.5 rounded-md font-semibold ${partner.isActive
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}>
+                      {partner.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-1.5 pt-2">
+                    <button
+                      onClick={() => {
+                        setEditingPartner(partner);
+                        setShowModal(true);
+                      }}
+                      className="flex-1 px-2.5 py-1.5 text-xs font-semibold text-[#039edb] border border-[#039edb] rounded-lg hover:bg-[#039edb] hover:text-white transition-colors"
                     >
-                      <GlobeAltIcon className="h-3.5 w-3.5" />
-                      Visit Website
-                    </a>
-                  )}
+                      <PencilIcon className="h-3.5 w-3.5 inline mr-1" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(partner.partnerId)}
+                      className="px-2.5 py-1.5 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                      title="Delete"
+                    >
+                      <TrashIcon className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
-
-                {/* Meta */}
-                <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
-                  <span>Order: {partner.displayOrder}</span>
-                  <span className={`px-2 py-0.5 rounded-md font-semibold ${partner.isActive
-                    ? 'bg-green-50 text-green-700 border border-green-200'
-                    : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}>
-                    {partner.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-1.5 pt-2">
-                  <button
-                    onClick={() => {
-                      setEditingPartner(partner);
-                      setShowModal(true);
-                    }}
-                    className="flex-1 px-2.5 py-1.5 text-xs font-semibold text-[#039edb] border border-[#039edb] rounded-lg hover:bg-[#039edb] hover:text-white transition-colors"
-                  >
-                    <PencilIcon className="h-3.5 w-3.5 inline mr-1" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(partner.partnerId)}
-                    className="px-2.5 py-1.5 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
-                    title="Delete"
-                  >
-                    <TrashIcon className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            </AdminCard>
-          ))}
+              </AdminCard>
+            );
+          })}
         </div>
       )}
 
@@ -230,8 +266,8 @@ function PartnerModal({
     websiteUrl: partner?.websiteUrl || '',
     displayOrder: partner?.displayOrder || 0,
     isActive: partner?.isActive ?? true,
-    logoFileId: partner?.logoFileId || null, // Track file ID
-    translations: partner?.translations && partner.translations.length > 0 ? partner.translations : [
+    logoFileId: partner?.logoFileId || null,
+    translations: [
       { locale: 'id', description: '' },
       { locale: 'en', description: '' },
     ],
@@ -241,12 +277,22 @@ function PartnerModal({
 
   useEffect(() => {
     if (partner) {
-      const initialTranslations = partner.translations && Array.isArray(partner.translations)
-        ? partner.translations
-        : [
-          { locale: 'id', description: (partner as any)['description'] || '' }, // Fallback if flattened
-          { locale: 'en', description: '' }
-        ];
+      // Helper to extract content correctly
+      const getTrans = (locale: string) => {
+        if (Array.isArray(partner.translations)) {
+          const found = partner.translations.find(t => t.locale === locale);
+          return found ? { description: found.description } : null;
+        } else if (partner.translations && typeof partner.translations === 'object') {
+          // @ts-ignore
+          const trans = partner.translations[locale];
+          if (trans) return { description: trans.description || '' };
+        }
+        // Fallback for flat structure if absolutely necessary, but preferred to be clean
+        return null;
+      };
+
+      const idTrans = getTrans('id');
+      const enTrans = getTrans('en');
 
       setFormData({
         partnerName: partner.partnerName,
@@ -255,7 +301,10 @@ function PartnerModal({
         displayOrder: partner.displayOrder,
         isActive: partner.isActive,
         logoFileId: partner.logoFileId || null,
-        translations: initialTranslations
+        translations: [
+          { locale: 'id', description: idTrans?.description || '' },
+          { locale: 'en', description: enTrans?.description || '' }
+        ]
       });
     }
   }, [partner]);
@@ -284,11 +333,14 @@ function PartnerModal({
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
         translations: translationsMap,
-        logoFileId: formData.logoFileId, // Include file ID in payload
+        logoFileId: formData.logoFileId,
       };
 
       const response = await apiFetch(endpoint, {
         method: partner ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(submitData),
       });
 
@@ -359,7 +411,7 @@ function PartnerModal({
                 setFormData(prev => ({
                   ...prev,
                   logoFileId: fileId,
-                  logoUrl: filePath // Update preview URL immediately
+                  logoUrl: filePath
                 }));
               }}
               onRemove={() => {
@@ -376,7 +428,7 @@ function PartnerModal({
             <label className="block text-xs font-semibold text-gray-700 mb-1">Website URL</label>
             <input
               type="url"
-              value={formData.websiteUrl}
+              value={formData.websiteUrl || ''}
               onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               placeholder="https://example.com"

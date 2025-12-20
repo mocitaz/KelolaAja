@@ -16,11 +16,12 @@ interface Translation {
 
 interface Feature {
   featureId: number;
+  featureCode: string;
   featureName: string;
   category: string;
   displayOrder: number;
   isActive: boolean;
-  translations?: Translation[];
+  translations?: Translation[] | Record<string, any>;
 }
 
 export default function FeaturesPage() {
@@ -63,10 +64,51 @@ export default function FeaturesPage() {
     }
   };
 
-  const filteredFeatures = features.filter(f =>
-    f.featureName?.toLowerCase().includes(search.toLowerCase()) ||
-    f.category?.toLowerCase().includes(search.toLowerCase())
-  );
+  const getFeatureContent = (feature: Feature, locale: string) => {
+    let content: { title: string; description: string } | undefined;
+
+    if (Array.isArray(feature.translations)) {
+      content = feature.translations.find(t => t.locale === locale);
+    } else if (feature.translations && typeof feature.translations === 'object') {
+      // @ts-ignore
+      const trans = feature.translations[locale];
+      if (trans) {
+        // Map backend fields to frontend interface
+        content = {
+          title: trans.featureName || trans.title || '',
+          description: trans.description || ''
+        };
+      }
+    }
+
+    // Fallback
+    if (!content) {
+      return { title: feature.featureName, description: '' };
+    }
+    return content;
+  };
+
+  const filteredFeatures = features.filter(f => {
+    const searchLower = search.toLowerCase();
+
+    // Check main fields
+    const matchesMain = f.featureName?.toLowerCase().includes(searchLower) ||
+      f.featureCode?.toLowerCase().includes(searchLower) ||
+      f.category?.toLowerCase().includes(searchLower);
+
+    // Check translations
+    let matchesTrans = false;
+    if (searchLower) {
+      const idContent = getFeatureContent(f, 'id');
+      const enContent = getFeatureContent(f, 'en');
+      matchesTrans = idContent.title.toLowerCase().includes(searchLower) ||
+        idContent.description.toLowerCase().includes(searchLower) ||
+        enContent.title.toLowerCase().includes(searchLower) ||
+        enContent.description.toLowerCase().includes(searchLower);
+    }
+
+    return matchesMain || matchesTrans;
+  });
 
   const activeCount = features.filter(f => f.isActive).length;
   const inactiveCount = features.filter(f => !f.isActive).length;
@@ -133,76 +175,83 @@ export default function FeaturesPage() {
         </AdminCard>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filteredFeatures.map((feature) => (
-            <AdminCard key={feature.featureId} compact>
-              <div className="space-y-3">
-                {/* Header */}
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-bold text-gray-900 truncate">{feature.featureName}</h3>
-                    <p className="text-[10px] text-gray-500 font-mono">{feature.featureCode}</p>
-                    <span className="inline-block mt-1 px-2 py-0.5 text-xs font-semibold rounded-md bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] border border-[#039edb]/20 capitalize">
-                      {feature.category}
-                    </span>
-                  </div>
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1 ${feature.isActive ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                </div>
+          {filteredFeatures.map((feature) => {
+            const idContent = getFeatureContent(feature, 'id');
+            const enContent = getFeatureContent(feature, 'en');
 
-                {/* Translations */}
-                {feature.translations && feature.translations.length > 0 && (
+            return (
+              <AdminCard key={feature.featureId} compact>
+                <div className="space-y-3">
+                  {/* Header */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-bold text-gray-900 truncate">{feature.featureName}</h3>
+                      <p className="text-[10px] text-gray-500 font-mono">{feature.featureCode}</p>
+                      <span className="inline-block mt-1 px-2 py-0.5 text-xs font-semibold rounded-md bg-gradient-to-r from-[#039edb]/10 to-[#71bf44]/10 text-[#039edb] border border-[#039edb]/20 capitalize">
+                        {feature.category}
+                      </span>
+                    </div>
+                    <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1 ${feature.isActive ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                  </div>
+
+                  {/* Translations Preview */}
                   <div className="space-y-2 text-xs">
-                    {feature.translations.map((trans, idx) => (
-                      <div key={idx} className="bg-gray-50 rounded-lg p-2 border border-gray-200">
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
-                            {trans.locale.toUpperCase()}
-                          </span>
-                          <span className="font-semibold text-gray-900 truncate">{trans.title}</span>
-                        </div>
-                        <p className="text-gray-600 line-clamp-2 text-xs leading-relaxed">{trans.description}</p>
+                    <div className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="px-1.5 py-0.5 text-[10px] font-bold rounded text-white bg-red-500">ID</span>
+                        <span className="font-semibold text-gray-900 truncate">{idContent.title}</span>
                       </div>
-                    ))}
+                      <p className="text-gray-600 line-clamp-2 text-xs leading-relaxed">{idContent.description}</p>
+                    </div>
+
+                    <div className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="px-1.5 py-0.5 text-[10px] font-bold rounded text-white bg-blue-500">EN</span>
+                        <span className="font-semibold text-gray-900 truncate">{enContent.title}</span>
+                      </div>
+                      <p className="text-gray-600 line-clamp-2 text-xs leading-relaxed">{enContent.description}</p>
+                    </div>
                   </div>
-                )}
 
-                {/* Meta */}
-                <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
-                  <span>Order: {feature.displayOrder}</span>
-                </div>
+                  {/* Meta */}
+                  <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
+                    <span>Order: {feature.displayOrder}</span>
+                  </div>
 
-                {/* Actions */}
-                <div className="flex gap-1.5 pt-2">
-                  <button
-                    onClick={() => {
-                      setPreviewFeature(feature);
-                      setShowPreviewModal(true);
-                    }}
-                    className="flex-1 px-2.5 py-1.5 text-xs font-semibold bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition-opacity"
-                  >
-                    <EyeIcon className="h-3.5 w-3.5 inline mr-1" />
-                    View
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEditingFeature(feature);
-                      setShowModal(true);
-                    }}
-                    className="px-2.5 py-1.5 text-[#039edb] border border-[#039edb] rounded-lg hover:bg-[#039edb] hover:text-white transition-colors"
-                    title="Edit"
-                  >
-                    <PencilIcon className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(feature.featureId)}
-                    className="px-2.5 py-1.5 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
-                    title="Delete"
-                  >
-                    <TrashIcon className="h-3.5 w-3.5" />
-                  </button>
+                  {/* Actions */}
+                  <div className="flex gap-1.5 pt-2">
+                    <button
+                      onClick={() => {
+                        setPreviewFeature(feature);
+                        setShowPreviewModal(true);
+                      }}
+                      className="flex-1 px-2.5 py-1.5 text-xs font-semibold bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white rounded-lg hover:opacity-90 transition-opacity"
+                    >
+                      <EyeIcon className="h-3.5 w-3.5 inline mr-1" />
+                      View
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditingFeature(feature);
+                        setShowModal(true);
+                      }}
+                      className="px-2.5 py-1.5 text-[#039edb] border border-[#039edb] rounded-lg hover:bg-[#039edb] hover:text-white transition-colors"
+                      title="Edit"
+                    >
+                      <PencilIcon className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(feature.featureId)}
+                      className="px-2.5 py-1.5 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                      title="Delete"
+                    >
+                      <TrashIcon className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </AdminCard>
-          ))}
+              </AdminCard>
+            );
+          })}
         </div>
       )}
 
@@ -234,16 +283,6 @@ export default function FeaturesPage() {
   );
 }
 
-interface Feature {
-  featureId: number;
-  featureCode: string;
-  featureName: string;
-  category: string;
-  displayOrder: number;
-  isActive: boolean;
-  translations?: Translation[];
-}
-
 function FeatureModal({
   feature,
   onClose,
@@ -259,7 +298,7 @@ function FeatureModal({
     category: feature?.category || '',
     displayOrder: feature?.displayOrder || 0,
     isActive: feature?.isActive ?? true,
-    translations: feature?.translations || [
+    translations: [
       { locale: 'id', title: '', description: '' },
       { locale: 'en', title: '', description: '' },
     ],
@@ -269,15 +308,37 @@ function FeatureModal({
 
   useEffect(() => {
     if (feature) {
+      // Helper to extract content
+      const getTrans = (locale: string) => {
+        if (Array.isArray(feature.translations)) {
+          const founded = feature.translations.find(t => t.locale === locale);
+          return founded ? { title: founded.title, description: founded.description } : null;
+        } else if (feature.translations && typeof feature.translations === 'object') {
+          // @ts-ignore
+          const trans = feature.translations[locale];
+          // Backend might return featureName instead of title
+          if (trans) {
+            return {
+              title: trans.featureName || trans.title || '',
+              description: trans.description || ''
+            };
+          }
+        }
+        return null;
+      };
+
+      const idTrans = getTrans('id');
+      const enTrans = getTrans('en');
+
       setFormData({
         featureCode: feature.featureCode,
         featureName: feature.featureName,
         category: feature.category,
         displayOrder: feature.displayOrder,
         isActive: feature.isActive,
-        translations: feature.translations || [
-          { locale: 'id', title: '', description: '' },
-          { locale: 'en', title: '', description: '' },
+        translations: [
+          { locale: 'id', title: idTrans?.title || '', description: idTrans?.description || '' },
+          { locale: 'en', title: enTrans?.title || '', description: enTrans?.description || '' },
         ],
       });
     }
@@ -312,6 +373,9 @@ function FeatureModal({
 
       const response = await apiFetch(endpoint, {
         method: feature ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(submitData),
       });
 
@@ -466,6 +530,28 @@ function FeatureModal({
 }
 
 function PreviewModal({ feature, onClose }: { feature: Feature; onClose: () => void }) {
+  // Helper to extract content inside component
+  const getTrans = (locale: string) => {
+    let content = { title: '', description: '' };
+    if (Array.isArray(feature.translations)) {
+      const founded = feature.translations.find(t => t.locale === locale);
+      if (founded) { content = { title: founded.title, description: founded.description }; }
+    } else if (feature.translations && typeof feature.translations === 'object') {
+      // @ts-ignore
+      const trans = feature.translations[locale];
+      if (trans) {
+        content = {
+          title: trans.featureName || trans.title || '',
+          description: trans.description || ''
+        };
+      }
+    }
+    return content;
+  };
+
+  const idTrans = getTrans('id');
+  const enTrans = getTrans('en');
+
   return (
     <AdminModal
       isOpen={true}
@@ -491,21 +577,23 @@ function PreviewModal({ feature, onClose }: { feature: Feature; onClose: () => v
           </span>
         </div>
 
-        {feature.translations && feature.translations.length > 0 && (
-          <div className="space-y-3">
-            {feature.translations.map((trans, idx) => (
-              <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
-                    {trans.locale.toUpperCase()}
-                  </span>
-                  <span className="font-semibold text-gray-900">{trans.title}</span>
-                </div>
-                <p className="text-sm text-gray-700 leading-relaxed">{trans.description}</p>
-              </div>
-            ))}
+        <div className="space-y-3">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-2 py-0.5 text-xs font-bold rounded text-white bg-red-500">ID</span>
+              <span className="font-semibold text-gray-900">{idTrans.title}</span>
+            </div>
+            <p className="text-sm text-gray-700 leading-relaxed">{idTrans.description}</p>
           </div>
-        )}
+
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-2 py-0.5 text-xs font-bold rounded text-white bg-blue-500">EN</span>
+              <span className="font-semibold text-gray-900">{enTrans.title}</span>
+            </div>
+            <p className="text-sm text-gray-700 leading-relaxed">{enTrans.description}</p>
+          </div>
+        </div>
 
         <div className="pt-3 border-t border-gray-200">
           <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">

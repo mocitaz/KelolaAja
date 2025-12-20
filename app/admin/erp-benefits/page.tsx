@@ -20,7 +20,7 @@ interface ERPBenefit {
   iconName: string;
   displayOrder: number;
   isActive: boolean;
-  translations?: Translation[];
+  translations?: Translation[] | Record<string, any>;
 }
 
 export default function ERPBenefitsPage() {
@@ -60,12 +60,40 @@ export default function ERPBenefitsPage() {
     }
   };
 
+  // Helper function to get translation content safely
+  const getBenefitContent = (benefit: ERPBenefit, locale: string) => {
+    let content: { title: string; description: string } | undefined;
+
+    if (Array.isArray(benefit.translations)) {
+      const found = benefit.translations.find(t => t.locale === locale);
+      if (found) content = found;
+    } else if (benefit.translations && typeof benefit.translations === 'object') {
+      // @ts-ignore
+      const trans = benefit.translations[locale];
+      if (trans) {
+        content = {
+          title: trans.title || '',
+          description: trans.description || ''
+        };
+      }
+    }
+
+    if (!content) return { title: '', description: '' };
+    return content;
+  };
+
   const filteredBenefits = benefits.filter(
-    (benefit) =>
-      benefit.iconName?.toLowerCase().includes(search.toLowerCase()) ||
-      (Array.isArray(benefit.translations) && benefit.translations.some((t) =>
-        t.title?.toLowerCase().includes(search.toLowerCase())
-      ))
+    (benefit) => {
+      if (!search) return true;
+      const searchLower = search.toLowerCase();
+
+      const idContent = getBenefitContent(benefit, 'id');
+      const enContent = getBenefitContent(benefit, 'en');
+      const matchesTrans = idContent.title.toLowerCase().includes(searchLower) ||
+        enContent.title.toLowerCase().includes(searchLower);
+
+      return matchesTrans;
+    }
   );
 
   const activeCount = benefits.filter(b => b.isActive).length;
@@ -75,9 +103,9 @@ export default function ERPBenefitsPage() {
     {
       header: 'Title',
       render: (benefit: ERPBenefit) => {
-        const idTrans = benefit.translations?.find(t => t.locale === 'id');
+        const idContent = getBenefitContent(benefit, 'id');
         return (
-          <span className="text-sm font-medium text-gray-900">{idTrans?.title || '-'}</span>
+          <span className="text-sm font-medium text-gray-900">{idContent.title || '-'}</span>
         );
       },
     },
@@ -96,11 +124,10 @@ export default function ERPBenefitsPage() {
     {
       header: 'Status',
       render: (benefit: ERPBenefit) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          benefit.isActive
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${benefit.isActive
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
           {benefit.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -216,7 +243,7 @@ function ERPBenefitModal({
     iconName: benefit?.iconName || '',
     displayOrder: benefit?.displayOrder || 0,
     isActive: benefit?.isActive ?? true,
-    translations: benefit?.translations || [
+    translations: [
       { locale: 'id', title: '', description: '' },
       { locale: 'en', title: '', description: '' },
     ],
@@ -226,13 +253,29 @@ function ERPBenefitModal({
 
   useEffect(() => {
     if (benefit) {
+      // Helper to extract content correctly
+      const getTrans = (locale: string) => {
+        if (Array.isArray(benefit.translations)) {
+          const found = benefit.translations.find(t => t.locale === locale);
+          return found ? { title: found.title, description: found.description } : null;
+        } else if (benefit.translations && typeof benefit.translations === 'object') {
+          // @ts-ignore
+          const trans = benefit.translations[locale];
+          if (trans) return { title: trans.title || '', description: trans.description || '' };
+        }
+        return null;
+      };
+
+      const idTrans = getTrans('id');
+      const enTrans = getTrans('en');
+
       setFormData({
         iconName: benefit.iconName,
         displayOrder: benefit.displayOrder,
         isActive: benefit.isActive,
-        translations: benefit.translations || [
-          { locale: 'id', title: '', description: '' },
-          { locale: 'en', title: '', description: '' },
+        translations: [
+          { locale: 'id', title: idTrans?.title || '', description: idTrans?.description || '' },
+          { locale: 'en', title: enTrans?.title || '', description: enTrans?.description || '' },
         ],
       });
     }
@@ -248,9 +291,28 @@ function ERPBenefitModal({
         ? `/api/v1/erp-benefits/admin/${benefit.benefitId}`
         : '/api/v1/erp-benefits/admin';
 
+      // Transform translations to object map
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach((t: any) => {
+        translationsMap[t.locale] = {
+          title: t.title,
+          description: t.description
+        };
+      });
+
+      const submitData = {
+        iconName: formData.iconName,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: translationsMap,
+      };
+
       const response = await apiFetch(endpoint, {
         method: benefit ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();

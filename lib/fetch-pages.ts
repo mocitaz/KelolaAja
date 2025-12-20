@@ -97,7 +97,7 @@ export async function fetchFeaturePage(
     }
 
     const result = await response.json()
-    
+
     if (result.success && result.data) {
       return result.data
     }
@@ -138,7 +138,7 @@ export async function fetchIndustry(
     }
 
     const result = await response.json()
-    
+
     if (result.success && result.data) {
       return result.data
     }
@@ -177,7 +177,7 @@ export async function fetchAllFeaturePages(
     }
 
     const result = await response.json()
-    
+
     if (result.success && result.data && Array.isArray(result.data)) {
       return result.data
     }
@@ -194,9 +194,125 @@ export async function fetchAllFeaturePages(
  * @param locale - Language locale ('id' or 'en')
  * @returns Array of industries or empty array if failed
  */
+// ... existing imports
+
+/**
+ * Fetch all testimonials
+ */
+export async function fetchTestimonials(): Promise<any[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/testimonials`, { next: { revalidate: 60 } });
+    const result = await response.json();
+    return result.success && Array.isArray(result.data) ? result.data : [];
+  } catch (error) {
+    console.error('Error fetching testimonials:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch all partners
+ */
+export async function fetchPartners(): Promise<any[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/partners`, { next: { revalidate: 60 } });
+    const result = await response.json();
+    return result.success && Array.isArray(result.data) ? result.data : [];
+  } catch (error) {
+    console.error('Error fetching partners:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch all KelolaAja features
+ */
+export async function fetchKelolaAjaFeatures(): Promise<any[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/kelolaaja-features`, { next: { revalidate: 60 } });
+    const result = await response.json();
+    return result.success && Array.isArray(result.data) ? result.data : [];
+  } catch (error) {
+    console.error('Error fetching KelolaAja features:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch all process steps
+ */
+export async function fetchProcessSteps(): Promise<any[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/process-steps`, { next: { revalidate: 60 } });
+    const result = await response.json();
+    return result.success && Array.isArray(result.data) ? result.data : [];
+  } catch (error) {
+    console.error('Error fetching process steps:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch all ERP benefits
+ */
+export async function fetchERPBenefits(): Promise<any[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/erp-benefits`, { next: { revalidate: 60 } });
+    const result = await response.json();
+    return result.success && Array.isArray(result.data) ? result.data : [];
+  } catch (error) {
+    console.error('Error fetching ERP benefits:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch benefit stats
+ */
+export async function fetchBenefitStats(): Promise<any[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/benefit-stats`, { next: { revalidate: 60 } });
+    const result = await response.json();
+    return result.success && Array.isArray(result.data) ? result.data : [];
+  } catch (error) {
+    console.error('Error fetching benefit stats:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch advanced features
+ */
+export async function fetchAdvancedFeatures(): Promise<any[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/advanced-features`, { next: { revalidate: 60 } });
+    const result = await response.json();
+    return result.success && Array.isArray(result.data) ? result.data : [];
+  } catch (error) {
+    console.error('Error fetching advanced features:', error);
+    return [];
+  }
+}
+
+/**
+ * Fetch industries list for landing page (simpler structure)
+ */
+export async function fetchIndustriesList(): Promise<any[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/v1/industries`, { next: { revalidate: 60 } });
+    const result = await response.json();
+    return result.success && Array.isArray(result.data) ? result.data : [];
+  } catch (error) {
+    console.error('Error fetching industries list:', error);
+    return [];
+  }
+}
+
 export async function fetchAllIndustries(
   locale: string = 'id'
 ): Promise<IndustryData[]> {
+  // ... existing implementation
+
   try {
     const response = await fetch(
       `${API_BASE_URL}/api/industries?locale=${locale}`,
@@ -216,7 +332,7 @@ export async function fetchAllIndustries(
     }
 
     const result = await response.json()
-    
+
     if (result.success && result.data && Array.isArray(result.data)) {
       return result.data
     }

@@ -184,7 +184,7 @@ export const API_ENDPOINTS = {
 
     // Media Files
     MEDIA_FILES: {
-      LIST: "/api/v1/media-files/admin",
+      LIST: "/api/v1/media-files/admin/all",
       UPLOAD: "/api/v1/media-files/admin/upload",
       UPDATE: (id: number) => `/api/v1/media-files/admin/${id}`,
       DELETE: (id: number) => `/api/v1/media-files/admin/${id}`,

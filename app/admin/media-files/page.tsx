@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { PhotoIcon, DocumentIcon, VideoCameraIcon, ArrowUpTrayIcon, TrashIcon, PencilIcon, EyeIcon } from '@heroicons/react/24/outline';
-import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
+import { apiFetch, API_ENDPOINTS, API_BASE_URL } from '@/lib/api-config';
 import PageHeader from '@/components/admin/PageHeader';
 import AdminCard from '@/components/admin/AdminCard';
 import AdminModal from '@/components/admin/AdminModal';
@@ -69,7 +69,14 @@ export default function MediaFilesPage() {
       const response = await apiFetch(API_ENDPOINTS.ADMIN.MEDIA_FILES.LIST);
       const data = await response.json();
       if (data.success) {
-        setMediaFiles(data.data || []);
+        // Transform data to match interface and generate full URLs
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const transformData = (data.data || []).map((file: any) => ({
+          ...file,
+          mediaFileId: file.fileId, // Map backend ID to frontend ID
+          fileUrl: file.storageUrl || `${API_BASE_URL}/uploads${file.filePath.startsWith('/') ? '' : '/'}${file.filePath}`
+        }));
+        setMediaFiles(transformData);
       }
     } catch (error) {
       console.error('Error fetching media files:', error);
@@ -154,8 +161,13 @@ export default function MediaFilesPage() {
   };
 
   const filteredFiles = mediaFiles.filter(file => {
-    const matchesSearch = file.fileName.toLowerCase().includes(search.toLowerCase()) ||
-      (file.altText && file.altText.toLowerCase().includes(search.toLowerCase()));
+    if (!search && selectedType === 'all') return true;
+
+    const matchesSearch = !search || (
+      (file.fileName && file.fileName.toLowerCase().includes(search.toLowerCase())) ||
+      (file.altText && file.altText.toLowerCase().includes(search.toLowerCase()))
+    );
+
     const matchesType = selectedType === 'all' || file.fileType === selectedType;
     return matchesSearch && matchesType;
   });
@@ -249,7 +261,7 @@ export default function MediaFilesPage() {
             <AdminCard key={file.mediaFileId} compact>
               <div className="space-y-3">
                 {/* Preview */}
-                <div 
+                <div
                   className="relative h-32 bg-gray-100 rounded-lg flex items-center justify-center cursor-pointer overflow-hidden border border-gray-200"
                   onClick={() => {
                     setSelectedFile(file);

@@ -1,5 +1,6 @@
 'use client'
 
+// Updated to accept data prop for server-side rendering
 import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
@@ -19,15 +20,24 @@ interface AdvancedFeature {
   }[]
 }
 
-export default function AdvancedFeatures() {
+interface AdvancedFeaturesProps {
+  data?: AdvancedFeature[]
+}
+
+export default function AdvancedFeatures({ data }: AdvancedFeaturesProps) {
   const { t, locale } = useLanguage()
   const [features, setFeatures] = useState<AdvancedFeature[]>([])
   const [loading, setLoading] = useState(true)
   const [currentIndex, setCurrentIndex] = useState(0)
-  
+
   useEffect(() => {
-    fetchAdvancedFeatures()
-  }, [])
+    if (data && data.length > 0) {
+      setFeatures(data.filter((f: AdvancedFeature) => f.isActive))
+      setLoading(false)
+    } else {
+      fetchAdvancedFeatures()
+    }
+  }, [data])
 
   const icons = [
     <svg key="finance" className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
@@ -52,83 +62,85 @@ export default function AdvancedFeatures() {
 
   // Use featuresPage data (same as page fitur) with shortDesc
   const featuresPageData = t.featuresPage?.features || []
-  
+
   // Fallback features - same structure as page fitur
   const fallbackFeaturesData = featuresPageData.length > 0
     ? featuresPageData.map((feature, index) => {
-        const images = [
-          '/images/finance/feature-finance.jpg',
-          '/images/manufacturing/feature-manufacturing.jpg',
-          '/images/project/feature-project.jpg',
-          '/images/sales/feature-sales.jpg',
-          '/images/inventory/feature-inventory.jpg',
-          '/images/hr/feature-hr.jpg',
-        ]
-        const links = [
-          '/features/finance',
-          '/features/manufacturing',
-          '/features/project',
-          '/features/sales',
-          '/features/inventory',
-          '/features/hr',
-        ]
-        return {
-          title: feature.title,
-          description: feature.shortDesc || feature.description,
-          image: images[index] || '/images/common/default.jpg',
-          link: index === 5 ? '#' : (links[index] || '#'), // HR & Payroll (index 5) tidak navigasi
-        }
-      })
-    : [
-        {
-          title: 'Keuangan & Akuntansi',
-          description: 'Buat laporan keuangan seperti laba rugi, neraca, dan arus kas secara real-time. Pemantauan buku besar, serta utang dan piutang, menjadi lebih sederhana. Dapatkan laporan kinerja perusahaan yang selalu terkini dan menyeluruh.',
-          image: '/images/finance/feature-finance.jpg',
-          link: '/features/finance',
-        },
-        {
-          title: 'Manufaktur',
-          description: 'KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis. Rencanakan produksi, Bill of Material, serta hitung biaya bahan baku dan overhead produksi pabrik secara otomatis dengan modul manufaktur.',
-          image: '/images/manufacturing/feature-manufacturing.jpg',
-          link: '/features/manufacturing',
-        },
-        {
-          title: 'Manajement Proyek',
-          description: 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim kelolaAja akan selalu membantu sampai Anda bisa.',
-          image: '/images/project/feature-project.jpg',
-          link: '/features/project',
-        },
-        {
-          title: 'Pembelian & Penjualan',
-          description: 'Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi. Dilengkapi fitur DP dan diskon bertingkat. Pantau pengiriman barang, buat tagihan, hingga dengan mudah dalam satu software.',
-          image: '/images/sales/feature-sales.jpg',
-          link: '/features/sales',
-        },
-        {
-          title: 'Produk & Inventory',
-          description: 'KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman. Pantau stok secara real-time, atur harga, dan optimalkan alur distribusi menggunakan satu platform.',
-          image: '/images/inventory/feature-inventory.jpg',
-          link: '/features/inventory',
-        },
-        {
-          title: 'HR & Payroll',
-          description: 'KelolaAja HR dan payroll dengan mudah, mulai dari pengelolaan data karyawan, absensi, hingga perhitungan gaji. Semua proses otomatis, akurat, dan dapat diakses kapan saja, memudahkan manajemen SDM di perusahaan Anda.',
-          image: '/images/hr/feature-hr.jpg',
-          link: '#', // HR page tidak ada, jadi link tidak navigasi
-        },
+      const images = [
+        '/images/finance/feature-finance.jpg',
+        '/images/manufacturing/feature-manufacturing.jpg',
+        '/images/project/feature-project.jpg',
+        '/images/sales/feature-sales.jpg',
+        '/images/inventory/feature-inventory.jpg',
+        '/images/hr/feature-hr.jpg',
       ]
+      const links = [
+        '/features/finance',
+        '/features/manufacturing',
+        '/features/project',
+        '/features/sales',
+        '/features/inventory',
+        '/features/hr',
+      ]
+      return {
+        title: feature.title,
+        description: feature.shortDesc || feature.description,
+        image: images[index] || '/images/common/default.jpg',
+        link: index === 5 ? '#' : (links[index] || '#'), // HR & Payroll (index 5) tidak navigasi
+      }
+    })
+    : [
+      {
+        title: 'Keuangan & Akuntansi',
+        description: 'Buat laporan keuangan seperti laba rugi, neraca, dan arus kas secara real-time. Pemantauan buku besar, serta utang dan piutang, menjadi lebih sederhana. Dapatkan laporan kinerja perusahaan yang selalu terkini dan menyeluruh.',
+        image: '/images/finance/feature-finance.jpg',
+        link: '/features/finance',
+      },
+      {
+        title: 'Manufaktur',
+        description: 'KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis. Rencanakan produksi, Bill of Material, serta hitung biaya bahan baku dan overhead produksi pabrik secara otomatis dengan modul manufaktur.',
+        image: '/images/manufacturing/feature-manufacturing.jpg',
+        link: '/features/manufacturing',
+      },
+      {
+        title: 'Manajement Proyek',
+        description: 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim kelolaAja akan selalu membantu sampai Anda bisa.',
+        image: '/images/project/feature-project.jpg',
+        link: '/features/project',
+      },
+      {
+        title: 'Pembelian & Penjualan',
+        description: 'Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi. Dilengkapi fitur DP dan diskon bertingkat. Pantau pengiriman barang, buat tagihan, hingga dengan mudah dalam satu software.',
+        image: '/images/sales/feature-sales.jpg',
+        link: '/features/sales',
+      },
+      {
+        title: 'Produk & Inventory',
+        description: 'KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman. Pantau stok secara real-time, atur harga, dan optimalkan alur distribusi menggunakan satu platform.',
+        image: '/images/inventory/feature-inventory.jpg',
+        link: '/features/inventory',
+      },
+      {
+        title: 'HR & Payroll',
+        description: 'KelolaAja HR dan payroll dengan mudah, mulai dari pengelolaan data karyawan, absensi, hingga perhitungan gaji. Semua proses otomatis, akurat, dan dapat diakses kapan saja, memudahkan manajemen SDM di perusahaan Anda.',
+        image: '/images/hr/feature-hr.jpg',
+        link: '#', // HR page tidak ada, jadi link tidak navigasi
+      },
+    ]
 
   const fetchAdvancedFeatures = async () => {
+    if (data && data.length > 0) return
+
     const result = await fetchPublicData<AdvancedFeature[]>(
       API_ENDPOINTS.PUBLIC.ADVANCED_FEATURES.LIST
     )
-    
+
     if (result.success && Array.isArray(result.data)) {
       setFeatures(result.data.filter((f: AdvancedFeature) => f.isActive))
     } else {
       setFeatures([])
     }
-    
+
     setLoading(false)
   }
 
@@ -162,14 +174,14 @@ export default function AdvancedFeatures() {
     const title = translation?.title || fallbackFeaturesData[index]?.title || ''
     // SELALU gunakan gambar fallback yang sudah ditentukan
     const fallbackImage = getFallbackImage(title, index)
-    
+
     // Use shortDesc if available from featuresPage, otherwise use description
     const featuresPageItem = featuresPageData[index]
     const shortDesc = featuresPageItem?.shortDesc || featuresPageItem?.description || translation?.description || fallbackFeaturesData[index]?.description || ''
-    
+
     const link = feature.linkUrl || fallbackFeaturesData[index]?.link || '#'
     const isHR = title.toLowerCase().includes('hr') || title.toLowerCase().includes('payroll') || link.includes('/hr')
-    
+
     return {
       title: title,
       description: shortDesc, // Use shortDesc like page fitur
@@ -359,10 +371,10 @@ export default function AdvancedFeatures() {
                                 className="text-primary-600 hover:text-primary-700 font-medium text-sm lg:text-base inline-flex items-center gap-1.5 transition-colors duration-300 group/link w-fit flex-shrink-0 mt-auto"
                               >
                                 {learnMore}
-                                <svg 
-                                  className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" 
-                                  fill="none" 
-                                  stroke="currentColor" 
+                                <svg
+                                  className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300"
+                                  fill="none"
+                                  stroke="currentColor"
                                   viewBox="0 0 24 24"
                                 >
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -384,11 +396,10 @@ export default function AdvancedFeatures() {
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    index === currentIndex
-                      ? 'w-8 bg-primary-600'
-                      : 'w-2 bg-gray-300 hover:bg-gray-400'
-                  }`}
+                  className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex
+                    ? 'w-8 bg-primary-600'
+                    : 'w-2 bg-gray-300 hover:bg-gray-400'
+                    }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}

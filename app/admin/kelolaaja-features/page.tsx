@@ -20,7 +20,7 @@ interface KelolaAjaFeature {
   iconName: string;
   displayOrder: number;
   isActive: boolean;
-  translations?: Translation[];
+  translations?: Translation[] | Record<string, any>;
 }
 
 export default function KelolaAjaFeaturesPage() {
@@ -60,13 +60,38 @@ export default function KelolaAjaFeaturesPage() {
     }
   };
 
-  const filteredFeatures = features.filter(
-    (feature) =>
-      feature.iconName?.toLowerCase().includes(search.toLowerCase()) ||
-      (Array.isArray(feature.translations) && feature.translations.some((t) =>
-        t.title?.toLowerCase().includes(search.toLowerCase())
-      ))
-  );
+  const getFeatureContent = (feature: KelolaAjaFeature, locale: string) => {
+    let content: { title: string; description: string } | undefined;
+
+    if (Array.isArray(feature.translations)) {
+      const found = feature.translations.find(t => t.locale === locale);
+      if (found) content = found;
+    } else if (feature.translations && typeof feature.translations === 'object') {
+      // @ts-ignore
+      const trans = feature.translations[locale];
+      if (trans) {
+        content = {
+          title: trans.title || '',
+          description: trans.description || ''
+        };
+      }
+    }
+
+    if (!content) return { title: '', description: '' };
+    return content;
+  };
+
+  const filteredFeatures = features.filter((feature) => {
+    if (!search) return true;
+    const searchLower = search.toLowerCase();
+
+    const idContent = getFeatureContent(feature, 'id');
+    const enContent = getFeatureContent(feature, 'en');
+    const matchesTrans = idContent.title.toLowerCase().includes(searchLower) ||
+      enContent.title.toLowerCase().includes(searchLower);
+
+    return matchesTrans;
+  });
 
   const activeCount = features.filter(f => f.isActive).length;
   const inactiveCount = features.filter(f => !f.isActive).length;
@@ -75,11 +100,9 @@ export default function KelolaAjaFeaturesPage() {
     {
       header: 'Title',
       render: (feature: KelolaAjaFeature) => {
-        const idTrans = Array.isArray(feature.translations) 
-          ? feature.translations.find(t => t.locale === 'id')
-          : null;
+        const idContent = getFeatureContent(feature, 'id');
         return (
-          <span className="text-sm font-medium text-gray-900">{idTrans?.title || '-'}</span>
+          <span className="text-sm font-medium text-gray-900">{idContent.title || '-'}</span>
         );
       },
     },
@@ -98,11 +121,10 @@ export default function KelolaAjaFeaturesPage() {
     {
       header: 'Status',
       render: (feature: KelolaAjaFeature) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          feature.isActive
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${feature.isActive
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
           {feature.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -218,11 +240,39 @@ function KelolaAjaFeatureModal({
     iconName: feature?.iconName || '',
     displayOrder: feature?.displayOrder || 0,
     isActive: feature?.isActive ?? true,
-    translations: feature?.translations || [
-      { locale: 'id', title: '', description: '' },
-      { locale: 'en', title: '', description: '' },
-    ],
+    translations: routerTranslations(feature)
   });
+
+  // Helper to extract translations safely for initial state
+  function routerTranslations(feat: KelolaAjaFeature | null) {
+    if (!feat) {
+      return [
+        { locale: 'id', title: '', description: '' },
+        { locale: 'en', title: '', description: '' },
+      ];
+    }
+
+    const getTrans = (locale: string) => {
+      if (Array.isArray(feat.translations)) {
+        const found = feat.translations.find(t => t.locale === locale);
+        return found ? { title: found.title, description: found.description } : null;
+      } else if (feat.translations && typeof feat.translations === 'object') {
+        // @ts-ignore
+        const trans = feat.translations[locale];
+        if (trans) return { title: trans.title || '', description: trans.description || '' };
+      }
+      return null;
+    };
+
+    const idTrans = getTrans('id');
+    const enTrans = getTrans('en');
+
+    return [
+      { locale: 'id', title: idTrans?.title || '', description: idTrans?.description || '' },
+      { locale: 'en', title: enTrans?.title || '', description: enTrans?.description || '' },
+    ];
+  }
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -232,10 +282,7 @@ function KelolaAjaFeatureModal({
         iconName: feature.iconName,
         displayOrder: feature.displayOrder,
         isActive: feature.isActive,
-        translations: feature.translations || [
-          { locale: 'id', title: '', description: '' },
-          { locale: 'en', title: '', description: '' },
-        ],
+        translations: routerTranslations(feature)
       });
     }
   }, [feature]);
@@ -250,9 +297,27 @@ function KelolaAjaFeatureModal({
         ? `/api/v1/kelolaaja-features/admin/${feature.featureId}`
         : '/api/v1/kelolaaja-features/admin';
 
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach((t: any) => {
+        translationsMap[t.locale] = {
+          title: t.title,
+          description: t.description
+        };
+      });
+
+      const submitData = {
+        iconName: formData.iconName,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: translationsMap,
+      };
+
       const response = await apiFetch(endpoint, {
         method: feature ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();

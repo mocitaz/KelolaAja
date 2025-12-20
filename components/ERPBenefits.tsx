@@ -19,7 +19,12 @@ interface ERPBenefit {
   }[]
 }
 
-export default function ERPBenefits() {
+interface ERPBenefitsProps {
+  benefits?: ERPBenefit[]
+  stats?: any[] // Placeholder for stats if we implement them later
+}
+
+export default function ERPBenefits({ benefits: propBenefits, stats }: ERPBenefitsProps) {
   const { t, locale } = useLanguage()
   const whatsappLink = createWhatsAppLink()
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0)
@@ -27,14 +32,25 @@ export default function ERPBenefits() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchERPBenefits()
-  }, [])
+    if (propBenefits && propBenefits.length > 0) {
+      const activeBenefits = propBenefits.filter((b: ERPBenefit) => b.isActive)
+      setBenefits(activeBenefits)
+      if (activeBenefits.length > 0) {
+        setExpandedIndex(0)
+      }
+      setLoading(false)
+    } else {
+      fetchERPBenefits()
+    }
+  }, [propBenefits])
 
   const fetchERPBenefits = async () => {
+    if (propBenefits && propBenefits.length > 0) return
+
     const result = await fetchPublicData<ERPBenefit[]>(
       API_ENDPOINTS.PUBLIC.ERP_BENEFITS.LIST
     )
-    
+
     if (result.success && Array.isArray(result.data)) {
       const activeBenefits = result.data.filter((b: ERPBenefit) => b.isActive)
       setBenefits(activeBenefits)
@@ -44,7 +60,7 @@ export default function ERPBenefits() {
     } else {
       setBenefits([]) // Will use fallback data
     }
-    
+
     setLoading(false)
   }
 
@@ -60,19 +76,64 @@ export default function ERPBenefits() {
   // Fallback benefits
   const fallbackBenefits = [
     {
-      title: t.erpBenefits?.benefits?.purchasing?.title || 'Purchasing',
-      description: t.erpBenefits?.benefits?.purchasing?.description || 'Buat purchase order dan faktur dalam satu langkah mudah.',
-      image: '/images/home/purchasing.jpg',
+      title: t.erpBenefits?.benefits?.sales?.title || 'Penjualan',
+      description: t.erpBenefits?.benefits?.sales?.description || 'Kelola seluruh proses penjualan secara terintegrasi, mulai dari penawaran, pesanan pelanggan, pengiriman, hingga penagihan dan penerimaan pembayaran.',
+      image: '/images/benefits/penjualan.png',
     },
     {
       title: t.erpBenefits?.benefits?.multiWarehouse?.title || 'Multi Gudang',
-      description: t.erpBenefits?.benefits?.multiWarehouse?.description || 'KelolaAja stok produkmu dibanyak tempat dengan mudah dan pantau stok pergudang secara realtime.',
-      image: '/images/home/multi-gudang.jpg',
+      description: t.erpBenefits?.benefits?.multiWarehouse?.description || 'Kelola stok dan pergerakan barang di berbagai lokasi gudang secara terpusat dan real-time.',
+      image: '/images/benefits/multi-gudang.png',
     },
     {
-      title: t.erpBenefits?.benefits?.importExcel?.title || 'Import dari Excel',
-      description: t.erpBenefits?.benefits?.importExcel?.description || 'Tidak perlu lagi repot memasukkan data produk dan stok secara manual, cukup ketik di Excel dan unggah. Semua informasi akan otomatis terintegrasi ke dalam sistem KelolaAja.',
-      image: '/images/inventory/import-excel.jpg',
+      title: t.erpBenefits?.benefits?.darkMode?.title || 'Dark Mode',
+      description: t.erpBenefits?.benefits?.darkMode?.description || 'Nikmati tampilan antarmuka yang lebih nyaman untuk penggunaan jangka panjang.',
+      image: '/images/benefits/dark-mode.png',
+    },
+    {
+      title: t.erpBenefits?.benefits?.multiExportInvoice?.title || 'Multi Export Invoice',
+      description: t.erpBenefits?.benefits?.multiExportInvoice?.description || 'Ekspor invoice penjualan ke berbagai format sesuai kebutuhan bisnis.',
+      image: '/images/benefits/multi-export.png',
+    },
+    {
+      title: t.erpBenefits?.benefits?.documentApproval?.title || 'Approval Dokumen',
+      description: t.erpBenefits?.benefits?.documentApproval?.description || 'Kelola proses persetujuan dokumen secara terkontrol sebelum transaksi diproses lebih lanjut.',
+      image: '/images/benefits/approval-dokumen.png',
+    },
+    {
+      title: t.erpBenefits?.benefits?.purchasePriceMovement?.title || 'Pergerakan Harga Beli',
+      description: t.erpBenefits?.benefits?.purchasePriceMovement?.description || 'Pantau riwayat dan perubahan harga beli barang secara detail.',
+      image: '/images/benefits/pergerakan-harga-asli.png',
+    },
+    {
+      title: t.erpBenefits?.benefits?.stockMovementRealtime?.title || 'Pergerakan Stok Real Time',
+      description: t.erpBenefits?.benefits?.stockMovementRealtime?.description || 'Pantau setiap pergerakan stok masuk dan keluar secara real-time.',
+      image: '/images/benefits/pergerakan-stok.png',
+    },
+    {
+      title: t.erpBenefits?.benefits?.stockRealtime?.title || 'Stok Real Time',
+      description: t.erpBenefits?.benefits?.stockRealtime?.description || 'Pantau ketersediaan stok secara real-time di setiap gudang dan kategori barang.',
+      image: '/images/benefits/stok-realtime.png',
+    },
+    {
+      title: t.erpBenefits?.benefits?.stockTransfer?.title || 'Transfer Stok',
+      description: t.erpBenefits?.benefits?.stockTransfer?.description || 'Kelola perpindahan stok antar gudang secara terkontrol dan terdokumentasi.',
+      image: '/images/benefits/transfer-stok.png',
+    },
+    {
+      title: t.erpBenefits?.benefits?.vendorPayables?.title || 'Hutang Vendor',
+      description: t.erpBenefits?.benefits?.vendorPayables?.description || 'Pantau dan kelola kewajiban pembayaran ke vendor secara terstruktur dan transparan.',
+      image: '/images/benefits/hutang-vendor.png',
+    },
+    {
+      title: t.erpBenefits?.benefits?.customerReceivables?.title || 'Piutang Pelanggan',
+      description: t.erpBenefits?.benefits?.customerReceivables?.description || 'Kelola piutang pelanggan secara terstruktur dan real-time.',
+      image: '/images/benefits/piutang-pelanggan.png',
+    },
+    {
+      title: t.erpBenefits?.benefits?.authorizationGroup?.title || 'Grup Otorisasi',
+      description: t.erpBenefits?.benefits?.authorizationGroup?.description || 'Atur hak akses dan kewenangan pengguna sesuai peran dan tanggung jawab masing-masing.',
+      image: '/images/benefits/grup-otorisasi.png',
     },
   ]
 
@@ -122,11 +183,10 @@ export default function ERPBenefits() {
                   duration={500}
                 >
                   <div
-                    className={`bg-white rounded-lg border-2 transition-all duration-300 overflow-hidden ${
-                      isExpanded
-                        ? 'border-[#0498da] shadow-md'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                    className={`bg-white rounded-lg border-2 transition-all duration-300 overflow-hidden ${isExpanded
+                      ? 'border-[#0498da] shadow-md'
+                      : 'border-gray-200 hover:border-gray-300'
+                      }`}
                   >
                     <button
                       onClick={() => toggleExpand(index)}
@@ -215,9 +275,6 @@ export default function ERPBenefits() {
               onError={(e) => {
                 const target = e.target as HTMLImageElement
                 target.style.display = 'none'
-                if (target.parentElement) {
-                  target.parentElement.style.background = 'linear-gradient(to bottom right, #e6f7fd, #f0f9ec)'
-                }
               }}
             />
           </div>

@@ -24,7 +24,7 @@ interface FeaturePage {
   displayOrder: number;
   iconName: string;
   isActive: boolean;
-  translations?: Translation[];
+  translations?: Translation[] | Record<string, any>;
 }
 
 export default function FeaturePagesPage() {
@@ -65,14 +65,38 @@ export default function FeaturePagesPage() {
     }
   };
 
-  const filteredPages = pages.filter(
-    (page) =>
-      page.pageSlug?.toLowerCase().includes(search.toLowerCase()) ||
-      page.iconName?.toLowerCase().includes(search.toLowerCase()) ||
-      (Array.isArray(page.translations) && page.translations.some((t) =>
-        t.title?.toLowerCase().includes(search.toLowerCase())
-      ))
-  );
+  const getPageContent = (page: FeaturePage, locale: string) => {
+    let content: { title: string } | undefined;
+
+    if (Array.isArray(page.translations)) {
+      const found = page.translations.find(t => t.locale === locale);
+      if (found) content = { title: found.title };
+    } else if (page.translations && typeof page.translations === 'object') {
+      // @ts-ignore
+      const trans = page.translations[locale];
+      if (trans) {
+        content = { title: trans.title || '' };
+      }
+    }
+
+    if (!content) return { title: '' };
+    return content;
+  };
+
+  const filteredPages = pages.filter((page) => {
+    if (!search) return true;
+    const searchLower = search.toLowerCase();
+    const matchesSlug = page.pageSlug?.toLowerCase().includes(searchLower);
+    const matchesIcon = page.iconName?.toLowerCase().includes(searchLower);
+
+    let matchesTrans = false;
+    const idContent = getPageContent(page, 'id');
+    const enContent = getPageContent(page, 'en');
+    matchesTrans = idContent.title.toLowerCase().includes(searchLower) ||
+      enContent.title.toLowerCase().includes(searchLower);
+
+    return matchesSlug || matchesIcon || matchesTrans;
+  });
 
   const activeCount = pages.filter(p => p.isActive).length;
   const inactiveCount = pages.filter(p => !p.isActive).length;
@@ -87,9 +111,9 @@ export default function FeaturePagesPage() {
     {
       header: 'Title',
       render: (page: FeaturePage) => {
-        const idTrans = page.translations?.find(t => t.locale === 'id');
+        const idContent = getPageContent(page, 'id');
         return (
-          <span className="text-sm font-medium text-gray-900">{idTrans?.title || '-'}</span>
+          <span className="text-sm font-medium text-gray-900">{idContent.title || '-'}</span>
         );
       },
     },
@@ -108,11 +132,10 @@ export default function FeaturePagesPage() {
     {
       header: 'Status',
       render: (page: FeaturePage) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          page.isActive
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${page.isActive
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
           {page.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -231,15 +254,61 @@ function FeaturePageModal({
   onClose: () => void;
   onSave: () => void;
 }) {
+  // Helper to extract translations safely
+  function routerTranslations(featPage: FeaturePage | null) {
+    if (!featPage) {
+      return [
+        { locale: 'id', title: '', description: '', heroTitle: '', heroDescription: '' },
+        { locale: 'en', title: '', description: '', heroTitle: '', heroDescription: '' },
+      ];
+    }
+
+    const getTrans = (locale: string) => {
+      if (Array.isArray(featPage.translations)) {
+        const found = featPage.translations.find(t => t.locale === locale);
+        return found ? { ...found } : null;
+      } else if (featPage.translations && typeof featPage.translations === 'object') {
+        // @ts-ignore
+        const trans = featPage.translations[locale];
+        if (trans) {
+          return {
+            title: trans.title || '',
+            description: trans.description || '',
+            heroTitle: trans.heroTitle || '',
+            heroDescription: trans.heroDescription || ''
+          };
+        }
+      }
+      return null;
+    };
+
+    const idTrans = getTrans('id');
+    const enTrans = getTrans('en');
+
+    return [
+      {
+        locale: 'id',
+        title: idTrans?.title || '',
+        description: idTrans?.description || '',
+        heroTitle: idTrans?.heroTitle || '',
+        heroDescription: idTrans?.heroDescription || ''
+      },
+      {
+        locale: 'en',
+        title: enTrans?.title || '',
+        description: enTrans?.description || '',
+        heroTitle: enTrans?.heroTitle || '',
+        heroDescription: enTrans?.heroDescription || ''
+      },
+    ];
+  }
+
   const [formData, setFormData] = useState({
     pageSlug: page?.pageSlug || '',
     iconName: page?.iconName || '',
     displayOrder: page?.displayOrder || 0,
     isActive: page?.isActive ?? true,
-    translations: page?.translations || [
-      { locale: 'id', title: '', description: '', heroTitle: '', heroDescription: '' },
-      { locale: 'en', title: '', description: '', heroTitle: '', heroDescription: '' },
-    ],
+    translations: routerTranslations(page),
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -251,10 +320,7 @@ function FeaturePageModal({
         iconName: page.iconName,
         displayOrder: page.displayOrder,
         isActive: page.isActive,
-        translations: page.translations || [
-          { locale: 'id', title: '', description: '', heroTitle: '', heroDescription: '' },
-          { locale: 'en', title: '', description: '', heroTitle: '', heroDescription: '' },
-        ],
+        translations: routerTranslations(page),
       });
     }
   }, [page]);
@@ -269,9 +335,31 @@ function FeaturePageModal({
         ? `/api/v1/feature-pages/admin/${page.pageId}`
         : '/api/v1/feature-pages/admin';
 
+      // Transform translations array to object map
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach((t: Translation) => {
+        translationsMap[t.locale] = {
+          title: t.title,
+          description: t.description,
+          heroTitle: t.heroTitle,
+          heroDescription: t.heroDescription
+        };
+      });
+
+      const submitData = {
+        pageSlug: formData.pageSlug,
+        iconName: formData.iconName,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: translationsMap,
+      };
+
       const response = await apiFetch(endpoint, {
         method: page ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -358,7 +446,7 @@ function FeaturePageModal({
           {/* Translations */}
           <div className="space-y-2 pt-2 border-t border-gray-200">
             <label className="block text-xs font-semibold text-gray-700 mb-2">Translations</label>
-            {formData.translations.map((trans, idx) => (
+            {(formData.translations as Translation[]).map((trans, idx) => (
               <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
@@ -371,7 +459,7 @@ function FeaturePageModal({
                     placeholder="Title"
                     value={trans.title}
                     onChange={(e) => {
-                      const newTranslations = [...formData.translations];
+                      const newTranslations = [...(formData.translations as Translation[])];
                       newTranslations[idx] = { ...trans, title: e.target.value };
                       setFormData({ ...formData, translations: newTranslations });
                     }}
@@ -382,7 +470,7 @@ function FeaturePageModal({
                     placeholder="Hero Title"
                     value={trans.heroTitle}
                     onChange={(e) => {
-                      const newTranslations = [...formData.translations];
+                      const newTranslations = [...(formData.translations as Translation[])];
                       newTranslations[idx] = { ...trans, heroTitle: e.target.value };
                       setFormData({ ...formData, translations: newTranslations });
                     }}
@@ -392,7 +480,7 @@ function FeaturePageModal({
                     placeholder="Description"
                     value={trans.description}
                     onChange={(e) => {
-                      const newTranslations = [...formData.translations];
+                      const newTranslations = [...(formData.translations as Translation[])];
                       newTranslations[idx] = { ...trans, description: e.target.value };
                       setFormData({ ...formData, translations: newTranslations });
                     }}
@@ -403,7 +491,7 @@ function FeaturePageModal({
                     placeholder="Hero Description"
                     value={trans.heroDescription}
                     onChange={(e) => {
-                      const newTranslations = [...formData.translations];
+                      const newTranslations = [...(formData.translations as Translation[])];
                       newTranslations[idx] = { ...trans, heroDescription: e.target.value };
                       setFormData({ ...formData, translations: newTranslations });
                     }}

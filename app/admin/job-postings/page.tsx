@@ -61,7 +61,7 @@ interface JobPosting {
   publishedAt?: string;
   viewCount: number;
   applicationCount: number;
-  translations?: JobPostingTranslation[];
+  translations?: JobPostingTranslation[] | Record<string, any>;
   requirements?: JobRequirement[];
   responsibilities?: JobResponsibility[];
   benefits?: JobBenefit[];
@@ -127,12 +127,55 @@ export default function JobPostingsPage() {
     }
   };
 
+  const getJobContent = (job: JobPosting, locale: string = 'id') => {
+    let content: JobPostingTranslation | undefined;
+
+    if (Array.isArray(job.translations)) {
+      content = job.translations.find(t => t.locale === locale);
+      if (!content && job.translations.length > 0) content = job.translations[0];
+    } else if (job.translations && typeof job.translations === 'object') {
+      // @ts-ignore
+      const trans = job.translations[locale];
+      if (trans) {
+        content = {
+          locale,
+          title: trans.title || '',
+          shortDescription: trans.shortDescription || '',
+          description: trans.description || '',
+          qualifications: trans.qualifications,
+          additionalInfo: trans.additionalInfo
+        };
+      } else {
+        // Fallback to first key if specific locale not found
+        const keys = Object.keys(job.translations);
+        if (keys.length > 0) {
+          // @ts-ignore
+          const first = job.translations[keys[0]];
+          content = {
+            locale: keys[0],
+            title: first.title || '',
+            shortDescription: first.shortDescription || '',
+            description: first.description || '',
+            qualifications: first.qualifications,
+            additionalInfo: first.additionalInfo
+          };
+        }
+      }
+    }
+
+    return content;
+  };
+
   const filteredJobs = jobPostings.filter(job => {
     const searchLower = search.toLowerCase();
+    const idContent = getJobContent(job, 'id');
+    const enContent = getJobContent(job, 'en');
+
     return (
       job.jobCode?.toLowerCase().includes(searchLower) ||
       job.department?.toLowerCase().includes(searchLower) ||
-      job.translations?.some(t => t.title?.toLowerCase().includes(searchLower))
+      idContent?.title?.toLowerCase().includes(searchLower) ||
+      enContent?.title?.toLowerCase().includes(searchLower)
     );
   });
 
@@ -197,7 +240,7 @@ export default function JobPostingsPage() {
       ) : (
         <div className="grid grid-cols-1 gap-3">
           {filteredJobs.map((job) => {
-            const translation = job.translations?.[0];
+            const translation = getJobContent(job, 'id');
             return (
               <AdminCard key={job.jobId} compact>
                 <div className="flex items-start justify-between gap-3">
@@ -287,6 +330,57 @@ function JobPostingModal({
   onClose: () => void;
   onSave: () => void;
 }) {
+  // Helper to extract translations safely
+  function routerTranslations(j: JobPosting | null) {
+    if (!j) {
+      return [
+        { locale: 'id', title: '', shortDescription: '', description: '', qualifications: '', additionalInfo: '' },
+        { locale: 'en', title: '', shortDescription: '', description: '', qualifications: '', additionalInfo: '' },
+      ];
+    }
+
+    const getTrans = (locale: string) => {
+      if (Array.isArray(j.translations)) {
+        const found = j.translations.find(t => t.locale === locale);
+        return found ? { ...found } : null;
+      } else if (j.translations && typeof j.translations === 'object') {
+        // @ts-ignore
+        const trans = j.translations[locale];
+        if (trans) {
+          return {
+            title: trans.title || '',
+            shortDescription: trans.shortDescription || '',
+            description: trans.description || '',
+            qualifications: trans.qualifications || '',
+            additionalInfo: trans.additionalInfo || ''
+          };
+        }
+      }
+      return null;
+    };
+
+    const idTrans = getTrans('id');
+    const enTrans = getTrans('en');
+
+    return [
+      {
+        locale: 'id',
+        title: idTrans?.title || '',
+        shortDescription: idTrans?.shortDescription || '',
+        description: idTrans?.description || '',
+        qualifications: idTrans?.qualifications || '',
+        additionalInfo: idTrans?.additionalInfo || ''
+      },
+      {
+        locale: 'en',
+        title: enTrans?.title || '',
+        shortDescription: enTrans?.shortDescription || '',
+        description: enTrans?.description || '',
+        qualifications: enTrans?.qualifications || '',
+        additionalInfo: enTrans?.additionalInfo || ''
+      },
+    ];
+  }
   const [formData, setFormData] = useState({
     jobCode: job?.jobCode || '',
     slug: job?.slug || '',
@@ -307,10 +401,7 @@ function JobPostingModal({
     isActive: job?.isActive ?? true,
     isFeatured: job?.isFeatured ?? false,
     publishedAt: job?.publishedAt ? new Date(job.publishedAt).toISOString().slice(0, 16) : '',
-    translations: job?.translations || [
-      { locale: 'id', title: '', shortDescription: '', description: '', qualifications: '', additionalInfo: '' },
-      { locale: 'en', title: '', shortDescription: '', description: '', qualifications: '', additionalInfo: '' },
-    ],
+    translations: routerTranslations(job) as JobPostingTranslation[],
     requirements: job?.requirements || [],
     responsibilities: job?.responsibilities || [],
     benefits: job?.benefits || [],
@@ -323,9 +414,22 @@ function JobPostingModal({
     setLoading(true);
     setError('');
 
+    // Transform translations array to object map
+    const translationsMap: Record<string, any> = {};
+    formData.translations.forEach((t: JobPostingTranslation) => {
+      translationsMap[t.locale] = {
+        title: t.title,
+        shortDescription: t.shortDescription,
+        description: t.description,
+        qualifications: t.qualifications,
+        additionalInfo: t.additionalInfo
+      };
+    });
+
     try {
       const submitData = {
         ...formData,
+        translations: translationsMap,
         applicationDeadline: formData.applicationDeadline ? new Date(formData.applicationDeadline).toISOString() : undefined,
         publishedAt: formData.publishedAt ? new Date(formData.publishedAt).toISOString() : undefined,
       };
@@ -651,7 +755,7 @@ function JobPostingModal({
         {/* Translations */}
         <div className="space-y-3 border-b border-gray-200 pb-3">
           <h3 className="text-sm font-semibold text-gray-900">Translations</h3>
-          {formData.translations.map((trans, idx) => (
+          {(formData.translations as JobPostingTranslation[]).map((trans, idx) => (
             <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
               <div className="flex items-center gap-2 mb-2">
                 <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
@@ -665,7 +769,7 @@ function JobPostingModal({
                   required
                   value={trans.title}
                   onChange={(e) => {
-                    const newTranslations = [...formData.translations];
+                    const newTranslations = [...(formData.translations as JobPostingTranslation[])];
                     newTranslations[idx] = { ...trans, title: e.target.value };
                     setFormData({ ...formData, translations: newTranslations });
                   }}
@@ -676,7 +780,7 @@ function JobPostingModal({
                   required
                   value={trans.shortDescription}
                   onChange={(e) => {
-                    const newTranslations = [...formData.translations];
+                    const newTranslations = [...(formData.translations as JobPostingTranslation[])];
                     newTranslations[idx] = { ...trans, shortDescription: e.target.value };
                     setFormData({ ...formData, translations: newTranslations });
                   }}
@@ -688,7 +792,7 @@ function JobPostingModal({
                   required
                   value={trans.description}
                   onChange={(e) => {
-                    const newTranslations = [...formData.translations];
+                    const newTranslations = [...(formData.translations as JobPostingTranslation[])];
                     newTranslations[idx] = { ...trans, description: e.target.value };
                     setFormData({ ...formData, translations: newTranslations });
                   }}
@@ -699,7 +803,7 @@ function JobPostingModal({
                   placeholder="Qualifications"
                   value={trans.qualifications || ''}
                   onChange={(e) => {
-                    const newTranslations = [...formData.translations];
+                    const newTranslations = [...(formData.translations as JobPostingTranslation[])];
                     newTranslations[idx] = { ...trans, qualifications: e.target.value };
                     setFormData({ ...formData, translations: newTranslations });
                   }}
@@ -710,7 +814,7 @@ function JobPostingModal({
                   placeholder="Additional Info"
                   value={trans.additionalInfo || ''}
                   onChange={(e) => {
-                    const newTranslations = [...formData.translations];
+                    const newTranslations = [...(formData.translations as JobPostingTranslation[])];
                     newTranslations[idx] = { ...trans, additionalInfo: e.target.value };
                     setFormData({ ...formData, translations: newTranslations });
                   }}

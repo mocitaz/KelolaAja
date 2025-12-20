@@ -18,26 +18,37 @@ interface ProcessStep {
   }[]
 }
 
-export default function ProcessSteps() {
+interface ProcessStepsProps {
+  data?: ProcessStep[]
+}
+
+export default function ProcessSteps({ data }: ProcessStepsProps) {
   const { t, locale } = useLanguage()
   const [steps, setSteps] = useState<ProcessStep[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchProcessSteps()
-  }, [])
+    if (data && data.length > 0) {
+      setSteps(data.filter((step: ProcessStep) => step.isActive))
+      setLoading(false)
+    } else {
+      fetchProcessSteps()
+    }
+  }, [data])
 
   const fetchProcessSteps = async () => {
+    if (data && data.length > 0) return
+
     const result = await fetchPublicData<ProcessStep[]>(
       API_ENDPOINTS.PUBLIC.PROCESS_STEPS.LIST
     )
-    
+
     if (result.success && Array.isArray(result.data)) {
       setSteps(result.data.filter((step: ProcessStep) => step.isActive))
     } else {
       setSteps([]) // Will use fallback data
     }
-    
+
     setLoading(false)
   }
 
@@ -73,7 +84,7 @@ export default function ProcessSteps() {
         </svg>
       ),
     }
-    
+
     return iconMap[iconName] || iconMap['analysis']
   }
 
@@ -119,9 +130,9 @@ export default function ProcessSteps() {
 
   const displaySteps = steps.length > 0
     ? steps.map((step, index) => ({
-        ...getStepContent(step),
-        icon: getIconForStep(step.iconName, index)
-      }))
+      ...getStepContent(step),
+      icon: getIconForStep(step.iconName, index)
+    }))
     : fallbackSteps
 
   return (
@@ -183,78 +194,78 @@ export default function ProcessSteps() {
                   </div>
                 ) : (
                   displaySteps.map((step, index) => (
-                  <ScrollAnimation
-                    key={index}
-                    direction="left"
-                    delay={index * 100}
-                    duration={500}
-                  >
-                    <div className="relative">
-                      {/* Timeline Node - Desktop */}
-                      <div className="hidden lg:block absolute left-0 top-4 w-12 h-12 -translate-x-1/2">
-                        <div className="relative w-full h-full">
-                          {/* Outer glow ring */}
-                          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 opacity-25 blur-sm animate-pulse"></div>
-                          {/* Step number circle */}
-                          <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold text-base shadow-lg border-2 border-white transform group-hover:scale-110 transition-all duration-300">
-                            {index + 1}
+                    <ScrollAnimation
+                      key={index}
+                      direction="left"
+                      delay={index * 100}
+                      duration={500}
+                    >
+                      <div className="relative">
+                        {/* Timeline Node - Desktop */}
+                        <div className="hidden lg:block absolute left-0 top-4 w-12 h-12 -translate-x-1/2">
+                          <div className="relative w-full h-full">
+                            {/* Outer glow ring */}
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 opacity-25 blur-sm animate-pulse"></div>
+                            {/* Step number circle */}
+                            <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold text-base shadow-lg border-2 border-white transform group-hover:scale-110 transition-all duration-300">
+                              {index + 1}
+                            </div>
+                            {/* Inner glow */}
+                            <div className="absolute inset-1.5 rounded-full bg-white/20"></div>
                           </div>
-                          {/* Inner glow */}
-                          <div className="absolute inset-1.5 rounded-full bg-white/20"></div>
                         </div>
-                      </div>
 
-                      {/* Content Card */}
-                      <div className="lg:ml-16">
-                        <div className="group relative bg-white rounded-xl p-4 lg:p-5 shadow-md border border-gray-100 hover:border-primary-300 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-                          {/* Gradient overlay on hover */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-primary-50/40 via-transparent to-secondary-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          
-                          {/* Content */}
-                          <div className="relative z-10">
-                            <div className="flex items-start gap-3 lg:gap-4">
-                              {/* Icon */}
-                              <div className="flex-shrink-0">
-                                <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-lg bg-gradient-to-br from-primary-500 via-primary-400 to-secondary-500 flex items-center justify-center text-white shadow-md p-2.5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative overflow-hidden">
-                                  {/* Shimmer effect */}
-                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                                  <div className="relative z-10 w-7 h-7 lg:w-8 lg:h-8">
-                                    {step.icon}
+                        {/* Content Card */}
+                        <div className="lg:ml-16">
+                          <div className="group relative bg-white rounded-xl p-4 lg:p-5 shadow-md border border-gray-100 hover:border-primary-300 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                            {/* Gradient overlay on hover */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary-50/40 via-transparent to-secondary-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                            {/* Content */}
+                            <div className="relative z-10">
+                              <div className="flex items-start gap-3 lg:gap-4">
+                                {/* Icon */}
+                                <div className="flex-shrink-0">
+                                  <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-lg bg-gradient-to-br from-primary-500 via-primary-400 to-secondary-500 flex items-center justify-center text-white shadow-md p-2.5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative overflow-hidden">
+                                    {/* Shimmer effect */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                                    <div className="relative z-10 w-7 h-7 lg:w-8 lg:h-8">
+                                      {step.icon}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
 
-                              {/* Text Content */}
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1.5">
-                                  {/* Step number badge - Mobile */}
-                                  <div className="lg:hidden w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold text-xs shadow-md">
-                                    {index + 1}
+                                {/* Text Content */}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1.5">
+                                    {/* Step number badge - Mobile */}
+                                    <div className="lg:hidden w-7 h-7 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold text-xs shadow-md">
+                                      {index + 1}
+                                    </div>
+                                    <h3 className="text-base lg:text-lg font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-300">
+                                      {step.title}
+                                    </h3>
                                   </div>
-                                  <h3 className="text-base lg:text-lg font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-300">
-                                    {step.title}
-                                  </h3>
+                                  <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
+                                    {step.description}
+                                  </p>
                                 </div>
-                                <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
-                                  {step.description}
-                                </p>
                               </div>
                             </div>
+
+                            {/* Decorative corner accent */}
+                            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-primary-100/40 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-secondary-100/40 to-transparent rounded-tr-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           </div>
-
-                          {/* Decorative corner accent */}
-                          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-primary-100/40 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-secondary-100/40 to-transparent rounded-tr-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </div>
-                      </div>
 
-                      {/* Connecting Line - Between steps (Desktop only) */}
-                      {index < displaySteps.length - 1 && (
-                        <div className="hidden lg:block absolute left-6 top-16 w-0.5 h-5 bg-gradient-to-b from-primary-300 to-secondary-300"></div>
-                      )}
-                    </div>
-                  </ScrollAnimation>
-                ))
+                        {/* Connecting Line - Between steps (Desktop only) */}
+                        {index < displaySteps.length - 1 && (
+                          <div className="hidden lg:block absolute left-6 top-16 w-0.5 h-5 bg-gradient-to-b from-primary-300 to-secondary-300"></div>
+                        )}
+                      </div>
+                    </ScrollAnimation>
+                  ))
                 )}
               </div>
             </div>

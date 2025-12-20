@@ -20,7 +20,7 @@ interface AdvancedFeature {
   iconFileId: number;
   displayOrder: number;
   isActive: boolean;
-  translations?: Translation[];
+  translations?: Translation[] | Record<string, any>;
 }
 
 export default function AdvancedFeaturesPage() {
@@ -60,13 +60,38 @@ export default function AdvancedFeaturesPage() {
     }
   };
 
-  const filteredFeatures = features.filter(
-    (feature) =>
-      feature.iconFileId?.toString().includes(search) ||
-      (Array.isArray(feature.translations) && feature.translations.some((t) =>
-        t.title?.toLowerCase().includes(search.toLowerCase())
-      ))
-  );
+  const getFeatureContent = (feature: AdvancedFeature, locale: string) => {
+    let content: { title: string; description: string } | undefined;
+
+    if (Array.isArray(feature.translations)) {
+      const found = feature.translations.find(t => t.locale === locale);
+      if (found) content = found;
+    } else if (feature.translations && typeof feature.translations === 'object') {
+      // @ts-ignore
+      const trans = feature.translations[locale];
+      if (trans) {
+        content = {
+          title: trans.title || '',
+          description: trans.description || ''
+        };
+      }
+    }
+
+    if (!content) return { title: '', description: '' };
+    return content;
+  };
+
+  const filteredFeatures = features.filter((feature) => {
+    if (!search) return true;
+    const searchLower = search.toLowerCase();
+
+    const idContent = getFeatureContent(feature, 'id');
+    const enContent = getFeatureContent(feature, 'en');
+    const matchesTrans = idContent.title.toLowerCase().includes(searchLower) ||
+      enContent.title.toLowerCase().includes(searchLower);
+
+    return matchesTrans;
+  });
 
   const activeCount = features.filter(f => f.isActive).length;
   const inactiveCount = features.filter(f => !f.isActive).length;
@@ -75,9 +100,9 @@ export default function AdvancedFeaturesPage() {
     {
       header: 'Title',
       render: (feature: AdvancedFeature) => {
-        const idTrans = feature.translations?.find(t => t.locale === 'id');
+        const idContent = getFeatureContent(feature, 'id');
         return (
-          <span className="text-sm font-medium text-gray-900">{idTrans?.title || '-'}</span>
+          <span className="text-sm font-medium text-gray-900">{idContent.title || '-'}</span>
         );
       },
     },
@@ -96,11 +121,10 @@ export default function AdvancedFeaturesPage() {
     {
       header: 'Status',
       render: (feature: AdvancedFeature) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          feature.isActive
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${feature.isActive
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
           {feature.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -216,7 +240,7 @@ function AdvancedFeatureModal({
     iconFileId: feature?.iconFileId || 0,
     displayOrder: feature?.displayOrder || 0,
     isActive: feature?.isActive ?? true,
-    translations: feature?.translations || [
+    translations: [
       { locale: 'id', title: '', description: '' },
       { locale: 'en', title: '', description: '' },
     ],
@@ -226,13 +250,29 @@ function AdvancedFeatureModal({
 
   useEffect(() => {
     if (feature) {
+      // Helper to extract content correctly
+      const getTrans = (locale: string) => {
+        if (Array.isArray(feature.translations)) {
+          const found = feature.translations.find(t => t.locale === locale);
+          return found ? { title: found.title, description: found.description } : null;
+        } else if (feature.translations && typeof feature.translations === 'object') {
+          // @ts-ignore
+          const trans = feature.translations[locale];
+          if (trans) return { title: trans.title || '', description: trans.description || '' };
+        }
+        return null;
+      };
+
+      const idTrans = getTrans('id');
+      const enTrans = getTrans('en');
+
       setFormData({
         iconFileId: feature.iconFileId,
         displayOrder: feature.displayOrder,
         isActive: feature.isActive,
-        translations: feature.translations || [
-          { locale: 'id', title: '', description: '' },
-          { locale: 'en', title: '', description: '' },
+        translations: [
+          { locale: 'id', title: idTrans?.title || '', description: idTrans?.description || '' },
+          { locale: 'en', title: enTrans?.title || '', description: enTrans?.description || '' },
         ],
       });
     }
@@ -248,9 +288,30 @@ function AdvancedFeatureModal({
         ? `/api/v1/advanced-features/admin/${feature.featureId}`
         : '/api/v1/advanced-features/admin';
 
+      // Transform translations to object map if needed by backend, 
+      // but assuming consistent API with Partners, we might want to send map or array.
+      // Usually inconsistent GET vs POST/PUT. Assuming POST/PUT expects map based on Partners.
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach((t: any) => {
+        translationsMap[t.locale] = {
+          title: t.title,
+          description: t.description
+        };
+      });
+
+      const submitData = {
+        iconFileId: formData.iconFileId,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: translationsMap,
+      };
+
       const response = await apiFetch(endpoint, {
         method: feature ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();

@@ -32,28 +32,28 @@ export default function AboutKelolaAja() {
     const result = await fetchPublicData<AboutCard[]>(
       API_ENDPOINTS.PUBLIC.ABOUT_CARDS.LIST
     )
-    
+
     if (result.success && Array.isArray(result.data)) {
       setAboutCards(result.data.filter((card: AboutCard) => card.isActive))
     } else {
       setAboutCards([])
     }
-    
+
     setLoading(false)
   }
 
   const getCardContent = (cardKey: string) => {
     const card = aboutCards.find(c => c.cardKey === cardKey)
     if (!card) return null
-    
+
     const translation = card.translations?.find(t => t.locale === locale)
     return translation?.content || ''
   }
 
   const title = getCardContent('title') || t.aboutKelolaAja?.title || 'Apa Itu KelolaAja?'
-  const subtitle = getCardContent('subtitle') || t.aboutKelolaAja?.subtitle || 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia'
-  const description = getCardContent('description') || t.aboutKelolaAja?.description || 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.'
-  const highlight = getCardContent('highlight') || t.aboutKelolaAja?.highlight || 'Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.'
+  const subtitle = getCardContent('subtitle') || t.aboutKelolaAja?.subtitle || ''
+  const description = getCardContent('description') || t.aboutKelolaAja?.description || 'KelolaAja adalah software ERP terintegrasi yang dikembangkan khusus untuk menjawab kebutuhan small to growing businesses di Indonesia. Dirancang untuk menyederhanakan proses manajemen keuangan, pembukuan, pelaporan, hingga operasional bisnis lainnya secara menyeluruh, KelolaAja memungkinkan perusahaan untuk mengelola dan memantau aktivitas bisnis secara real-time, dari mana saja, dengan efisiensi tinggi dan akurasi yang konsisten.'
+  const highlight = getCardContent('highlight') || t.aboutKelolaAja?.highlight || 'Meski dioptimalkan untuk bisnis yang sedang tumbuh, KelolaAja dibangun dengan standar dan kapabilitas enterprise-class. Ini memastikan bahwa perusahaan skala besar sekalipun tetap dapat mengandalkan KelolaAja dalam memenuhi kompleksitas kebutuhan internal mereka.'
   const ctaText = getCardContent('cta') || t.aboutKelolaAja?.ctaText || 'Coba Gratis Sekarang'
 
   // Don't show loading spinner - directly use fallback data from translations
@@ -65,9 +65,11 @@ export default function AboutKelolaAja() {
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-2">
             {title}
           </h2>
-          <p className="text-base lg:text-lg text-gray-600 mb-4">
-            {subtitle}
-          </p>
+          {subtitle && (
+            <p className="text-base lg:text-lg text-gray-600 mb-4">
+              {subtitle}
+            </p>
+          )}
           <div className="space-y-3 text-sm lg:text-base text-gray-700 leading-relaxed text-justify">
             <p>
               {description}

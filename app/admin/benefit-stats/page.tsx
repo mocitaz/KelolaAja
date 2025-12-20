@@ -17,11 +17,12 @@ interface Translation {
 
 interface BenefitStat {
   statId: number;
-  statKey: string;
+  statKey?: string;
+  label?: string; // Support label from API
   value: string;
   displayOrder: number;
-  iconName: string;
-  isActive: boolean;
+  iconName?: string;
+  isActive?: boolean;
   translations?: Translation[];
 }
 
@@ -43,6 +44,7 @@ export default function BenefitStatsPage() {
       if (data.success && Array.isArray(data.data)) {
         setStats(data.data);
       }
+      console.log('BenefitStats API Data:', data);
     } catch (error) {
       console.error('Error fetching stats:', error);
     } finally {
@@ -62,29 +64,39 @@ export default function BenefitStatsPage() {
     }
   };
 
-  const filteredStats = stats.filter(
-    (stat) =>
-      stat.statKey?.toLowerCase().includes(search.toLowerCase()) ||
-      stat.value?.toLowerCase().includes(search.toLowerCase()) ||
-      (Array.isArray(stat.translations) && stat.translations.some((t) =>
-        t.label?.toLowerCase().includes(search.toLowerCase())
-      ))
-  );
+  console.log('BenefitStats State:', stats);
+
+  const filteredStats = stats.filter((stat) => {
+    const searchLower = search.toLowerCase();
+    const matchesKey = (stat.statKey || stat.label || '').toLowerCase().includes(searchLower);
+    const matchesValue = (stat.value || '').toLowerCase().includes(searchLower);
+
+    let matchesTrans = false;
+    if (Array.isArray(stat.translations)) {
+      matchesTrans = stat.translations.some((t) =>
+        (t.label || '').toLowerCase().includes(searchLower)
+      );
+    }
+
+    return matchesKey || matchesValue || matchesTrans;
+  });
+
+  console.log('Filtered Stats:', filteredStats);
 
   const activeCount = stats.filter(s => s.isActive).length;
   const inactiveCount = stats.filter(s => !s.isActive).length;
 
   const columns = [
     {
-      header: 'Key',
+      header: 'Key / Label',
       render: (stat: BenefitStat) => (
-        <span className="text-sm font-medium text-gray-900">{stat.statKey}</span>
+        <span className="text-sm font-medium text-gray-900">{stat.statKey || stat.label || '-'}</span>
       ),
     },
     {
       header: 'Value',
       render: (stat: BenefitStat) => (
-        <span className="text-sm text-gray-700">{stat.value}</span>
+        <span className="text-sm text-gray-700">{stat.value || '-'}</span>
       ),
     },
     {
@@ -102,11 +114,10 @@ export default function BenefitStatsPage() {
     {
       header: 'Status',
       render: (stat: BenefitStat) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          stat.isActive
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${stat.isActive
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
           {stat.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -235,11 +246,11 @@ function BenefitStatModal({
   useEffect(() => {
     if (stat) {
       setFormData({
-        statKey: stat.statKey,
-        value: stat.value,
-        iconName: stat.iconName,
-        displayOrder: stat.displayOrder,
-        isActive: stat.isActive,
+        statKey: stat.statKey || stat.label || '', // Use label as fallback
+        value: stat.value || '',
+        iconName: stat.iconName || '',
+        displayOrder: stat.displayOrder || 0,
+        isActive: stat.isActive ?? true,
         translations: stat.translations || [
           { locale: 'id', label: '', description: '' },
           { locale: 'en', label: '', description: '' },

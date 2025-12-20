@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, EyeSlashIcon, ChartBarIcon, ShieldCheckIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -14,6 +14,7 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,11 +40,10 @@ export default function AdminLogin() {
         setError(data.message || "Login failed");
       }
     } catch (error: any) {
-      // Handle network errors and JSON parsing errors
       if (error.message?.includes("JSON") || error.message?.includes("Unexpected")) {
-        setError("Backend server is not responding. Please ensure the backend API is running on port 8080.");
+        setError("Server unavailable. Check connection.");
       } else {
-        setError(error.message || "Network error. Please try again.");
+        setError(error.message || "Network error. Try again.");
       }
     } finally {
       setLoading(false);
@@ -51,77 +51,63 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex font-sans text-slate-800">
       {/* Left Side - Gradient Background with Info */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#039edb] via-[#0280af] to-[#71bf44] relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#039edb] via-[#0280af] to-[#71bf44] relative overflow-hidden flex-col justify-center px-16 text-white">
+
         {/* Animated Background Circles */}
         <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse delay-1000" />
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col justify-center px-16 text-white">
-          <div className="mb-8">
-            <Image
-              src="/images/common/logo.png"
-              alt="KelolaAja"
-              width={180}
-              height={50}
-              className="h-12 w-auto mb-4 brightness-0 invert"
-              priority
+        <div className="relative z-10">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center shadow-inner border border-white/20">
+              <Image
+                src="/images/common/logo.png"
+                alt="Logo"
+                width={40}
+                height={40}
+                className="w-7 h-auto brightness-0 invert opacity-90"
+              />
+            </div>
+            <span className="font-bold text-3xl tracking-tight">KelolaAja</span>
+          </div>
+
+          <h1 className="text-5xl font-bold leading-tight mb-6 text-white text-shadow-sm">
+            Master Your <br /> Business Logic.
+          </h1>
+          <p className="text-white/90 text-lg leading-relaxed max-w-lg mb-12">
+            Experience the next evolution of business management. Centralized, real-time, and effortlessly intuitive.
+          </p>
+
+          <div className="space-y-6 max-w-md">
+            <FeatureItem
+              icon={<ShieldCheckIcon className="w-6 h-6" />}
+              title="Secure Core"
+              desc="Enterprise-grade security"
+            />
+            <FeatureItem
+              icon={<ChartBarIcon className="w-6 h-6" />}
+              title="Real-time Analytics"
+              desc="Live data visualization"
+            />
+            <FeatureItem
+              icon={<UserGroupIcon className="w-6 h-6" />}
+              title="Team Sync"
+              desc="Seamless collaboration"
             />
           </div>
-          <p className="text-xl mb-8 text-white/90">Sistem Manajemen Bisnis Terpadu</p>
+        </div>
 
-          <div className="space-y-4">
-            <div className="flex items-start space-x-3">
-              <svg className="w-6 h-6 text-[#71bf44] mt-1" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <div>
-                <h3 className="font-semibold text-lg">Manajemen Terpusat</h3>
-                <p className="text-white/80">Kelola semua aspek bisnis dari satu platform</p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-3">
-              <svg className="w-6 h-6 text-[#71bf44] mt-1" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <div>
-                <h3 className="font-semibold text-lg">Laporan Real-time</h3>
-                <p className="text-white/80">Pantau performa bisnis secara langsung</p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-3">
-              <svg className="w-6 h-6 text-[#71bf44] mt-1" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <div>
-                <h3 className="font-semibold text-lg">Mudah Digunakan</h3>
-                <p className="text-white/80">Interface intuitif untuk semua pengguna</p>
-              </div>
-            </div>
-          </div>
+        <div className="absolute bottom-8 left-16 text-sm text-white/60">
+          © 2024 KelolaAja. All rights reserved.
         </div>
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
-        <div className="max-w-md w-full">
-          {/* Logo for mobile */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-white relative">
+        <div className="w-full max-w-md relative z-10">
+          {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
             <Image
               src="/images/common/logo.png"
@@ -133,113 +119,99 @@ export default function AdminLogin() {
             />
           </div>
 
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            {/* Logo for desktop */}
-            <div className="hidden lg:block mb-6 text-center">
-              <Image
-                src="/images/common/logo.png"
-                alt="KelolaAja"
-                width={140}
-                height={40}
-                className="h-10 w-auto mx-auto"
-                priority
-              />
-            </div>
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900">Welcome Back!</h2>
-              <p className="text-gray-600 mt-2">Sign in to your admin account</p>
-            </div>
+          <div className="mb-10">
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">Welcome Back</h2>
+            <p className="text-slate-500">Sign in to your admin account to continue.</p>
+          </div>
 
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            )}
+          {error && (
+            <div className="mb-8 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg flex items-center gap-3 animate-shake shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
+              <p className="text-sm text-red-700 font-medium">{error}</p>
+            </div>
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-1">
+              <label htmlFor="email" className="block text-sm font-semibold text-slate-700">Email Address</label>
+              <div className={`relative transition-all duration-300 ${focusedInput === 'email' ? 'ring-2 ring-[#039edb]/20 scale-[1.01]' : ''}`}>
                 <input
                   id="email"
                   type="email"
                   required
                   autoComplete="email"
                   value={formData.email}
+                  onFocus={() => setFocusedInput('email')}
+                  onBlur={() => setFocusedInput(null)}
                   onChange={e => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent transition"
+                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#039edb] focus:bg-white transition-all duration-200"
                   placeholder="Enter your email"
                 />
               </div>
+            </div>
 
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    required
-                    autoComplete="current-password"
-                    value={formData.password}
-                    onChange={e => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#039edb] focus:border-transparent transition pr-12"
-                    placeholder="Enter your password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                  >
-                    {showPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
-                  </button>
-                </div>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label htmlFor="password" className="block text-sm font-semibold text-slate-700">Password</label>
+                <a href="#" className="text-sm font-medium text-[#039edb] hover:text-[#0284b8] hover:underline">Forgot password?</a>
               </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 px-4 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white font-semibold rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#039edb] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    Signing in...
-                  </span>
-                ) : (
-                  "Sign In"
-                )}
-              </button>
-            </form>
-
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <div className="text-center">
-                <p className="text-sm text-gray-600 mb-2">Demo Credentials</p>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-xs text-gray-700 font-mono">admin@kelolaaja.com</p>
-                  <p className="text-xs text-gray-700 font-mono mt-1">admin123</p>
-                </div>
+              <div className={`relative transition-all duration-300 ${focusedInput === 'password' ? 'ring-2 ring-[#039edb]/20 scale-[1.01]' : ''}`}>
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  autoComplete="current-password"
+                  value={formData.password}
+                  onFocus={() => setFocusedInput('password')}
+                  onBlur={() => setFocusedInput(null)}
+                  onChange={e => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#039edb] focus:bg-white transition-all duration-200 pr-12"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
+                >
+                  {showPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+                </button>
               </div>
             </div>
-          </div>
 
-          <p className="text-center text-sm text-gray-600 mt-8">© 2024 KelolaAja. All rights reserved.</p>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 px-6 bg-gradient-to-r from-[#039edb] to-[#71bf44] text-white text-lg font-bold rounded-xl shadow-lg hover:opacity-95 focus:outline-none focus:ring-4 focus:ring-[#039edb]/30 disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-300 transform hover:-translate-y-1"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-3">
+                  <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Signing in...
+                </span>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+          </form>
         </div>
+
+        {/* Decor Elements for Right Side */}
+        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-[#71bf44]/10 to-transparent rounded-bl-[100px]" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-[#039edb]/10 to-transparent rounded-tr-[80px]" />
       </div>
     </div>
   );
 }
+
+const FeatureItem = ({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) => (
+  <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors cursor-default">
+    <div className="text-sky-300">{icon}</div>
+    <div>
+      <h3 className="font-semibold text-sm text-slate-100">{title}</h3>
+      <p className="text-[10px] text-slate-400">{desc}</p>
+    </div>
+  </div>
+);

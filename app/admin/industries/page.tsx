@@ -27,7 +27,7 @@ interface Industry {
   imageUrl?: string | null;
   iconName?: string; // Legacy/Fallback
   isActive: boolean;
-  translations?: Translation[];
+  translations?: Translation[] | Record<string, any>;
 }
 
 export default function IndustriesPage() {
@@ -68,14 +68,38 @@ export default function IndustriesPage() {
     }
   };
 
-  const filteredIndustries = industries.filter(
-    (industry) =>
-      industry.industrySlug?.toLowerCase().includes(search.toLowerCase()) ||
-      industry.iconName?.toLowerCase().includes(search.toLowerCase()) ||
-      (Array.isArray(industry.translations) && industry.translations.some((t) =>
-        t.name?.toLowerCase().includes(search.toLowerCase())
-      ))
-  );
+  const getIndustryContent = (industry: Industry, locale: string) => {
+    let content: { name: string } | undefined;
+
+    if (Array.isArray(industry.translations)) {
+      const found = industry.translations.find(t => t.locale === locale);
+      if (found) content = { name: found.name };
+    } else if (industry.translations && typeof industry.translations === 'object') {
+      // @ts-ignore
+      const trans = industry.translations[locale];
+      if (trans) {
+        content = { name: trans.name || trans.industryName || '' };
+      }
+    }
+
+    if (!content) return { name: '' };
+    return content;
+  };
+
+  const filteredIndustries = industries.filter((industry) => {
+    if (!search) return true;
+    const searchLower = search.toLowerCase();
+    const matchesSlug = industry.industrySlug?.toLowerCase().includes(searchLower);
+    const matchesIcon = industry.iconName?.toLowerCase().includes(searchLower);
+
+    let matchesTrans = false;
+    const idContent = getIndustryContent(industry, 'id');
+    const enContent = getIndustryContent(industry, 'en');
+    matchesTrans = idContent.name.toLowerCase().includes(searchLower) ||
+      enContent.name.toLowerCase().includes(searchLower);
+
+    return matchesSlug || matchesIcon || matchesTrans;
+  });
 
   const activeCount = industries.filter(i => i.isActive).length;
   const inactiveCount = industries.filter(i => !i.isActive).length;
@@ -90,9 +114,9 @@ export default function IndustriesPage() {
     {
       header: 'Name',
       render: (industry: Industry) => {
-        const idTrans = industry.translations?.find(t => t.locale === 'id');
+        const idContent = getIndustryContent(industry, 'id');
         return (
-          <span className="text-sm font-medium text-gray-900">{idTrans?.name || '-'}</span>
+          <span className="text-sm font-medium text-gray-900">{idContent.name || '-'}</span>
         );
       },
     },
@@ -240,16 +264,62 @@ function IndustryModal({
   onClose: () => void;
   onSave: () => void;
 }) {
+  // Helper to extract translations safely for initial state
+  function routerTranslations(ind: Industry | null) {
+    if (!ind) {
+      return [
+        { locale: 'id', name: '', description: '', heroTitle: '', heroDescription: '' },
+        { locale: 'en', name: '', description: '', heroTitle: '', heroDescription: '' },
+      ];
+    }
+
+    const getTrans = (locale: string) => {
+      if (Array.isArray(ind.translations)) {
+        const found = ind.translations.find(t => t.locale === locale);
+        return found ? { ...found } : null;
+      } else if (ind.translations && typeof ind.translations === 'object') {
+        // @ts-ignore
+        const trans = ind.translations[locale];
+        if (trans) {
+          return {
+            name: trans.name || trans.industryName || '',
+            description: trans.description || '',
+            heroTitle: trans.heroTitle || '',
+            heroDescription: trans.heroDescription || ''
+          };
+        }
+      }
+      return null;
+    };
+
+    const idTrans = getTrans('id');
+    const enTrans = getTrans('en');
+
+    return [
+      {
+        locale: 'id',
+        name: idTrans?.name || '',
+        description: idTrans?.description || '',
+        heroTitle: idTrans?.heroTitle || '',
+        heroDescription: idTrans?.heroDescription || ''
+      },
+      {
+        locale: 'en',
+        name: enTrans?.name || '',
+        description: enTrans?.description || '',
+        heroTitle: enTrans?.heroTitle || '',
+        heroDescription: enTrans?.heroDescription || ''
+      },
+    ];
+  }
+
   const [formData, setFormData] = useState({
     industrySlug: industry?.industrySlug || '',
     imageUrl: industry?.imageUrl || '',
     imageFileId: industry?.imageFileId || null,
     displayOrder: industry?.displayOrder || 0,
     isActive: industry?.isActive ?? true,
-    translations: industry?.translations || [
-      { locale: 'id', name: '', description: '', heroTitle: '', heroDescription: '' },
-      { locale: 'en', name: '', description: '', heroTitle: '', heroDescription: '' },
-    ],
+    translations: routerTranslations(industry),
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -262,10 +332,7 @@ function IndustryModal({
         imageFileId: industry.imageFileId || null,
         displayOrder: industry.displayOrder,
         isActive: industry.isActive,
-        translations: industry.translations || [
-          { locale: 'id', name: '', description: '', heroTitle: '', heroDescription: '' },
-          { locale: 'en', name: '', description: '', heroTitle: '', heroDescription: '' },
-        ],
+        translations: routerTranslations(industry),
       });
     }
   }, [industry]);
@@ -399,7 +466,7 @@ function IndustryModal({
           {/* Translations */}
           <div className="space-y-2 pt-2 border-t border-gray-200">
             <label className="block text-xs font-semibold text-gray-700 mb-2">Translations</label>
-            {formData.translations.map((trans, idx) => (
+            {(formData.translations as Translation[]).map((trans, idx) => (
               <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
@@ -412,7 +479,7 @@ function IndustryModal({
                     placeholder="Name"
                     value={trans.name}
                     onChange={(e) => {
-                      const newTranslations = [...formData.translations];
+                      const newTranslations = [...formData.translations] as Translation[];
                       newTranslations[idx] = { ...trans, name: e.target.value };
                       setFormData({ ...formData, translations: newTranslations });
                     }}
@@ -423,7 +490,7 @@ function IndustryModal({
                     placeholder="Hero Title"
                     value={trans.heroTitle}
                     onChange={(e) => {
-                      const newTranslations = [...formData.translations];
+                      const newTranslations = [...formData.translations] as Translation[];
                       newTranslations[idx] = { ...trans, heroTitle: e.target.value };
                       setFormData({ ...formData, translations: newTranslations });
                     }}
@@ -433,7 +500,7 @@ function IndustryModal({
                     placeholder="Description"
                     value={trans.description}
                     onChange={(e) => {
-                      const newTranslations = [...formData.translations];
+                      const newTranslations = [...formData.translations] as Translation[];
                       newTranslations[idx] = { ...trans, description: e.target.value };
                       setFormData({ ...formData, translations: newTranslations });
                     }}
@@ -444,7 +511,7 @@ function IndustryModal({
                     placeholder="Hero Description"
                     value={trans.heroDescription}
                     onChange={(e) => {
-                      const newTranslations = [...formData.translations];
+                      const newTranslations = [...formData.translations] as Translation[];
                       newTranslations[idx] = { ...trans, heroDescription: e.target.value };
                       setFormData({ ...formData, translations: newTranslations });
                     }}
