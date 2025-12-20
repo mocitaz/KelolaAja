@@ -10,17 +10,23 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Endpoint required" }, { status: 400 });
   }
 
+  const url = `${API_BASE_URL}${endpoint}`;
+  console.log('[Proxy GET] Request to:', url);
+
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(url, {
       headers: {
         Authorization: token || "",
         "Content-Type": "application/json"
       }
     });
 
+    console.log('[Proxy GET] Status:', response.status);
+
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
+    console.error('[Proxy GET] Error:', error);
     return NextResponse.json({ success: false, message: "Network error" }, { status: 500 });
   }
 }
@@ -35,8 +41,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Endpoint required" }, { status: 400 });
   }
 
+  const url = `${API_BASE_URL}${endpoint}`;
+  console.log('[Proxy POST] Request to:', url);
+
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         Authorization: token || "",
@@ -45,9 +54,12 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(body)
     });
 
+    console.log('[Proxy POST] Status:', response.status);
+
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
+    console.error('[Proxy POST] Error:', error);
     return NextResponse.json({ success: false, message: "Network error" }, { status: 500 });
   }
 }
@@ -62,8 +74,11 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Endpoint required" }, { status: 400 });
   }
 
+  const url = `${API_BASE_URL}${endpoint}`;
+  console.log('[Proxy PUT] Request to:', url);
+
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(url, {
       method: "PUT",
       headers: {
         Authorization: token || "",
@@ -72,9 +87,12 @@ export async function PUT(request: NextRequest) {
       body: JSON.stringify(body)
     });
 
+    console.log('[Proxy PUT] Status:', response.status);
+
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
+    console.error('[Proxy PUT] Error:', error);
     return NextResponse.json({ success: false, message: "Network error" }, { status: 500 });
   }
 }
@@ -88,8 +106,11 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Endpoint required" }, { status: 400 });
   }
 
+  const url = `${API_BASE_URL}${endpoint}`;
+  console.log('[Proxy DELETE] Request to:', url);
+
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(url, {
       method: "DELETE",
       headers: {
         Authorization: token || "",
@@ -97,9 +118,12 @@ export async function DELETE(request: NextRequest) {
       }
     });
 
+    console.log('[Proxy DELETE] Status:', response.status);
+
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
+    console.error('[Proxy DELETE] Error:', error);
     return NextResponse.json({ success: false, message: "Network error" }, { status: 500 });
   }
 }

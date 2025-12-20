@@ -9,6 +9,7 @@ import AdminCard from '@/components/admin/AdminCard';
 import AdminTable from '@/components/admin/AdminTable';
 import AdminModal from '@/components/admin/AdminModal';
 import SearchBar from '@/components/admin/SearchBar';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 interface Translation {
   locale: string;
@@ -22,7 +23,9 @@ interface Industry {
   industryId: number;
   industrySlug: string;
   displayOrder: number;
-  iconName: string;
+  imageFileId: number | null;
+  imageUrl?: string | null;
+  iconName?: string; // Legacy/Fallback
   isActive: boolean;
   translations?: Translation[];
 }
@@ -108,11 +111,10 @@ export default function IndustriesPage() {
     {
       header: 'Status',
       render: (industry: Industry) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
-          industry.isActive
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
-        }`}>
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${industry.isActive
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
           {industry.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
@@ -240,7 +242,8 @@ function IndustryModal({
 }) {
   const [formData, setFormData] = useState({
     industrySlug: industry?.industrySlug || '',
-    iconName: industry?.iconName || '',
+    imageUrl: industry?.imageUrl || '',
+    imageFileId: industry?.imageFileId || null,
     displayOrder: industry?.displayOrder || 0,
     isActive: industry?.isActive ?? true,
     translations: industry?.translations || [
@@ -255,7 +258,8 @@ function IndustryModal({
     if (industry) {
       setFormData({
         industrySlug: industry.industrySlug,
-        iconName: industry.iconName,
+        imageUrl: industry.imageUrl || '', // Assuming backend returns imageUrl or we have a way to display it
+        imageFileId: industry.imageFileId || null,
         displayOrder: industry.displayOrder,
         isActive: industry.isActive,
         translations: industry.translations || [
@@ -276,9 +280,28 @@ function IndustryModal({
         ? `/api/v1/industries/admin/${industry.industryId}`
         : '/api/v1/industries/admin';
 
+      // Transform translations array to object map
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach(t => {
+        translationsMap[t.locale] = {
+          industryName: t.name,
+          description: t.description,
+          heroTitle: t.heroTitle,
+          heroDescription: t.heroDescription
+        };
+      });
+
+      const submitData = {
+        industrySlug: formData.industrySlug,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        imageFileId: formData.imageFileId,
+        translations: translationsMap
+      };
+
       const response = await apiFetch(endpoint, {
         method: industry ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -342,12 +365,23 @@ function IndustryModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Icon Name</label>
-              <input
-                type="text"
-                value={formData.iconName}
-                onChange={(e) => setFormData({ ...formData, iconName: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+              <ImageUpload
+                label="Industry Icon/Image"
+                currentImage={formData.imageUrl}
+                onUploadComplete={(fileId, filePath) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    imageFileId: fileId,
+                    imageUrl: filePath
+                  }));
+                }}
+                onRemove={() => {
+                  setFormData(prev => ({
+                    ...prev,
+                    imageFileId: null,
+                    imageUrl: ''
+                  }));
+                }}
               />
             </div>
             <div>

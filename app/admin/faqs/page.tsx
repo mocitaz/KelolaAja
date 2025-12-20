@@ -9,10 +9,16 @@ import AdminTable from '@/components/admin/AdminTable';
 import AdminModal from '@/components/admin/AdminModal';
 import SearchBar from '@/components/admin/SearchBar';
 
-interface FAQ {
-  faqId: number;
+interface Translation {
+  locale: string;
   question: string;
   answer: string;
+}
+
+interface FAQ {
+  faqId: number;
+  question?: string; // Optional because it might be in translations
+  answer?: string;   // Optional because it might be in translations
   categoryId: number;
   category?: {
     categoryId: number;
@@ -21,6 +27,7 @@ interface FAQ {
   displayOrder: number;
   isActive: boolean;
   createdAt: string;
+  translations?: Translation[] | Record<string, Translation>;
 }
 
 interface Category {
@@ -80,10 +87,51 @@ export default function FAQsPage() {
     }
   };
 
+  const getFAQContent = (faq: FAQ, locale: string = 'id') => {
+    let content: { question: string; answer: string } | undefined;
+
+    if (Array.isArray(faq.translations)) {
+      content = faq.translations.find(t => t.locale === locale);
+    } else if (faq.translations && typeof faq.translations === 'object') {
+      // @ts-ignore
+      content = faq.translations[locale];
+    }
+
+    // Fallback to top-level properties if translation missing
+    if (!content) {
+      return {
+        question: faq.question || '-',
+        answer: faq.answer || '-'
+      };
+    }
+
+    return content;
+  };
+
   const filteredFAQs = faqs.filter(faq => {
-    const matchesSearch = faq.question?.toLowerCase().includes(search.toLowerCase()) ||
-      faq.answer?.toLowerCase().includes(search.toLowerCase());
+    const searchLower = search.toLowerCase();
+
+    // Check top level
+    const matchesTopLevel = (faq.question?.toLowerCase().includes(searchLower) ||
+      faq.answer?.toLowerCase().includes(searchLower)) ?? false;
+
+    // Check translations
+    let matchesTranslations = false;
+    if (Array.isArray(faq.translations)) {
+      matchesTranslations = faq.translations.some(t =>
+        t.question?.toLowerCase().includes(searchLower) ||
+        t.answer?.toLowerCase().includes(searchLower)
+      );
+    } else if (typeof faq.translations === 'object' && faq.translations !== null) {
+      matchesTranslations = Object.values(faq.translations).some((t: any) =>
+        t.question?.toLowerCase().includes(searchLower) ||
+        t.answer?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    const matchesSearch = matchesTopLevel || matchesTranslations;
     const matchesCategory = filterCategory === 'all' || faq.categoryId === filterCategory;
+
     return matchesSearch && matchesCategory;
   });
 
@@ -93,11 +141,15 @@ export default function FAQsPage() {
   const columns = [
     {
       header: 'Question',
-      render: (faq: FAQ) => (
-        <div className="max-w-md">
-          <span className="text-sm font-medium text-gray-900">{faq.question}</span>
-        </div>
-      ),
+      render: (faq: FAQ) => {
+        const content = getFAQContent(faq, 'id');
+        return (
+          <div className="max-w-md">
+            <span className="text-sm font-medium text-gray-900">{content.question}</span>
+            <p className="text-xs text-gray-500 mt-1 truncate">{content.answer}</p>
+          </div>
+        );
+      },
     },
     {
       header: 'Category',
@@ -115,8 +167,8 @@ export default function FAQsPage() {
       header: 'Status',
       render: (faq: FAQ) => (
         <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${faq.isActive
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'
           }`}>
           {faq.isActive ? 'Active' : 'Inactive'}
         </span>
@@ -251,7 +303,7 @@ function FAQModal({
     displayOrder: faq?.displayOrder || 0,
     isActive: faq?.isActive ?? true,
     translations: [
-      { locale: 'id', question: faq?.question || '', answer: faq?.answer || '' },
+      { locale: 'id', question: '', answer: '' },
       { locale: 'en', question: '', answer: '' },
     ],
   });
@@ -260,19 +312,37 @@ function FAQModal({
 
   useEffect(() => {
     if (faq) {
+      // Helper to extract translation from either array or object
+      const getTrans = (locale: string) => {
+        if (Array.isArray(faq.translations)) {
+          return faq.translations.find(t => t.locale === locale);
+        } else if (faq.translations && typeof faq.translations === 'object') {
+          // @ts-ignore
+          return faq.translations[locale];
+        }
+        return null;
+      };
+
+      const idTrans = getTrans('id');
+      const enTrans = getTrans('en');
+
       setFormData({
         categoryId: faq.categoryId,
         displayOrder: faq.displayOrder,
         isActive: faq.isActive,
         translations: [
-          { locale: 'id', question: faq.question || '', answer: faq.answer || '' },
-          { locale: 'en', question: '', answer: '' }
+          { locale: 'id', question: idTrans?.question || faq.question || '', answer: idTrans?.answer || faq.answer || '' },
+          { locale: 'en', question: enTrans?.question || '', answer: enTrans?.answer || '' }
         ]
       });
     } else if (categories.length > 0) {
       setFormData(prev => ({
         ...prev,
         categoryId: categories[0].categoryId,
+        translations: [
+          { locale: 'id', question: '', answer: '' },
+          { locale: 'en', question: '', answer: '' },
+        ]
       }));
     }
   }, [faq, categories]);
@@ -305,6 +375,9 @@ function FAQModal({
 
       const response = await apiFetch(endpoint, {
         method: faq ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(requestBody),
       });
 
