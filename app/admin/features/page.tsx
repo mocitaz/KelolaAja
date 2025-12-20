@@ -18,7 +18,6 @@ interface Feature {
   featureId: number;
   featureName: string;
   category: string;
-  iconName: string;
   displayOrder: number;
   isActive: boolean;
   translations?: Translation[];
@@ -168,7 +167,6 @@ export default function FeaturesPage() {
 
                 {/* Meta */}
                 <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
-                  <span>Icon: {feature.iconName || 'None'}</span>
                   <span>Order: {feature.displayOrder}</span>
                 </div>
 
@@ -241,7 +239,6 @@ interface Feature {
   featureCode: string;
   featureName: string;
   category: string;
-  iconName: string;
   displayOrder: number;
   isActive: boolean;
   translations?: Translation[];
@@ -260,7 +257,6 @@ function FeatureModal({
     featureCode: feature?.featureCode || '',
     featureName: feature?.featureName || '',
     category: feature?.category || '',
-    iconName: feature?.iconName || '',
     displayOrder: feature?.displayOrder || 0,
     isActive: feature?.isActive ?? true,
     translations: feature?.translations || [
@@ -277,7 +273,6 @@ function FeatureModal({
         featureCode: feature.featureCode,
         featureName: feature.featureName,
         category: feature.category,
-        iconName: feature.iconName,
         displayOrder: feature.displayOrder,
         isActive: feature.isActive,
         translations: feature.translations || [
@@ -310,7 +305,6 @@ function FeatureModal({
       const submitData = {
         featureCode: formData.featureCode,
         category: formData.category,
-        iconName: formData.iconName,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
         translations: translationsMap
@@ -417,17 +411,6 @@ function FeatureModal({
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Icon Name</label>
-            <input
-              type="text"
-              value={formData.iconName}
-              onChange={(e) => setFormData({ ...formData, iconName: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-              placeholder="e.g., ChartBarIcon"
-            />
-          </div>
-
           {/* Translations */}
           <div className="space-y-2 pt-2 border-t border-gray-200">
             <label className="block text-xs font-semibold text-gray-700 mb-2">Translations</label>
@@ -526,9 +509,6 @@ function PreviewModal({ feature, onClose }: { feature: Feature; onClose: () => v
 
         <div className="pt-3 border-t border-gray-200">
           <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
-            <div>
-              <span className="font-medium">Icon:</span> {feature.iconName || 'None'}
-            </div>
             <div>
               <span className="font-medium">Order:</span> {feature.displayOrder}
             </div>

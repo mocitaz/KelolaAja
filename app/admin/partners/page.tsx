@@ -8,6 +8,7 @@ import PageHeader from '@/components/admin/PageHeader';
 import AdminCard from '@/components/admin/AdminCard';
 import AdminModal from '@/components/admin/AdminModal';
 import SearchBar from '@/components/admin/SearchBar';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 interface Partner {
   partnerId: number;
@@ -17,6 +18,7 @@ interface Partner {
   displayOrder: number;
   isActive: boolean;
   translations?: any[];
+  logoFileId?: number | null; // Added for file handling
 }
 
 export default function PartnersPage() {
@@ -162,8 +164,8 @@ export default function PartnersPage() {
                 <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
                   <span>Order: {partner.displayOrder}</span>
                   <span className={`px-2 py-0.5 rounded-md font-semibold ${partner.isActive
-                      ? 'bg-green-50 text-green-700 border border-green-200'
-                      : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
                     }`}>
                     {partner.isActive ? 'Active' : 'Inactive'}
                   </span>
@@ -228,6 +230,7 @@ function PartnerModal({
     websiteUrl: partner?.websiteUrl || '',
     displayOrder: partner?.displayOrder || 0,
     isActive: partner?.isActive ?? true,
+    logoFileId: partner?.logoFileId || null, // Track file ID
     translations: partner?.translations && partner.translations.length > 0 ? partner.translations : [
       { locale: 'id', description: '' },
       { locale: 'en', description: '' },
@@ -241,7 +244,7 @@ function PartnerModal({
       const initialTranslations = partner.translations && Array.isArray(partner.translations)
         ? partner.translations
         : [
-          { locale: 'id', description: partner['description'] || '' }, // Fallback if flattened
+          { locale: 'id', description: (partner as any)['description'] || '' }, // Fallback if flattened
           { locale: 'en', description: '' }
         ];
 
@@ -251,6 +254,7 @@ function PartnerModal({
         websiteUrl: partner.websiteUrl || '',
         displayOrder: partner.displayOrder,
         isActive: partner.isActive,
+        logoFileId: partner.logoFileId || null,
         translations: initialTranslations
       });
     }
@@ -280,7 +284,7 @@ function PartnerModal({
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
         translations: translationsMap,
-        // logoFileId: 1, // TODO: Implement File Upload. Currently Logo URL text input cannot be saved as File ID.
+        logoFileId: formData.logoFileId, // Include file ID in payload
       };
 
       const response = await apiFetch(endpoint, {
@@ -348,27 +352,24 @@ function PartnerModal({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Logo URL (Display Only - Not Saved)</label>
-            <input
-              type="url"
-              value={formData.logoUrl}
-              onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-              placeholder="https://example.com/logo.png"
+            <ImageUpload
+              label="Partner Logo"
+              currentImage={formData.logoUrl}
+              onUploadComplete={(fileId, filePath) => {
+                setFormData(prev => ({
+                  ...prev,
+                  logoFileId: fileId,
+                  logoUrl: filePath // Update preview URL immediately
+                }));
+              }}
+              onRemove={() => {
+                setFormData(prev => ({
+                  ...prev,
+                  logoFileId: null,
+                  logoUrl: ''
+                }));
+              }}
             />
-            {formData.logoUrl && (
-              <div className="mt-2 relative h-20 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                <Image
-                  src={formData.logoUrl}
-                  alt="Preview"
-                  fill
-                  className="object-contain p-2"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              </div>
-            )}
           </div>
 
           <div>
