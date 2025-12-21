@@ -17,9 +17,9 @@ interface Translation {
 
 interface BenefitStat {
   statId: number;
-  statKey?: string;
-  label?: string; // Support label from API
+  statCode?: string;
   value: string;
+  unit?: string;
   displayOrder: number;
   iconName?: string;
   isActive?: boolean;
@@ -68,7 +68,7 @@ export default function BenefitStatsPage() {
 
   const filteredStats = stats.filter((stat) => {
     const searchLower = search.toLowerCase();
-    const matchesKey = (stat.statKey || stat.label || '').toLowerCase().includes(searchLower);
+    const matchesCode = (stat.statCode || '').toLowerCase().includes(searchLower);
     const matchesValue = (stat.value || '').toLowerCase().includes(searchLower);
 
     let matchesTrans = false;
@@ -78,7 +78,7 @@ export default function BenefitStatsPage() {
       );
     }
 
-    return matchesKey || matchesValue || matchesTrans;
+    return matchesCode || matchesValue || matchesTrans;
   });
 
   console.log('Filtered Stats:', filteredStats);
@@ -90,7 +90,7 @@ export default function BenefitStatsPage() {
     {
       header: 'Key / Label',
       render: (stat: BenefitStat) => (
-        <span className="text-sm font-medium text-gray-900">{stat.statKey || stat.label || '-'}</span>
+        <span className="text-sm font-medium text-gray-900">{stat.statCode || '-'}</span>
       ),
     },
     {
@@ -230,8 +230,9 @@ function BenefitStatModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
-    statKey: stat?.statKey || '',
+    statCode: stat?.statCode || '',
     value: stat?.value || '',
+    unit: stat?.unit || '',
     iconName: stat?.iconName || '',
     displayOrder: stat?.displayOrder || 0,
     isActive: stat?.isActive ?? true,
@@ -246,8 +247,9 @@ function BenefitStatModal({
   useEffect(() => {
     if (stat) {
       setFormData({
-        statKey: stat.statKey || stat.label || '', // Use label as fallback
+        statCode: stat.statCode || '',
         value: stat.value || '',
+        unit: stat.unit || '',
         iconName: stat.iconName || '',
         displayOrder: stat.displayOrder || 0,
         isActive: stat.isActive ?? true,
@@ -269,9 +271,19 @@ function BenefitStatModal({
         ? `/api/v1/benefit-stats/admin/${stat.statId}`
         : '/api/v1/benefit-stats/admin';
 
+      const submitData = {
+        statCode: formData.statCode || formData.translations[0].label.toUpperCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_'),
+        value: formData.value,
+        unit: formData.unit,
+        iconName: formData.iconName,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: formData.translations,
+      };
+
       const response = await apiFetch(endpoint, {
         method: stat ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -322,17 +334,19 @@ function BenefitStatModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Stat Key</label>
-              <input
-                type="text"
-                required
-                value={formData.statKey}
-                onChange={(e) => setFormData({ ...formData, statKey: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Stat Code</label>
+            <input
+              type="text"
+              required
+              value={formData.statCode}
+              onChange={(e) => setFormData({ ...formData, statCode: e.target.value.toUpperCase() })}
+              placeholder="e.g., COMPANIES, EFFICIENCY"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+            />
+            <p className="text-xs text-gray-500 mt-1">Unique code (auto-generated from label if empty)</p>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Value</label>
               <input
@@ -343,15 +357,13 @@ function BenefitStatModal({
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Icon Name</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Unit</label>
               <input
                 type="text"
-                value={formData.iconName}
-                onChange={(e) => setFormData({ ...formData, iconName: e.target.value })}
+                value={formData.unit}
+                onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                placeholder="e.g., +, %, /7"
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
@@ -365,6 +377,15 @@ function BenefitStatModal({
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Icon Name</label>
+            <input
+              type="text"
+              value={formData.iconName}
+              onChange={(e) => setFormData({ ...formData, iconName: e.target.value })}
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+            />
           </div>
 
           {/* Translations */}

@@ -44,7 +44,28 @@ export default function FeaturePagesPage() {
       const response = await apiFetch('/api/v1/feature-pages/admin/all');
       const data = await response.json();
       if (data.success && Array.isArray(data.data)) {
-        setPages(data.data);
+        // Map backend response to handle different field names
+        const mapped = data.data.map((page: any) => {
+          // Handle translations - convert object to array if needed
+          let translations = page.translations;
+          if (translations && !Array.isArray(translations)) {
+            translations = Object.entries(translations).map(([locale, trans]: [string, any]) => ({
+              locale,
+              title: trans.heroTitle || trans.title || '',
+              description: trans.description || '',
+              heroTitle: trans.heroTitle || '',
+              heroDescription: trans.heroDescription || ''
+            }));
+          }
+
+          return {
+            ...page,
+            pageSlug: page.slug || page.pageCode || page.pageSlug || '',
+            iconName: page.iconName || '',
+            translations: translations || []
+          };
+        });
+        setPages(mapped);
       }
     } catch (error) {
       console.error('Error fetching pages:', error);

@@ -19,6 +19,7 @@ interface Translation {
 
 interface ProcessStep {
   stepId: number;
+  stepCode?: string;
   stepNumber?: number; // Make optional
   displayOrder: number;
   isActive: boolean;
@@ -258,6 +259,7 @@ function ProcessStepModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
+    stepCode: step?.stepCode || '',
     stepNumber: step?.stepNumber || 1, // stepNumber might be undefined
     displayOrder: step?.displayOrder || 0,
     isActive: step?.isActive ?? true,
@@ -289,6 +291,7 @@ function ProcessStepModal({
       const enTrans = getTrans('en');
 
       setFormData({
+        stepCode: step.stepCode || '',
         stepNumber: step.stepNumber || 1,
         displayOrder: step.displayOrder,
         isActive: step.isActive,
@@ -321,6 +324,7 @@ function ProcessStepModal({
       });
 
       const submitData = {
+        stepCode: formData.stepCode || formData.translations[0].title.toUpperCase().replace(/\s+/g, '_'),
         stepNumber: formData.stepNumber,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
@@ -384,6 +388,18 @@ function ProcessStepModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Step Code</label>
+            <input
+              type="text"
+              required
+              value={formData.stepCode}
+              onChange={(e) => setFormData({ ...formData, stepCode: e.target.value.toUpperCase() })}
+              placeholder="e.g., ANALYSIS, PLANNING"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+            />
+            <p className="text-xs text-gray-500 mt-1">Unique code for this step (auto-generated from title if empty)</p>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Step Number</label>

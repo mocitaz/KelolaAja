@@ -17,6 +17,7 @@ interface Translation {
 
 interface AboutCard {
   cardId: number;
+  cardCode?: string;
   iconName: string;
   displayOrder: number;
   isActive: boolean;
@@ -39,7 +40,24 @@ export default function AboutCardsPage() {
       const response = await apiFetch('/api/v1/about-cards/admin');
       const data = await response.json();
       if (data.success && Array.isArray(data.data)) {
-        setCards(data.data);
+        // Map backend response - translations might be object {id: {...}, en: {...}}
+        const mapped = data.data.map((card: any) => {
+          // Convert translations object to array if needed
+          let translations = card.translations;
+          if (translations && !Array.isArray(translations)) {
+            // Backend returns {id: {...}, en: {...}}, convert to array
+            translations = Object.entries(translations).map(([locale, trans]: [string, any]) => ({
+              locale,
+              title: trans.title || '',
+              description: trans.description || ''
+            }));
+          }
+          return {
+            ...card,
+            translations: translations || []
+          };
+        });
+        setCards(mapped);
       }
     } catch (error) {
       console.error('Error fetching cards:', error);
@@ -109,8 +127,8 @@ export default function AboutCardsPage() {
       header: 'Status',
       render: (card: AboutCard) => (
         <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${card.isActive
-            ? 'bg-green-50 text-green-700 border border-green-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
+          ? 'bg-green-50 text-green-700 border border-green-200'
+          : 'bg-red-50 text-red-700 border border-red-200'
           }`}>
           {card.isActive ? 'Active' : 'Inactive'}
         </span>
@@ -224,6 +242,7 @@ function AboutCardModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
+    cardCode: card?.cardCode || '',
     iconName: card?.iconName || '',
     displayOrder: card?.displayOrder || 0,
     isActive: card?.isActive ?? true,
@@ -238,6 +257,7 @@ function AboutCardModal({
   useEffect(() => {
     if (card) {
       setFormData({
+        cardCode: card.cardCode || '',
         iconName: card.iconName,
         displayOrder: card.displayOrder,
         isActive: card.isActive,
@@ -259,9 +279,17 @@ function AboutCardModal({
         ? `/api/v1/about-cards/admin/${card.cardId}`
         : '/api/v1/about-cards/admin';
 
+      const submitData = {
+        cardCode: formData.cardCode || formData.translations[0].title.toUpperCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_'),
+        iconName: formData.iconName,
+        displayOrder: formData.displayOrder,
+        isActive: formData.isActive,
+        translations: formData.translations,
+      };
+
       const response = await apiFetch(endpoint, {
         method: card ? 'PUT' : 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       const data = await response.json();
@@ -312,6 +340,18 @@ function AboutCardModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Card Code</label>
+            <input
+              type="text"
+              required
+              value={formData.cardCode}
+              onChange={(e) => setFormData({ ...formData, cardCode: e.target.value.toUpperCase() })}
+              placeholder="e.g., VISION, MISSION"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+            />
+            <p className="text-xs text-gray-500 mt-1">Unique code (auto-generated from title if empty)</p>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Icon Name</label>

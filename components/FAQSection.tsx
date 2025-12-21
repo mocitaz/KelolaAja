@@ -16,27 +16,37 @@ interface FAQ {
 }
 
 export default function FAQSection() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const [faqs, setFaqs] = useState<FAQ[]>([])
   const [loading, setLoading] = useState(true)
   const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
     fetchFAQs()
-  }, [])
+  }, [locale])
 
   const fetchFAQs = async () => {
-    const result = await fetchPublicData<FAQ[]>(
-      API_ENDPOINTS.PUBLIC.FAQS.LIST
-    )
-    
-    if (result.success && Array.isArray(result.data)) {
-      // Only get active FAQs and limit to 9 items (or show all if less than 9)
-      setFaqs(result.data.filter((faq: FAQ) => faq.isActive).slice(0, 9))
-    } else {
+    try {
+      const url = `${API_ENDPOINTS.PUBLIC.FAQS.LIST}?locale=${locale}&t=${Date.now()}`;
+
+      const result = await fetchPublicData<FAQ[]>(
+        url,
+        { cache: 'no-store' }
+      )
+
+      if (result.success && Array.isArray(result.data)) {
+        const activeFaqs = result.data;
+        // Only get active FAQs and limit to 9 items (or show all if less than 9)
+        setFaqs(activeFaqs.slice(0, 9))
+      } else {
+        console.warn('FAQ fetch failed or invalid data, using fallback');
+        setFaqs([])
+      }
+    } catch (error) {
+      console.error('Error in fetchFAQs:', error);
       setFaqs([])
     }
-    
+
     setLoading(false)
   }
 
@@ -126,7 +136,7 @@ export default function FAQSection() {
               </div>
             ))}
           </div>
-          
+
           {/* Show More / Show Less Button */}
           {hasMore && (
             <div className="mt-4">

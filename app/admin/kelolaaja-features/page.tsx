@@ -17,6 +17,7 @@ interface Translation {
 
 interface KelolaAjaFeature {
   featureId: number;
+  featureCode?: string;
   iconName: string;
   displayOrder: number;
   isActive: boolean;
@@ -237,6 +238,7 @@ function KelolaAjaFeatureModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
+    featureCode: feature?.featureCode || '',
     iconName: feature?.iconName || '',
     displayOrder: feature?.displayOrder || 0,
     isActive: feature?.isActive ?? true,
@@ -279,6 +281,7 @@ function KelolaAjaFeatureModal({
   useEffect(() => {
     if (feature) {
       setFormData({
+        featureCode: feature.featureCode || '',
         iconName: feature.iconName,
         displayOrder: feature.displayOrder,
         isActive: feature.isActive,
@@ -306,6 +309,7 @@ function KelolaAjaFeatureModal({
       });
 
       const submitData = {
+        featureCode: formData.featureCode || formData.translations[0].title.toUpperCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_'),
         iconName: formData.iconName,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
@@ -368,6 +372,18 @@ function KelolaAjaFeatureModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Feature Code</label>
+            <input
+              type="text"
+              required
+              value={formData.featureCode}
+              onChange={(e) => setFormData({ ...formData, featureCode: e.target.value.toUpperCase() })}
+              placeholder="e.g., EASY_TO_USE, REALTIME"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+            />
+            <p className="text-xs text-gray-500 mt-1">Unique code (auto-generated from title if empty)</p>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Icon Name</label>

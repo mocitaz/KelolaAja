@@ -4,7 +4,11 @@
  */
 
 // Backend API Base URL
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://kelolaaja-be-production.up.railway.app";
+// Backend API Base URL
+// Hardcoded to ensure it works, bypassing potential env var issues
+export const API_BASE_URL = "https://kelolaaja-be-production.up.railway.app";
+console.log('API_BASE_URL set to:', API_BASE_URL);
+
 
 // API Endpoints
 export const API_ENDPOINTS = {

@@ -66,8 +66,13 @@ export default function MediaFilesPage() {
 
   const fetchMediaFiles = async () => {
     try {
-      const response = await apiFetch(API_ENDPOINTS.ADMIN.MEDIA_FILES.LIST);
+      // Add pagination params that backend expects
+      const response = await apiFetch(`${API_ENDPOINTS.ADMIN.MEDIA_FILES.LIST}?page=1&limit=100`);
       const data = await response.json();
+
+      // Log response for debugging
+      console.log('Media Files Response:', data);
+
       if (data.success) {
         // Transform data to match interface and generate full URLs
         const transformData = (data.data || []).map((file: any) => ({
@@ -76,9 +81,13 @@ export default function MediaFilesPage() {
           fileUrl: file.storageUrl || `${API_BASE_URL}/uploads${file.filePath.startsWith('/') ? '' : '/'}${file.filePath}`
         }));
         setMediaFiles(transformData);
+      } else {
+        console.error('Media Files API Error:', data.message);
+        setMediaFiles([]);
       }
     } catch (error) {
       console.error('Error fetching media files:', error);
+      setMediaFiles([]);
     } finally {
       setLoading(false);
     }

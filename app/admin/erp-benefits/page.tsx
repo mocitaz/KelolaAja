@@ -17,6 +17,7 @@ interface Translation {
 
 interface ERPBenefit {
   benefitId: number;
+  benefitCode?: string;
   iconName: string;
   displayOrder: number;
   isActive: boolean;
@@ -240,6 +241,7 @@ function ERPBenefitModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
+    benefitCode: benefit?.benefitCode || '',
     iconName: benefit?.iconName || '',
     displayOrder: benefit?.displayOrder || 0,
     isActive: benefit?.isActive ?? true,
@@ -270,6 +272,7 @@ function ERPBenefitModal({
       const enTrans = getTrans('en');
 
       setFormData({
+        benefitCode: benefit.benefitCode || '',
         iconName: benefit.iconName,
         displayOrder: benefit.displayOrder,
         isActive: benefit.isActive,
@@ -301,6 +304,7 @@ function ERPBenefitModal({
       });
 
       const submitData = {
+        benefitCode: formData.benefitCode || formData.translations[0].title.toUpperCase().replace(/[&]/g, '').replace(/[^\w\s]/g, '').replace(/\s+/g, '_'),
         iconName: formData.iconName,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
@@ -363,6 +367,18 @@ function ERPBenefitModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Benefit Code</label>
+            <input
+              type="text"
+              required
+              value={formData.benefitCode}
+              onChange={(e) => setFormData({ ...formData, benefitCode: e.target.value.toUpperCase() })}
+              placeholder="e.g., SALES, MULTIWAREHOUSE"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+            />
+            <p className="text-xs text-gray-500 mt-1">Unique code (auto-generated from title if empty)</p>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Icon Name</label>

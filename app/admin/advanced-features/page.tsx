@@ -17,6 +17,7 @@ interface Translation {
 
 interface AdvancedFeature {
   featureId: number;
+  featureCode?: string;
   iconFileId: number;
   displayOrder: number;
   isActive: boolean;
@@ -237,6 +238,7 @@ function AdvancedFeatureModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
+    featureCode: feature?.featureCode || '',
     iconFileId: feature?.iconFileId || 0,
     displayOrder: feature?.displayOrder || 0,
     isActive: feature?.isActive ?? true,
@@ -267,6 +269,7 @@ function AdvancedFeatureModal({
       const enTrans = getTrans('en');
 
       setFormData({
+        featureCode: feature.featureCode || '',
         iconFileId: feature.iconFileId,
         displayOrder: feature.displayOrder,
         isActive: feature.isActive,
@@ -300,6 +303,7 @@ function AdvancedFeatureModal({
       });
 
       const submitData = {
+        featureCode: formData.featureCode || formData.translations[0].title.toUpperCase().replace(/[&]/g, '').replace(/[^\w\s]/g, '').replace(/\s+/g, '_'),
         iconFileId: formData.iconFileId,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
@@ -362,6 +366,18 @@ function AdvancedFeatureModal({
         )}
 
         <div className="grid grid-cols-1 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Feature Code</label>
+            <input
+              type="text"
+              required
+              value={formData.featureCode}
+              onChange={(e) => setFormData({ ...formData, featureCode: e.target.value.toUpperCase() })}
+              placeholder="e.g., FINANCE, MANUFACTURING"
+              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+            />
+            <p className="text-xs text-gray-500 mt-1">Unique code (auto-generated from title if empty)</p>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Icon File ID</label>

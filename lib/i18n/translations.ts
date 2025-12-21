@@ -1431,9 +1431,9 @@ export const translations: Record<Locale, Translations> = {
     },
     aboutKelolaAja: {
       title: 'What is KelolaAja?',
-      subtitle: 'Leading ERP Accounting Software for Indonesian Business',
-      description: 'KelolaAja ERP Accounting software, founded in 2024 to answer the challenges of companies in managing management systems efficiently. With KelolaAja business software solutions present to meet the needs of various industries. Designed specifically for ease of use and adapted to the needs of Indonesian companies.',
-      highlight: 'KelolaAja is the first ERP software that offers the advantage of financial reporting guidance up to tax reporting.',
+      subtitle: '',
+      description: 'KelolaAja is an integrated ERP software developed specifically to meet the needs of small to growing businesses in Indonesia. Designed to simplify financial management, bookkeeping, reporting, and other business operations comprehensively, KelolaAja enables companies to manage and monitor business activities in real-time, from anywhere, with high efficiency and consistent accuracy.',
+      highlight: 'Although optimized for growing businesses, KelolaAja is built with enterprise-class standards and capabilities. This ensures that even large-scale companies can rely on KelolaAja to meet their internal complexity needs.',
       question: 'Have questions?',
       contactVia: 'Contact us via WhatsApp',
       ctaText: 'Try Free Now',
@@ -1444,10 +1444,6 @@ export const translations: Record<Locale, Translations> = {
       showAll: 'Show All FAQs',
       showLess: 'Show Less',
       items: [
-        {
-          question: 'What is KelolaAja?',
-          answer: 'KelolaAja is an integrated ERP software developed specifically to meet the needs of small to growing businesses in Indonesia. Designed to simplify financial management, bookkeeping, reporting, and other business operations comprehensively, KelolaAja enables companies to manage and monitor business activities in real-time, from anywhere, with high efficiency and consistent accuracy.\n\nAlthough optimized for growing businesses, KelolaAja is built with enterprise-class standards and capabilities. This ensures that even large-scale companies can rely on KelolaAja to meet their internal complexity needs.',
-        },
         {
           question: 'What distinguishes KelolaAja from other ERP software in the market?',
           answer: 'KelolaAja brings a balance between system quality, feature depth, and cost affordability. Compared to local or global ERPs, KelolaAja offers comprehensive and cost-efficient solutions without sacrificing core functionality.',

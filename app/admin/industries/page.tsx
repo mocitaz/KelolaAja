@@ -47,7 +47,28 @@ export default function IndustriesPage() {
       const response = await apiFetch('/api/v1/industries/admin/all');
       const data = await response.json();
       if (data.success && Array.isArray(data.data)) {
-        setIndustries(data.data);
+        // Map backend response to handle different field names
+        const mapped = data.data.map((industry: any) => {
+          // Handle translations - convert object to array if needed
+          let translations = industry.translations;
+          if (translations && !Array.isArray(translations)) {
+            translations = Object.entries(translations).map(([locale, trans]: [string, any]) => ({
+              locale,
+              name: trans.title || trans.industryName || trans.name || '',
+              description: trans.description || '',
+              heroTitle: trans.heroTitle || '',
+              heroDescription: trans.heroDescription || ''
+            }));
+          }
+
+          return {
+            ...industry,
+            industrySlug: industry.slug || industry.industryCode || industry.industrySlug || '',
+            iconName: industry.iconName || '',
+            translations: translations || []
+          };
+        });
+        setIndustries(mapped);
       }
     } catch (error) {
       console.error('Error fetching industries:', error);

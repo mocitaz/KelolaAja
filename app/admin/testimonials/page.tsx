@@ -11,12 +11,16 @@ import SearchBar from '@/components/admin/SearchBar';
 
 interface Testimonial {
   testimonialId: number;
-  personName: string;
-  position: string;
+  name: string;              // Backend field
+  title: string;             // Backend field
   company: string;
-  testimonialText: string;
+  quote: string;             // Backend field (from translations)
   rating: number;
-  imageUrl?: string;
+  photo?: {                  // Backend field (nested object)
+    fileId: number;
+    filePath: string;
+    altText: string | null;
+  };
   isActive: boolean;
   displayOrder: number;
   createdAt: string;
@@ -38,7 +42,13 @@ export default function TestimonialsPage() {
       const response = await apiFetch('/api/v1/admin/testimonials');
       const data = await response.json();
       if (data.success) {
-        setTestimonials(data.data);
+        // Map backend response to match interface
+        const mapped = data.data.map((t: any) => ({
+          ...t,
+          quote: t.translations?.id?.quote || t.translations?.en?.quote || '',
+          photo: t.photo || null
+        }));
+        setTestimonials(mapped);
       }
     } catch (error) {
       console.error('Error fetching testimonials:', error);
@@ -61,7 +71,7 @@ export default function TestimonialsPage() {
   };
 
   const filteredTestimonials = testimonials.filter(t =>
-    t.personName?.toLowerCase().includes(search.toLowerCase()) ||
+    t.name?.toLowerCase().includes(search.toLowerCase()) ||
     t.company?.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -136,24 +146,24 @@ export default function TestimonialsPage() {
                 {/* Header */}
                 <div className="flex items-start gap-3">
                   <div className="relative h-12 w-12 rounded-full bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-200">
-                    {testimonial.imageUrl ? (
+                    {testimonial.photo?.filePath ? (
                       <Image
-                        src={testimonial.imageUrl}
-                        alt={testimonial.personName}
+                        src={testimonial.photo.filePath}
+                        alt={testimonial.name}
                         fill
                         className="object-cover"
                       />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-[#039edb] to-[#71bf44]">
                         <span className="text-white text-sm font-bold">
-                          {testimonial.personName?.charAt(0)?.toUpperCase() || '?'}
+                          {testimonial.name?.charAt(0)?.toUpperCase() || '?'}
                         </span>
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-bold text-gray-900 truncate">{testimonial.personName}</h3>
-                    <p className="text-xs text-gray-600 truncate">{testimonial.position}</p>
+                    <h3 className="text-sm font-bold text-gray-900 truncate">{testimonial.name}</h3>
+                    <p className="text-xs text-gray-600 truncate">{testimonial.title}</p>
                     <p className="text-xs text-gray-500 truncate">{testimonial.company}</p>
                   </div>
                 </div>
@@ -164,8 +174,8 @@ export default function TestimonialsPage() {
                     <StarIcon
                       key={i}
                       className={`h-4 w-4 ${i < testimonial.rating
-                          ? 'text-yellow-400 fill-current'
-                          : 'text-gray-300'
+                        ? 'text-yellow-400 fill-current'
+                        : 'text-gray-300'
                         }`}
                     />
                   ))}
@@ -174,15 +184,15 @@ export default function TestimonialsPage() {
 
                 {/* Testimonial Text */}
                 <p className="text-xs text-gray-700 line-clamp-3 leading-relaxed">
-                  {testimonial.testimonialText}
+                  {testimonial.quote}
                 </p>
 
                 {/* Meta */}
                 <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
                   <span>Order: {testimonial.displayOrder}</span>
                   <span className={`px-2 py-0.5 rounded-md font-semibold ${testimonial.isActive
-                      ? 'bg-green-50 text-green-700 border border-green-200'
-                      : 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
                     }`}>
                     {testimonial.isActive ? 'Active' : 'Inactive'}
                   </span>
@@ -242,15 +252,15 @@ function TestimonialModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
-    name: testimonial?.personName || '', // Backend expects 'name', FE interface used 'personName'
-    title: testimonial?.position || '',   // Backend expects 'title', FE interface used 'position'
+    name: testimonial?.name || '',
+    title: testimonial?.title || '',
     company: testimonial?.company || '',
     rating: testimonial?.rating || 5,
-    imageUrl: testimonial?.imageUrl || '',
+    photoFilePath: testimonial?.photo?.filePath || '',
     isActive: testimonial?.isActive ?? true,
     displayOrder: testimonial?.displayOrder || 0,
     translations: [
-      { locale: 'id', quote: testimonial?.testimonialText || '' }, // Mapping legacy single text to ID
+      { locale: 'id', quote: testimonial?.quote || '' },
       { locale: 'en', quote: '' },
     ],
   });
@@ -259,22 +269,16 @@ function TestimonialModal({
 
   useEffect(() => {
     if (testimonial) {
-      // If backend return includes translations, use them. Otherwise fallback.
-      // Note: The parent component might pass 'testimonialText' from a flattened response.
-      // We'll just init with that for now.
-      // Ideally we should look for testimonial.translations if available.
-      // But existing interface `Testimonial` (lines 12-23) doesn't have translations array. 
-      // We will assume for now we use the flattened text for ID.
       setFormData({
-        name: testimonial.personName,
-        title: testimonial.position,
+        name: testimonial.name,
+        title: testimonial.title,
         company: testimonial.company,
         rating: testimonial.rating,
-        imageUrl: testimonial.imageUrl || '',
+        photoFilePath: testimonial.photo?.filePath || '',
         isActive: testimonial.isActive,
         displayOrder: testimonial.displayOrder,
         translations: [
-          { locale: 'id', quote: testimonial.testimonialText || '' },
+          { locale: 'id', quote: testimonial.quote || '' },
           { locale: 'en', quote: '' }
         ]
       });
@@ -404,8 +408,8 @@ function TestimonialModal({
                   type="button"
                   onClick={() => setFormData({ ...formData, rating })}
                   className={`p-1 rounded transition-colors ${rating <= formData.rating
-                      ? 'text-yellow-400'
-                      : 'text-gray-300'
+                    ? 'text-yellow-400'
+                    : 'text-gray-300'
                     }`}
                 >
                   <StarIcon className="h-5 w-5 fill-current" />
@@ -416,18 +420,20 @@ function TestimonialModal({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Image URL (Display Only)</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">Photo URL (Display Only)</label>
             <input
               type="url"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+              value={formData.photoFilePath}
+              onChange={(e) => setFormData({ ...formData, photoFilePath: e.target.value })}
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-              placeholder="https://example.com/image.jpg"
+              placeholder="https://example.com/photo.jpg"
+              disabled
             />
-            {formData.imageUrl && (
+            <p className="mt-1 text-xs text-gray-500">Note: Photo upload via Media Files is not yet implemented</p>
+            {formData.photoFilePath && (
               <div className="mt-2 relative h-20 w-20 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
                 <Image
-                  src={formData.imageUrl}
+                  src={formData.photoFilePath}
                   alt="Preview"
                   fill
                   className="object-cover"
