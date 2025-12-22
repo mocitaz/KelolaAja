@@ -76,9 +76,9 @@ export default function ERPBenefits({ benefits: propBenefits, stats }: ERPBenefi
   // Fallback benefits - Only 5 items
   const fallbackBenefits = [
     {
-      title: t.erpBenefits?.benefits?.purchasing?.title || 'Pembelian',
-      description: t.erpBenefits?.benefits?.purchasing?.description || 'Kelola seluruh proses pembelian secara terintegrasi, mulai dari permintaan pembelian, purchase order, penerimaan barang, hingga pembayaran vendor.',
-      image: '/images/benefits/hutang-vendor.png', // Using vendor payables image as placeholder
+      title: 'Pembelian',
+      description: 'Kelola seluruh proses pembelian secara terintegrasi, mulai dari permintaan pembelian, purchase order, penerimaan barang, hingga pembayaran vendor.',
+      image: '/images/benefits/hutang-vendor.png',
     },
     {
       title: t.erpBenefits?.benefits?.sales?.title || 'Penjualan',
@@ -86,14 +86,14 @@ export default function ERPBenefits({ benefits: propBenefits, stats }: ERPBenefi
       image: '/images/benefits/penjualan.png',
     },
     {
-      title: t.erpBenefits?.benefits?.reports?.title || 'Laporan',
-      description: t.erpBenefits?.benefits?.reports?.description || 'Dapatkan berbagai laporan bisnis yang komprehensif dan real-time untuk mendukung pengambilan keputusan strategis.',
-      image: '/images/benefits/stok-realtime.png', // Using stock realtime image as placeholder
+      title: 'Laporan',
+      description: 'Dapatkan berbagai laporan bisnis yang komprehensif dan real-time untuk mendukung pengambilan keputusan strategis.',
+      image: '/images/benefits/stok-realtime.png',
     },
     {
-      title: t.erpBenefits?.benefits?.accounting?.title || 'Akuntansi',
-      description: t.erpBenefits?.benefits?.accounting?.description || 'Kelola pembukuan dan laporan keuangan secara otomatis, akurat, dan sesuai dengan standar akuntansi yang berlaku.',
-      image: '/images/benefits/piutang-pelanggan.png', // Using customer receivables image as placeholder
+      title: 'Akuntansi',
+      description: 'Kelola pembukuan dan laporan keuangan secara otomatis, akurat, dan sesuai dengan standar akuntansi yang berlaku.',
+      image: '/images/benefits/piutang-pelanggan.png',
     },
     {
       title: t.erpBenefits?.benefits?.authorizationGroup?.title || 'Grup Otorisasi',
