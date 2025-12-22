@@ -1,7 +1,7 @@
 'use client'
 
 import { ReactNode, useEffect } from 'react'
-import { X } from 'lucide-react'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import Button from './Button'
 
 interface ModalProps {
@@ -53,7 +53,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md', f
                         onClick={onClose}
                         className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                     >
-                        <X className="w-5 h-5 text-gray-500" />
+                        <XMarkIcon className="w-5 h-5 text-gray-500" />
                     </button>
                 </div>
 

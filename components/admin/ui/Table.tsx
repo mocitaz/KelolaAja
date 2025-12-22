@@ -1,7 +1,7 @@
 'use client'
 
 import { ReactNode } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import Button from './Button'
 
 interface Column<T> {
@@ -112,7 +112,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                     onClick={() => onPageChange(currentPage - 1)}
                     disabled={currentPage === 1}
                 >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeftIcon className="w-4 h-4" />
                 </Button>
 
                 <Button
@@ -121,7 +121,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                     onClick={() => onPageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
                 >
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRightIcon className="w-4 h-4" />
                 </Button>
             </div>
         </div>

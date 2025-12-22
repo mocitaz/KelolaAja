@@ -2,7 +2,7 @@
 
 import { InputHTMLAttributes, forwardRef, useState } from 'react'
 import { cn } from '@/lib/utils'
-import { Eye, EyeOff } from 'lucide-react'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string
@@ -48,7 +48,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                         >
-                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                            {showPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
                         </button>
                     )}
                 </div>
