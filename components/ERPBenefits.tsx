@@ -73,62 +73,27 @@ export default function ERPBenefits({ benefits: propBenefits, stats }: ERPBenefi
     }
   }
 
-  // Fallback benefits
+  // Fallback benefits - Only 5 items
   const fallbackBenefits = [
+    {
+      title: t.erpBenefits?.benefits?.purchasing?.title || 'Pembelian',
+      description: t.erpBenefits?.benefits?.purchasing?.description || 'Kelola seluruh proses pembelian secara terintegrasi, mulai dari permintaan pembelian, purchase order, penerimaan barang, hingga pembayaran vendor.',
+      image: '/images/benefits/hutang-vendor.png', // Using vendor payables image as placeholder
+    },
     {
       title: t.erpBenefits?.benefits?.sales?.title || 'Penjualan',
       description: t.erpBenefits?.benefits?.sales?.description || 'Kelola seluruh proses penjualan secara terintegrasi, mulai dari penawaran, pesanan pelanggan, pengiriman, hingga penagihan dan penerimaan pembayaran.',
       image: '/images/benefits/penjualan.png',
     },
     {
-      title: t.erpBenefits?.benefits?.multiWarehouse?.title || 'Multi Gudang',
-      description: t.erpBenefits?.benefits?.multiWarehouse?.description || 'Kelola stok dan pergerakan barang di berbagai lokasi gudang secara terpusat dan real-time.',
-      image: '/images/benefits/multi-gudang.png',
+      title: t.erpBenefits?.benefits?.reports?.title || 'Laporan',
+      description: t.erpBenefits?.benefits?.reports?.description || 'Dapatkan berbagai laporan bisnis yang komprehensif dan real-time untuk mendukung pengambilan keputusan strategis.',
+      image: '/images/benefits/stok-realtime.png', // Using stock realtime image as placeholder
     },
     {
-      title: t.erpBenefits?.benefits?.darkMode?.title || 'Dark Mode',
-      description: t.erpBenefits?.benefits?.darkMode?.description || 'Nikmati tampilan antarmuka yang lebih nyaman untuk penggunaan jangka panjang.',
-      image: '/images/benefits/dark-mode.png',
-    },
-    {
-      title: t.erpBenefits?.benefits?.multiExportInvoice?.title || 'Multi Export Invoice',
-      description: t.erpBenefits?.benefits?.multiExportInvoice?.description || 'Ekspor invoice penjualan ke berbagai format sesuai kebutuhan bisnis.',
-      image: '/images/benefits/multi-export.png',
-    },
-    {
-      title: t.erpBenefits?.benefits?.documentApproval?.title || 'Approval Dokumen',
-      description: t.erpBenefits?.benefits?.documentApproval?.description || 'Kelola proses persetujuan dokumen secara terkontrol sebelum transaksi diproses lebih lanjut.',
-      image: '/images/benefits/approval-dokumen.png',
-    },
-    {
-      title: t.erpBenefits?.benefits?.purchasePriceMovement?.title || 'Pergerakan Harga Beli',
-      description: t.erpBenefits?.benefits?.purchasePriceMovement?.description || 'Pantau riwayat dan perubahan harga beli barang secara detail.',
-      image: '/images/benefits/pergerakan-harga-asli.png',
-    },
-    {
-      title: t.erpBenefits?.benefits?.stockMovementRealtime?.title || 'Pergerakan Stok Real Time',
-      description: t.erpBenefits?.benefits?.stockMovementRealtime?.description || 'Pantau setiap pergerakan stok masuk dan keluar secara real-time.',
-      image: '/images/benefits/pergerakan-stok.png',
-    },
-    {
-      title: t.erpBenefits?.benefits?.stockRealtime?.title || 'Stok Real Time',
-      description: t.erpBenefits?.benefits?.stockRealtime?.description || 'Pantau ketersediaan stok secara real-time di setiap gudang dan kategori barang.',
-      image: '/images/benefits/stok-realtime.png',
-    },
-    {
-      title: t.erpBenefits?.benefits?.stockTransfer?.title || 'Transfer Stok',
-      description: t.erpBenefits?.benefits?.stockTransfer?.description || 'Kelola perpindahan stok antar gudang secara terkontrol dan terdokumentasi.',
-      image: '/images/benefits/transfer-stok.png',
-    },
-    {
-      title: t.erpBenefits?.benefits?.vendorPayables?.title || 'Hutang Vendor',
-      description: t.erpBenefits?.benefits?.vendorPayables?.description || 'Pantau dan kelola kewajiban pembayaran ke vendor secara terstruktur dan transparan.',
-      image: '/images/benefits/hutang-vendor.png',
-    },
-    {
-      title: t.erpBenefits?.benefits?.customerReceivables?.title || 'Piutang Pelanggan',
-      description: t.erpBenefits?.benefits?.customerReceivables?.description || 'Kelola piutang pelanggan secara terstruktur dan real-time.',
-      image: '/images/benefits/piutang-pelanggan.png',
+      title: t.erpBenefits?.benefits?.accounting?.title || 'Akuntansi',
+      description: t.erpBenefits?.benefits?.accounting?.description || 'Kelola pembukuan dan laporan keuangan secara otomatis, akurat, dan sesuai dengan standar akuntansi yang berlaku.',
+      image: '/images/benefits/piutang-pelanggan.png', // Using customer receivables image as placeholder
     },
     {
       title: t.erpBenefits?.benefits?.authorizationGroup?.title || 'Grup Otorisasi',
