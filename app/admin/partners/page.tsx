@@ -41,7 +41,10 @@ export default function PartnersPage() {
     try {
       const response = await apiFetch('/api/v1/partners/admin/all');
       const data = await response.json();
+      console.log('[Partners] Response:', { status: response.status, ok: response.ok, data });
       if (data.success) {
+        console.log('[Partners] Fetched partners count:', data.data?.length || 0);
+        console.log('[Partners] Fetched partners:', data.data);
         setPartners(data.data);
       }
     } catch (error) {
@@ -264,7 +267,7 @@ function PartnerModal({
     partnerName: partner?.partnerName || '',
     logoUrl: partner?.logoUrl || '',
     websiteUrl: partner?.websiteUrl || '',
-    displayOrder: partner?.displayOrder || 0,
+    displayOrder: partner?.displayOrder || 1,
     isActive: partner?.isActive ?? true,
     logoFileId: partner?.logoFileId || null,
     translations: [
@@ -327,6 +330,18 @@ function PartnerModal({
         };
       });
 
+      console.log('[Partners] Submitting data:', {
+        endpoint,
+        method: partner ? 'PUT' : 'POST',
+        data: {
+          partnerName: formData.partnerName,
+          websiteUrl: formData.websiteUrl,
+          displayOrder: formData.displayOrder,
+          isActive: formData.isActive,
+          logoFileId: formData.logoFileId,
+        }
+      });
+
       const submitData = {
         partnerName: formData.partnerName,
         websiteUrl: formData.websiteUrl,
@@ -345,6 +360,7 @@ function PartnerModal({
       });
 
       const data = await response.json();
+      console.log('[Partners] Response:', { status: response.status, ok: response.ok, data });
 
       if (response.ok && data.success) {
         onSave();

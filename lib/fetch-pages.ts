@@ -201,11 +201,32 @@ export async function fetchAllFeaturePages(
  */
 export async function fetchTestimonials(): Promise<any[]> {
   try {
+    console.log('[Server fetchTestimonials] Fetching from:', `${API_BASE_URL}/api/v1/testimonials`);
     const response = await fetch(`${API_BASE_URL}/api/v1/testimonials`, { cache: 'no-store' });
     const result = await response.json();
-    return result.success && Array.isArray(result.data) ? result.data : [];
+    console.log('[Server fetchTestimonials] Response:', result);
+    
+    if (result.success && Array.isArray(result.data)) {
+      // Map API field names to component field names
+      const mapped = result.data.map((t: any) => ({
+        testimonialId: t.testimonialId,
+        personName: t.name,           // API: name -> Component: personName
+        position: t.title,             // API: title -> Component: position
+        company: t.company,
+        testimonialText: t.quote,      // API: quote -> Component: testimonialText
+        rating: t.rating,
+        imageUrl: t.photo,             // API: photo -> Component: imageUrl
+        isActive: t.isFeatured !== false, // Use isFeatured as isActive
+        displayOrder: t.displayOrder
+      }));
+      console.log('[Server fetchTestimonials] Mapped testimonials:', mapped.length);
+      return mapped;
+    }
+    
+    console.log('[Server fetchTestimonials] No data, returning empty array');
+    return [];
   } catch (error) {
-    console.error('Error fetching testimonials:', error);
+    console.error('[Server fetchTestimonials] Error:', error);
     return [];
   }
 }

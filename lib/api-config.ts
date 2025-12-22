@@ -4,10 +4,10 @@
  */
 
 // Backend API Base URL
-// Backend API Base URL
-// Hardcoded to ensure it works, bypassing potential env var issues
-export const API_BASE_URL = "https://kelolaaja-be-production.up.railway.app";
+// Use environment variable to allow switching between local and production
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://kelolaaja-be-production.up.railway.app";
 console.log('API_BASE_URL set to:', API_BASE_URL);
+
 
 
 // API Endpoints

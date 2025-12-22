@@ -22,6 +22,7 @@ interface PartnersProps {
 }
 
 export default function Partners({ partners: propPartners, title, className = "" }: PartnersProps) {
+  console.log('[Partners] Component mounted, propPartners:', propPartners);
   const { locale } = useLanguage();
   const [isPaused, setIsPaused] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -46,14 +47,21 @@ export default function Partners({ partners: propPartners, title, className = ""
       const response = await fetch(`${baseUrl}/api/v1/partners?locale=${locale}`);
       const data = await response.json();
 
+      console.log('[Partners Public] API Response:', data);
+      
       if (data.success && Array.isArray(data.data)) {
+        console.log('[Partners Public] Raw data count:', data.data.length);
+        console.log('[Partners Public] Raw data:', data.data);
+        
         // Map API response to component format and filter invalid logos
         const mappedPartners = data.data
           .filter((p: any) => {
-            // Only include partners with valid image URLs (not page URLs)
+            // Only include partners with valid image URLs
             const logoUrl = p.logoUrl || '';
-            return logoUrl && (
+            const isValid = logoUrl && (
               logoUrl.startsWith('/images/') ||
+              logoUrl.startsWith('/uploads/') ||
+              logoUrl.startsWith('/2025/') ||  // Accept uploaded files
               (logoUrl.startsWith('http') && (
                 logoUrl.includes('.png') ||
                 logoUrl.includes('.jpg') ||
@@ -62,15 +70,38 @@ export default function Partners({ partners: propPartners, title, className = ""
                 logoUrl.includes('.webp')
               ))
             );
+            
+            if (!isValid && logoUrl) {
+              console.log('[Partners Public] Filtered out partner:', p.partnerName, 'logoUrl:', logoUrl);
+            }
+            
+            return isValid;
           })
-          .map((p: any) => ({
-            partnerId: p.partnerId,
-            partnerName: p.partnerName,
-            name: p.displayName || p.partnerName,
-            image: p.logoUrl,
-            website: p.websiteUrl,
-            displayOrder: p.displayOrder
-          }));
+          .map((p: any) => {
+            // Convert logoUrl to full URL
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+            let imageUrl = p.logoUrl;
+            
+            console.log('[Partners] Mapping partner:', p.partnerName, 'logoUrl:', p.logoUrl, 'logo:', p.logo);
+            
+            // If logoUrl is relative path, convert to backend serve URL using fileId
+            if (imageUrl && imageUrl.startsWith('/') && p.logo?.fileId) {
+              imageUrl = `${baseUrl}/api/v1/media-files/serve/${p.logo.fileId}`;
+              console.log('[Partners] Converted to serve URL:', imageUrl);
+            }
+            
+            return {
+              partnerId: p.partnerId,
+              partnerName: p.partnerName,
+              name: p.displayName || p.partnerName,
+              image: imageUrl,
+              website: p.websiteUrl,
+              displayOrder: p.displayOrder
+            };
+          });
+
+        console.log('[Partners Public] After filter count:', mappedPartners.length);
+        console.log('[Partners Public] Filtered partners:', mappedPartners);
 
         // Only use API data if we have valid partners, otherwise use fallback
         if (mappedPartners.length > 0) {
@@ -127,6 +158,7 @@ export default function Partners({ partners: propPartners, title, className = ""
   ];
 
   const partnersList = partners.length > 0 ? partners : defaultPartners;
+  console.log('[Partners] Rendering with partnersList:', partnersList.length, partnersList);
   const sectionTitle = title || (locale === "id" ? "Mitra kami" : "Our Partners");
 
   // Touch/swipe handlers - MUST be before early returns (Rules of Hooks)

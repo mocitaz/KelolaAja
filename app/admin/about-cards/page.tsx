@@ -37,9 +37,13 @@ export default function AboutCardsPage() {
 
   const fetchCards = async () => {
     try {
+      console.log('[AboutCards] Fetching cards from admin API...');
       const response = await apiFetch('/api/v1/about-cards/admin');
       const data = await response.json();
+      console.log('[AboutCards] Admin API response:', data);
+
       if (data.success && Array.isArray(data.data)) {
+        console.log('[AboutCards] Raw cards data:', data.data);
         // Map backend response - translations might be object {id: {...}, en: {...}}
         const mapped = data.data.map((card: any) => {
           // Convert translations object to array if needed
@@ -57,6 +61,7 @@ export default function AboutCardsPage() {
             translations: translations || []
           };
         });
+        console.log('[AboutCards] Mapped cards:', mapped);
         setCards(mapped);
       }
     } catch (error) {
@@ -287,19 +292,30 @@ function AboutCardModal({
         translations: formData.translations,
       };
 
+      console.log('[AboutCards] Save endpoint:', endpoint);
+      console.log('[AboutCards] Save method:', card ? 'PUT' : 'POST');
+      console.log('[AboutCards] Submit data:', submitData);
+
       const response = await apiFetch(endpoint, {
         method: card ? 'PUT' : 'POST',
         body: JSON.stringify(submitData),
       });
 
+      console.log('[AboutCards] Response status:', response.status);
+      console.log('[AboutCards] Response ok:', response.ok);
+
       const data = await response.json();
+      console.log('[AboutCards] Response data:', data);
 
       if (response.ok && data.success) {
+        console.log('[AboutCards] Save successful!');
         onSave();
       } else {
+        console.error('[AboutCards] Save failed:', data.message);
         setError(data.message || 'Failed to save card');
       }
     } catch (error) {
+      console.error('[AboutCards] Network error:', error);
       setError('Network error. Please try again.');
     } finally {
       setLoading(false);

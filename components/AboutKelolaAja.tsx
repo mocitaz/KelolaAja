@@ -29,13 +29,19 @@ export default function AboutKelolaAja() {
   }, [])
 
   const fetchAboutCards = async () => {
+    console.log('[AboutKelolaAja] Fetching about cards...');
     const result = await fetchPublicData<AboutCard[]>(
       API_ENDPOINTS.PUBLIC.ABOUT_CARDS.LIST
     )
 
+    console.log('[AboutKelolaAja] API Response:', result);
     if (result.success && Array.isArray(result.data)) {
-      setAboutCards(result.data.filter((card: AboutCard) => card.isActive))
+      console.log('[AboutKelolaAja] Raw data:', result.data);
+      const activeCards = result.data.filter((card: AboutCard) => card.isActive);
+      console.log('[AboutKelolaAja] Active cards:', activeCards);
+      setAboutCards(activeCards)
     } else {
+      console.log('[AboutKelolaAja] No data, using fallback');
       setAboutCards([])
     }
 

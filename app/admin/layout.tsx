@@ -99,24 +99,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: "Partners", href: "/admin/partners", icon: BuildingOfficeIcon },
         { name: "Testimonials", href: "/admin/testimonials", icon: ChatBubbleLeftRightIcon },
         { name: "FAQs", href: "/admin/faqs", icon: QuestionMarkCircleIcon },
-        { name: "FAQ Categories", href: "/admin/faq-categories", icon: QuestionMarkCircleIcon },
+        { name: "About Cards", href: "/admin/about-cards", icon: DocumentTextIcon },
         { name: "Company Profile", href: "/admin/company-profile", icon: BuildingOfficeIcon }
       ]
     },
-    {
-      name: "Homepage Sections",
-      icon: HomeIcon,
-      children: [
-        { name: "Benefit Stats", href: "/admin/benefit-stats", icon: ChartBarIcon },
-        { name: "Process Steps", href: "/admin/process-steps", icon: ClipboardDocumentListIcon },
-        { name: "ERP Benefits", href: "/admin/erp-benefits", icon: SparklesIcon },
-        { name: "About Cards", href: "/admin/about-cards", icon: DocumentTextIcon },
-        { name: "Advanced Features", href: "/admin/advanced-features", icon: SparklesIcon },
-        { name: "KelolaAja Features", href: "/admin/kelolaaja-features", icon: SparklesIcon }
-      ]
-    },
     { name: "Industries", href: "/admin/industries", icon: BriefcaseIcon },
-    { name: "Feature Pages", href: "/admin/feature-pages", icon: DocumentTextIcon },
     { name: "Media Files", href: "/admin/media-files", icon: PhotoIcon },
     { name: "Contact Submissions", href: "/admin/contact-submissions", icon: EnvelopeIcon },
     {
@@ -269,8 +256,8 @@ function SidebarMenu({
                 <button
                   onClick={() => toggleMenu(item.name)}
                   className={`w-full flex items-center justify-between px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 group-hover:bg-slate-50 ${expanded || childActive
-                      ? "text-[#039edb] bg-sky-50/50"
-                      : "text-slate-600 hover:text-slate-900"
+                    ? "text-[#039edb] bg-sky-50/50"
+                    : "text-slate-600 hover:text-slate-900"
                     }`}
                 >
                   <div className="flex items-center gap-3">
@@ -292,8 +279,8 @@ function SidebarMenu({
                           key={child.name}
                           href={child.href || "#"}
                           className={`relative flex items-center px-3 py-2 text-[11px] font-medium rounded-lg transition-all ${isChildActive
-                              ? "text-[#039edb] bg-sky-50"
-                              : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                            ? "text-[#039edb] bg-sky-50"
+                            : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
                             }`}
                         >
                           {/* Active Dot */}
@@ -311,8 +298,8 @@ function SidebarMenu({
               <Link
                 href={item.href || "#"}
                 className={`relative flex items-center gap-3 px-3 py-2.5 text-xs font-medium rounded-lg transition-all duration-200 group-hover:bg-slate-50 ${active
-                    ? "text-white bg-gradient-to-r from-[#039edb] to-[#0280af] shadow-md shadow-sky-500/20"
-                    : "text-slate-600 hover:text-slate-900"
+                  ? "text-white bg-gradient-to-r from-[#039edb] to-[#0280af] shadow-md shadow-sky-500/20"
+                  : "text-slate-600 hover:text-slate-900"
                   }`}
               >
                 <item.icon className={`h-4 w-4 flex-shrink-0 transition-colors ${active ? "text-white" : "text-slate-400 group-hover:text-slate-600"}`} />

@@ -55,7 +55,6 @@ export default function PricingSection() {
       // const activePlans = result.data.filter((p: PricingPlan) => p.isActive);
       const activePlans = result.data; // Show ALL plans for now
       console.log('[PricingSection] All plans (no filter):', activePlans);
-      console.log('[PricingSection] Plan names:', activePlans.map(p => p.planName));
       console.log('[PricingSection] First plan isActive value:', activePlans[0]?.isActive);
       setPricingPlans(activePlans)
     } else {
@@ -78,18 +77,7 @@ export default function PricingSection() {
         price: "Rp 200.000",
         pricePeriod: "/bulan",
         userRange: "1-5 Users",
-        features: [
-          "Alur Bisnis Lengkap",
-          "Manajemen Stok",
-          "Aset Tetap",
-          "Inventori Multi Gudang",
-          "Laporan Keuangan & Bisnis",
-          "Multi Cabang, Multi Divisi, Multi Outlet, Multi Proyek",
-          "Pembatasan Hak Akses",
-          "File Attachment",
-          "Auto Backup",
-          "Free Support"
-        ],
+        features: ["Semua fitur dasar", "Support email", "Storage 10GB"],
         ctaText: "Hubungi Kami",
         badgeColor: "orange"
       },
@@ -98,18 +86,7 @@ export default function PricingSection() {
         price: "Rp 500.000",
         pricePeriod: "/bulan",
         userRange: "6-20 Users",
-        features: [
-          "Alur Bisnis Lengkap",
-          "Manajemen Stok",
-          "Aset Tetap",
-          "Inventori Multi Gudang",
-          "Laporan Keuangan & Bisnis",
-          "Multi Cabang, Multi Divisi, Multi Outlet, Multi Proyek",
-          "Pembatasan Hak Akses",
-          "File Attachment",
-          "Auto Backup",
-          "Free Support"
-        ],
+        features: ["Semua fitur lengkap", "Priority support", "Storage 50GB"],
         ctaText: "Hubungi Kami",
         badgeColor: "blue"
       },
@@ -118,18 +95,7 @@ export default function PricingSection() {
         price: "Rp 1.000.000",
         pricePeriod: "/bulan",
         userRange: "Unlimited Users",
-        features: [
-          "Alur Bisnis Lengkap",
-          "Manajemen Stok",
-          "Aset Tetap",
-          "Inventori Multi Gudang",
-          "Laporan Keuangan & Bisnis",
-          "Multi Cabang, Multi Divisi, Multi Outlet, Multi Proyek",
-          "Pembatasan Hak Akses",
-          "File Attachment",
-          "Auto Backup",
-          "Free Support"
-        ],
+        features: ["Semua fitur premium", "24/7 support", "Unlimited storage"],
         ctaText: "Hubungi Kami",
         badgeColor: "green"
       }
@@ -143,21 +109,19 @@ export default function PricingSection() {
         title: fallbackPricingData.title,
         subtitle: fallbackPricingData.subtitle,
         description: fallbackPricingData.description,
-        plans: pricingPlans.map((plan, index) => {
-          const fallbackPlan = fallbackPricingData.plans[index] || fallbackPricingData.plans[0];
-          return {
-            name: plan.planName || fallbackPlan.name, // Use fallback if empty
-            price: plan.pricePerUserMonth === 0 
-              ? "Gratis" 
-              : `Rp ${plan.pricePerUserMonth.toLocaleString("id-ID")}`,
-            pricePeriod: fallbackPlan.pricePeriod,
-            userRange: fallbackPlan.userRange,
-            features: fallbackPlan.features,
-            ctaText: fallbackPlan.ctaText,
-            badgeColor: fallbackPlan.badgeColor
-          };
-        })
-
+        plans: pricingPlans.map(plan => ({
+          name: plan.planName, // Dari backend: planName
+          price: plan.pricePerUserMonth === 0
+            ? "Gratis"
+            : `Rp ${plan.pricePerUserMonth.toLocaleString("id-ID")}`,
+          pricePeriod: plan.pricePeriod || "/bulan", // Dari backend: pricePeriod
+          userRange: plan.userRange || "", // Dari backend: userRange
+          features: plan.features && plan.features.length > 0
+            ? plan.features.map((f: any) => f.featureName || f.description)
+            : [plan.description || "Semua fitur lengkap"], // Fallback ke description jika features kosong
+          ctaText: "Hubungi Kami",
+          badgeColor: plan.badgeColor || (plan.displayOrder === 1 ? "orange" : plan.displayOrder === 2 ? "blue" : "green")
+        }))
       }
       : fallbackPricingData;
 

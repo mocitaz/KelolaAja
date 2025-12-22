@@ -4,15 +4,81 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { fetchPublicData, API_ENDPOINTS } from '@/lib/api-config'
+
+interface AboutCard {
+  cardId: number
+  displayOrder: number
+  cardLink: string | null
+  title: string
+  description: string
+  image: string | null
+}
 
 export default function CompanyProfilePage() {
   const { locale, t } = useLanguage()
   const [activeValue, setActiveValue] = useState('I')
   const [activeAgile, setActiveAgile] = useState('A')
+  const [aboutCards, setAboutCards] = useState<AboutCard[]>([])
+
+  useEffect(() => {
+    fetchAboutCards()
+  }, [])
+
+  const fetchAboutCards = async () => {
+    console.log('[CompanyProfile] Fetching about cards from:', API_ENDPOINTS.PUBLIC.ABOUT_CARDS.LIST);
+    const result = await fetchPublicData<AboutCard[]>(
+      API_ENDPOINTS.PUBLIC.ABOUT_CARDS.LIST
+    )
+
+    console.log('[CompanyProfile] API Response:', result);
+
+    if (result.success && Array.isArray(result.data)) {
+      console.log('[CompanyProfile] Raw data from API:', result.data);
+      setAboutCards(result.data)
+      console.log('[CompanyProfile] State updated with', result.data.length, 'cards');
+    } else {
+      console.log('[CompanyProfile] API fetch failed or no data');
+    }
+  }
 
   // Get translations
   const companyProfile = t.companyProfile
+
+  // Get Vision and Mission from About Cards API with fallback to translations
+  const visionData = useMemo(() => {
+    console.log('[CompanyProfile] Computing visionData...');
+    console.log('[CompanyProfile] aboutCards:', aboutCards);
+
+    // Find card by cardId: 1 for Vision
+    const card = aboutCards.find(c => c.cardId === 1)
+    console.log('[CompanyProfile] Found Vision card (cardId=1):', card);
+
+    const result = {
+      title: card?.title || companyProfile?.vision.title || 'VISI',
+      description: card?.description || companyProfile?.vision.description || ''
+    }
+    console.log('[CompanyProfile] Final visionData:', result);
+
+    return result
+  }, [aboutCards, companyProfile])
+
+  const missionData = useMemo(() => {
+    console.log('[CompanyProfile] Computing missionData...');
+
+    // Find card by cardId: 2 for Mission
+    const card = aboutCards.find(c => c.cardId === 2)
+    console.log('[CompanyProfile] Found Mission card (cardId=2):', card);
+
+    const result = {
+      title: card?.title || companyProfile?.mission.title || 'MISI',
+      description: card?.description || companyProfile?.mission.items?.join('\n• ') || ''
+    }
+    console.log('[CompanyProfile] Final missionData:', result);
+
+    return result
+  }, [aboutCards, companyProfile])
 
   // AGILE Values Data from translations
   const agileValues = companyProfile?.agileValues?.values || {
@@ -53,7 +119,7 @@ export default function CompanyProfilePage() {
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#71bf44]/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
           <div className="absolute -bottom-40 left-1/2 w-80 h-80 bg-[#0498da]/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
         </div>
-        
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-5xl mx-auto">
             <ScrollAnimation direction="fade" delay={0} duration={800}>
@@ -65,7 +131,7 @@ export default function CompanyProfilePage() {
                     {companyProfile?.hero.badge || 'Tentang Kami'}
                   </span>
                 </div>
-                
+
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-extrabold text-gray-900 mb-6 leading-tight">
                   {companyProfile?.hero.title || 'Profil'}{' '}
                   <span className="bg-gradient-to-r from-[#0498da] to-[#71bf44] bg-clip-text text-transparent">
@@ -139,10 +205,10 @@ export default function CompanyProfilePage() {
                     </span>
                   </div>
                   <h2 className="text-4xl sm:text-5xl font-display font-bold italic text-gray-900 mb-5">
-                    {companyProfile?.vision.title || 'VISI'}
+                    {visionData.title}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed font-light text-justify">
-                    {companyProfile?.vision.description || ''}
+                    {visionData.description}
                   </p>
                 </div>
               </ScrollAnimation>
@@ -196,12 +262,12 @@ export default function CompanyProfilePage() {
                     </span>
                   </div>
                   <h2 className="text-4xl sm:text-5xl font-display font-bold italic text-gray-900 mb-5">
-                    {companyProfile?.mission.title || 'MISI'}
+                    {missionData.title}
                   </h2>
                   <div className="space-y-3">
-                    {companyProfile?.mission.items?.map((item, index) => (
+                    {missionData.description.split('\n').filter((line: string) => line.trim()).map((item: string, index: number) => (
                       <p key={index} className="text-base lg:text-lg text-gray-700 leading-relaxed font-light text-justify">
-                        • {item}
+                        {item.startsWith('•') ? item : `• ${item}`}
                       </p>
                     ))}
                   </div>
@@ -250,11 +316,10 @@ export default function CompanyProfilePage() {
                   <button
                     key={letter}
                     onClick={() => setActiveAgile(letter)}
-                    className={`relative px-5 py-2.5 rounded-full font-black text-sm transition-all duration-300 transform hover:scale-105 ${
-                      activeAgile === letter
-                        ? 'bg-gradient-to-r from-[#0498da] to-[#71bf44] text-white shadow-lg shadow-[#0498da]/30 scale-105'
-                        : 'bg-white text-gray-400 hover:text-gray-600 hover:bg-gray-50 border border-gray-200/50 shadow-sm'
-                    }`}
+                    className={`relative px-5 py-2.5 rounded-full font-black text-sm transition-all duration-300 transform hover:scale-105 ${activeAgile === letter
+                      ? 'bg-gradient-to-r from-[#0498da] to-[#71bf44] text-white shadow-lg shadow-[#0498da]/30 scale-105'
+                      : 'bg-white text-gray-400 hover:text-gray-600 hover:bg-gray-50 border border-gray-200/50 shadow-sm'
+                      }`}
                   >
                     {letter}
                     {activeAgile === letter && (
@@ -270,12 +335,12 @@ export default function CompanyProfilePage() {
               <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 lg:p-8 shadow-xl border border-gray-100/50 overflow-hidden group hover:shadow-2xl transition-all duration-500">
                 {/* Animated gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#0498da]/5 via-transparent to-[#71bf44]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
+
                 {/* Large letter background */}
                 <div className="absolute -top-8 -right-8 text-[180px] lg:text-[220px] font-black select-none pointer-events-none leading-none opacity-[0.03] text-gray-900">
                   {activeAgile}
                 </div>
-                
+
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-4">
                     <div className="w-1 h-6 bg-gradient-to-b from-[#0498da] to-[#71bf44] rounded-full"></div>
@@ -333,11 +398,10 @@ export default function CompanyProfilePage() {
                   <button
                     key={letter}
                     onClick={() => setActiveValue(letter)}
-                    className={`relative px-5 py-2.5 rounded-full font-black text-sm transition-all duration-300 transform hover:scale-105 ${
-                      activeValue === letter
-                        ? 'bg-gradient-to-r from-[#0498da] to-[#71bf44] text-white shadow-lg shadow-[#0498da]/30 scale-105'
-                        : 'bg-white text-gray-400 hover:text-gray-600 hover:bg-gray-50 border border-gray-200/50 shadow-sm'
-                    }`}
+                    className={`relative px-5 py-2.5 rounded-full font-black text-sm transition-all duration-300 transform hover:scale-105 ${activeValue === letter
+                      ? 'bg-gradient-to-r from-[#0498da] to-[#71bf44] text-white shadow-lg shadow-[#0498da]/30 scale-105'
+                      : 'bg-white text-gray-400 hover:text-gray-600 hover:bg-gray-50 border border-gray-200/50 shadow-sm'
+                      }`}
                   >
                     {letter}
                     {activeValue === letter && (
@@ -353,7 +417,7 @@ export default function CompanyProfilePage() {
               <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 lg:p-8 shadow-xl border border-gray-100/50 overflow-hidden group hover:shadow-2xl transition-all duration-500">
                 {/* Animated gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#0498da]/5 via-transparent to-[#71bf44]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 relative z-10">
                   {/* Left - Text Content */}
                   <div className="relative">
@@ -361,7 +425,7 @@ export default function CompanyProfilePage() {
                     <div className="absolute -top-6 -left-6 text-[140px] lg:text-[180px] font-black select-none pointer-events-none leading-none opacity-[0.03] text-gray-900">
                       {activeValue}
                     </div>
-                    
+
                     <div className="relative z-10">
                       <div className="flex items-center gap-2 mb-4">
                         <div className="w-1 h-6 bg-gradient-to-b from-[#0498da] to-[#71bf44] rounded-full"></div>

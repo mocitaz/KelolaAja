@@ -42,13 +42,19 @@ export default function Testimonials({ data }: TestimonialsProps) {
     // Only fetch if data prop is not provided
     if (data && data.length > 0) return
 
+    console.log('[Testimonials] Fetching from API...');
     const result = await fetchPublicData<Testimonial[]>(
       API_ENDPOINTS.PUBLIC.TESTIMONIALS.LIST
     )
 
+    console.log('[Testimonials] API Response:', result);
     if (result.success && Array.isArray(result.data)) {
-      setTestimonials(result.data.filter((t: Testimonial) => t.isActive))
+      console.log('[Testimonials] Raw data count:', result.data.length);
+      const activeTestimonials = result.data.filter((t: Testimonial) => t.isActive);
+      console.log('[Testimonials] Active testimonials count:', activeTestimonials.length);
+      setTestimonials(activeTestimonials)
     } else {
+      console.log('[Testimonials] API failed, using fallback');
       setTestimonials([]) // Will use fallback data
     }
 
@@ -88,6 +94,7 @@ export default function Testimonials({ data }: TestimonialsProps) {
   }))
 
   const displayTestimonials = testimonials.length > 0 ? testimonials : fallbackTestimonials
+  console.log('[Testimonials] Displaying:', displayTestimonials.length, 'testimonials, using', testimonials.length > 0 ? 'API data' : 'fallback data');
 
   const nextTestimonial = () => {
     if (isAnimating) return
