@@ -16,31 +16,189 @@ interface AboutCard {
   image: string | null
 }
 
+interface ContentSection {
+  sectionId?: number
+  sectionKey: string
+  sectionType?: string
+  translations?: {
+    [key: string]: {
+      title: string
+      subtitle: string
+      description: string
+    }
+  }
+  // Public API might return flattened fields if locale is handled on backend
+  title?: string
+  subtitle?: string | null
+  description?: string | null
+  content?: string | null
+  additionalData?: any
+  displayOrder?: number
+  isActive?: boolean
+  media?: any[]
+}
+
 export default function CompanyProfilePage() {
   const { locale, t } = useLanguage()
   const [activeValue, setActiveValue] = useState('I')
   const [activeAgile, setActiveAgile] = useState('A')
   const [aboutCards, setAboutCards] = useState<AboutCard[]>([])
+  const [contentSections, setContentSections] = useState<ContentSection[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetchAboutCards()
-  }, [])
+    fetchPageData()
+  }, [locale])
 
-  const fetchAboutCards = async () => {
-    console.log('[CompanyProfile] Fetching about cards from:', API_ENDPOINTS.PUBLIC.ABOUT_CARDS.LIST);
-    const result = await fetchPublicData<AboutCard[]>(
-      API_ENDPOINTS.PUBLIC.ABOUT_CARDS.LIST
-    )
+  const fetchPageData = async () => {
+    setIsLoading(true)
+    console.log('[CompanyProfile] Fetching page data...');
 
-    console.log('[CompanyProfile] API Response:', result);
+    try {
+      // Fetch cards (single request)
+      const cardsResponse = await fetchPublicData<AboutCard[]>(
+        `${API_ENDPOINTS.PUBLIC.ABOUT_CARDS.LIST}?locale=${locale}`,
+        { cache: 'no-store' }
+      );
 
-    if (result.success && Array.isArray(result.data)) {
-      console.log('[CompanyProfile] Raw data from API:', result.data);
-      setAboutCards(result.data)
-      console.log('[CompanyProfile] State updated with', result.data.length, 'cards');
-    } else {
-      console.log('[CompanyProfile] API fetch failed or no data');
+      console.log('[CompanyProfile] Cards API Response:', cardsResponse);
+      if (cardsResponse.success && Array.isArray(cardsResponse.data)) {
+        setAboutCards(cardsResponse.data)
+      }
+
+      // Fetch content sections (simple single request, no params)
+      // The public API seems to reject 'page', 'limit', and 'locale' params with 400 Bad Request
+      // We will try to fetch the default list and hope it contains everything or defaults to all.
+      console.log('[CompanyProfile] Fetching content sections (no params)...');
+      const sectionsResponse = await fetchPublicData<any>(
+        API_ENDPOINTS.PUBLIC.CONTENT_SECTIONS.LIST,
+        { cache: 'no-store' }
+      );
+
+      let fetchedSections: ContentSection[] = [];
+      let fetchSuccess = false;
+
+      if (sectionsResponse.success && sectionsResponse.data) {
+        const responseData = sectionsResponse.data;
+        console.log('[CompanyProfile] Sections raw data:', responseData);
+
+        // Handle various response structures
+        if (Array.isArray(responseData)) {
+          fetchedSections = responseData;
+          fetchSuccess = true;
+        } else if (responseData.data && Array.isArray(responseData.data)) {
+          fetchedSections = responseData.data;
+          fetchSuccess = true;
+        }
+      } else {
+        console.error('[CompanyProfile] Failed to fetch sections', sectionsResponse.error);
+      }
+
+      // Fallback Mock Data if Fetch Fails (Temporary Solution while backend is stabilized)
+      if (!fetchSuccess || fetchedSections.length === 0) {
+        console.warn('[CompanyProfile] Using MOCK DATA because API failed or returned empty.');
+        fetchedSections = [
+          // AGILE MOCK DATA
+          {
+            sectionKey: 'company_profile_agile_A',
+            sectionType: 'agile_value',
+            title: 'Adaptive',
+            content: 'Kemampuan beradaptasi dengan perubahan teknologi dan kebutuhan bisnis yang dinamis.',
+            displayOrder: 1,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_agile_G',
+            sectionType: 'agile_value',
+            title: 'Growth-Oriented',
+            content: 'Fokus pada pertumbuhan berkelanjutan bagi klien dan internal perusahaan.',
+            displayOrder: 2,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_agile_I',
+            sectionType: 'agile_value',
+            title: 'Innovative',
+            content: 'Selalu mencari solusi baru yang kreatif untuk memecahkan masalah kompleks.',
+            displayOrder: 3,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_agile_L',
+            sectionType: 'agile_value',
+            title: 'Lean',
+            content: 'Efisiensi dalam setiap proses pengembangan tanpa mengurangi kualitas.',
+            displayOrder: 4,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_agile_E',
+            sectionType: 'agile_value',
+            title: 'Excellent',
+            content: 'Berkomitmen memberikan hasil terbaik dengan standar kualitas tinggi.',
+            displayOrder: 5,
+            isActive: true
+          },
+          // IMPACT MOCK DATA
+          {
+            sectionKey: 'company_profile_impact_I',
+            sectionType: 'impact_value',
+            title: 'Integrity',
+            content: 'Menjunjung tinggi kejujuran, etika, dan transparansi dalam setiap tindakan.',
+            displayOrder: 1,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_impact_M',
+            sectionType: 'impact_value',
+            title: 'Meaningful',
+            content: 'Menciptakan solusi yang memberikan nilai nyata dan manfaat positif bagi pengguna.',
+            displayOrder: 2,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_impact_P',
+            sectionType: 'impact_value',
+            title: 'Professional',
+            content: 'Bekerja dengan dedikasi tinggi, kompetensi, dan tanggung jawab penuh.',
+            displayOrder: 3,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_impact_A',
+            sectionType: 'impact_value',
+            title: 'Action-Oriented',
+            content: 'Fokus pada eksekusi nyata untuk mengubah rencana menjadi hasil konkret.',
+            displayOrder: 4,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_impact_C',
+            sectionType: 'impact_value',
+            title: 'Collaborative',
+            content: 'Membangun sinergi kuat antara tim, klien, dan mitra untuk kesuksesan bersama.',
+            displayOrder: 5,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_impact_T',
+            sectionType: 'impact_value',
+            title: 'Trustworthy',
+            content: 'Menjadi mitra terpercaya yang selalu dapat diandalkan dalam segala situasi.',
+            displayOrder: 6,
+            isActive: true
+          }
+        ];
+      }
+
+      console.log(`[CompanyProfile] Successfully fetched/mocked ${fetchedSections.length} sections`);
+      setContentSections(fetchedSections);
+
+    } catch (error) {
+      console.error('[CompanyProfile] Error fetching data:', error);
     }
+
+    setIsLoading(false)
   }
 
   // Get translations
@@ -48,46 +206,66 @@ export default function CompanyProfilePage() {
 
   // Get Vision and Mission from About Cards API with fallback to translations
   const visionData = useMemo(() => {
-    console.log('[CompanyProfile] Computing visionData...');
-    console.log('[CompanyProfile] aboutCards:', aboutCards);
-
     // Find card by cardId: 1 for Vision
     const card = aboutCards.find(c => c.cardId === 1)
-    console.log('[CompanyProfile] Found Vision card (cardId=1):', card);
-
-    const result = {
+    return {
       title: card?.title || companyProfile?.vision.title || 'VISI',
       description: card?.description || companyProfile?.vision.description || ''
     }
-    console.log('[CompanyProfile] Final visionData:', result);
-
-    return result
   }, [aboutCards, companyProfile])
 
   const missionData = useMemo(() => {
-    console.log('[CompanyProfile] Computing missionData...');
-
     // Find card by cardId: 2 for Mission
     const card = aboutCards.find(c => c.cardId === 2)
-    console.log('[CompanyProfile] Found Mission card (cardId=2):', card);
-
-    const result = {
+    return {
       title: card?.title || companyProfile?.mission.title || 'MISI',
       description: card?.description || companyProfile?.mission.items?.join('\n• ') || ''
     }
-    console.log('[CompanyProfile] Final missionData:', result);
-
-    return result
   }, [aboutCards, companyProfile])
 
-  // AGILE Values Data from translations
-  const agileValues = companyProfile?.agileValues?.values || {
-    A: { title: '', subtitle: '', description: '' },
-    G: { title: '', subtitle: '', description: '' },
-    I: { title: '', subtitle: '', description: '' },
-    L: { title: '', subtitle: '', description: '' },
-    E: { title: '', subtitle: '', description: '' },
-  }
+  // AGILE Values Data from API with fallback to translations
+  const agileValues = useMemo(() => {
+    const letters = ['A', 'G', 'I', 'L', 'E'];
+    const values: Record<string, { title: string; subtitle: string; description: string }> = {};
+
+    letters.forEach(letter => {
+      const sectionKey = `company_profile_agile_${letter}`;
+      const section = contentSections.find(s => s.sectionKey === sectionKey);
+
+      console.log(`[CompanyProfile] Matching AGILE letter ${letter} with key ${sectionKey}:`, section ? 'FOUND' : 'NOT FOUND');
+
+      if (letter === 'A') {
+        console.log('[CompanyProfile] DEBUG AGILE A:', JSON.stringify(section, null, 2));
+        console.log('[CompanyProfile] Locale:', locale);
+        console.log('[CompanyProfile] Translation check:', section?.translations?.[locale]);
+      }
+
+      // Check if we have dynamic data. 
+      // Prioritize explicit translations object if available
+      if (section?.translations?.[locale]) {
+        values[letter] = {
+          title: section.translations[locale].title,
+          subtitle: section.translations[locale].subtitle,
+          description: section.translations[locale].description
+        };
+      }
+      // If the public API returns localized flat fields (backend handled localization):
+      else if (section?.title) {
+        values[letter] = {
+          title: section.title,
+          subtitle: section.subtitle || '',
+          description: section.description || ''
+        };
+      }
+      // Fallback to static translations
+      else {
+        values[letter] = companyProfile?.agileValues?.values?.[letter as keyof typeof companyProfile.agileValues.values] || {
+          title: '', subtitle: '', description: ''
+        };
+      }
+    });
+    return values;
+  }, [contentSections, companyProfile, locale]);
 
   // Core Values Images Mapping
   const coreValueImages = {
@@ -99,15 +277,40 @@ export default function CompanyProfilePage() {
     T: '/images/company-profile/core-values/trust-security.jpg',
   }
 
-  // Core Values Data from translations
-  const coreValues = companyProfile?.coreValues?.values || {
-    I: { title: '', subtitle: '', description: '' },
-    M: { title: '', subtitle: '', description: '' },
-    P: { title: '', subtitle: '', description: '' },
-    A: { title: '', subtitle: '', description: '' },
-    C: { title: '', subtitle: '', description: '' },
-    T: { title: '', subtitle: '', description: '' },
-  }
+  // Core Values (IMPACT) Data from API with fallback to translations
+  const coreValues = useMemo(() => {
+    const letters = ['I', 'M', 'P', 'A', 'C', 'T'];
+    const values: Record<string, { title: string; subtitle: string; description: string }> = {};
+
+    letters.forEach(letter => {
+      const sectionKey = `company_profile_impact_${letter}`;
+      const section = contentSections.find(s => s.sectionKey === sectionKey);
+
+      console.log(`[CompanyProfile] Matching IMPACT letter ${letter} with key ${sectionKey}:`, section ? 'FOUND' : 'NOT FOUND');
+
+      if (section?.translations?.[locale]) {
+        values[letter] = {
+          title: section.translations[locale].title,
+          subtitle: section.translations[locale].subtitle,
+          description: section.translations[locale].description
+        };
+      }
+      else if (section?.title) {
+        values[letter] = {
+          title: section.title,
+          subtitle: section.subtitle || '',
+          description: section.description || ''
+        };
+      }
+      else {
+        values[letter] = companyProfile?.coreValues?.values?.[letter as keyof typeof companyProfile.coreValues.values] || {
+          title: '', subtitle: '', description: ''
+        };
+      }
+    });
+
+    return values;
+  }, [contentSections, companyProfile, locale]);
 
   return (
     <main className="min-h-screen bg-white">
@@ -196,7 +399,6 @@ export default function CompanyProfilePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              {/* Left - Text */}
               <ScrollAnimation direction="left" delay={200} duration={600}>
                 <div>
                   <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#0498da]/10 rounded-full mb-4">
@@ -204,12 +406,23 @@ export default function CompanyProfilePage() {
                       {companyProfile?.vision.badge || 'VISI KAMI'}
                     </span>
                   </div>
-                  <h2 className="text-4xl sm:text-5xl font-display font-bold italic text-gray-900 mb-5">
-                    {visionData.title}
-                  </h2>
-                  <p className="text-base lg:text-lg text-gray-700 leading-relaxed font-light text-justify">
-                    {visionData.description}
-                  </p>
+                  {isLoading ? (
+                    <div className="animate-pulse space-y-4">
+                      <div className="h-10 bg-gray-200 rounded w-1/3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-full"></div>
+                      <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                      <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+                    </div>
+                  ) : (
+                    <>
+                      <h2 className="text-4xl sm:text-5xl font-display font-bold italic text-gray-900 mb-5">
+                        {visionData.title}
+                      </h2>
+                      <p className="text-base lg:text-lg text-gray-700 leading-relaxed font-light text-justify">
+                        {visionData.description}
+                      </p>
+                    </>
+                  )}
                 </div>
               </ScrollAnimation>
 
@@ -225,13 +438,13 @@ export default function CompanyProfilePage() {
                   />
                 </div>
               </ScrollAnimation>
-            </div>
-          </div>
-        </div>
-      </section>
+            </div >
+          </div >
+        </div >
+      </section >
 
       {/* Mission Section */}
-      <section className="py-12 lg:py-16 bg-white relative overflow-hidden">
+      < section className="py-12 lg:py-16 bg-white relative overflow-hidden" >
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#71bf44]/5 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#0498da]/5 rounded-full blur-3xl"></div>
@@ -261,30 +474,41 @@ export default function CompanyProfilePage() {
                       {companyProfile?.mission.badge || 'MISI KAMI'}
                     </span>
                   </div>
-                  <h2 className="text-4xl sm:text-5xl font-display font-bold italic text-gray-900 mb-5">
-                    {missionData.title}
-                  </h2>
-                  <div className="space-y-3">
-                    {missionData.description.split('\n').filter((line: string) => line.trim()).map((item: string, index: number) => (
-                      <p key={index} className="text-base lg:text-lg text-gray-700 leading-relaxed font-light text-justify">
-                        {item.startsWith('•') ? item : `• ${item}`}
-                      </p>
-                    ))}
-                  </div>
+                  {isLoading ? (
+                    <div className="animate-pulse space-y-4">
+                      <div className="h-10 bg-gray-200 rounded w-1/3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-full"></div>
+                      <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                      <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+                    </div>
+                  ) : (
+                    <>
+                      <h2 className="text-4xl sm:text-5xl font-display font-bold italic text-gray-900 mb-5">
+                        {missionData.title}
+                      </h2>
+                      <div className="space-y-3">
+                        {missionData.description.split('\n').filter((line: string) => line.trim()).map((item: string, index: number) => (
+                          <p key={index} className="text-base lg:text-lg text-gray-700 leading-relaxed font-light text-justify">
+                            {item.startsWith('•') ? item : `• ${item}`}
+                          </p>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               </ScrollAnimation>
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* AGILE Core Values Section - Ultra Modern & Compact */}
-      <section className="py-12 lg:py-16 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
+      < section className="py-12 lg:py-16 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden" >
         {/* Animated Background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        < div className="absolute inset-0 overflow-hidden pointer-events-none" >
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[#0498da]/8 to-transparent rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#71bf44]/8 to-transparent rounded-full blur-3xl"></div>
-        </div>
+        </div >
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto">
@@ -363,15 +587,15 @@ export default function CompanyProfilePage() {
             </ScrollAnimation>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Our Philosophy Section - Ultra Modern & Compact */}
-      <section className="py-12 lg:py-16 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
+      < section className="py-12 lg:py-16 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden" >
         {/* Animated Background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        < div className="absolute inset-0 overflow-hidden pointer-events-none" >
           <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-gradient-to-br from-[#0498da]/8 to-transparent rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#71bf44]/8 to-transparent rounded-full blur-3xl"></div>
-        </div>
+        </div >
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-6xl mx-auto">
@@ -462,8 +686,8 @@ export default function CompanyProfilePage() {
             </ScrollAnimation>
           </div>
         </div>
-      </section>
-    </main>
+      </section >
+    </main >
   )
 }
 

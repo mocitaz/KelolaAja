@@ -13,7 +13,8 @@ import {
   CalendarIcon,
   SparklesIcon,
   ArrowRightIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
 import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
 import Link from 'next/link';
@@ -106,7 +107,7 @@ export default function AdminDashboard() {
       icon: DocumentTextIcon,
       color: 'green',
       gradient: 'from-[#71bf44] to-[#5a9936]',
-      href: '/admin/features',
+      href: '/admin/testimonials',
     },
     {
       name: 'Contact Submissions',
@@ -243,8 +244,8 @@ export default function AdminDashboard() {
               <div key={index} className="relative pl-6">
                 {/* Timeline Dot */}
                 <span className={`absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-white ring-1 ring-slate-200 ${activity.action.includes('CREATE') ? 'bg-green-500' :
-                    activity.action.includes('UPDATE') ? 'bg-blue-500' :
-                      activity.action.includes('DELETE') ? 'bg-red-500' : 'bg-slate-400'
+                  activity.action.includes('UPDATE') ? 'bg-blue-500' :
+                    activity.action.includes('DELETE') ? 'bg-red-500' : 'bg-slate-400'
                   }`}></span>
 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 group">
@@ -280,10 +281,6 @@ export default function AdminDashboard() {
                 <UsersIcon className="w-6 h-6 mb-2 text-slate-400 group-hover:text-[#039edb]" />
                 <span className="text-xs font-semibold">Users</span>
               </Link>
-              <Link href="/admin/features" className="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-green-50 hover:border-green-100 hover:text-green-600 transition-all group text-center">
-                <SparklesIcon className="w-6 h-6 mb-2 text-slate-400 group-hover:text-green-600" />
-                <span className="text-xs font-semibold">Features</span>
-              </Link>
               <Link href="/admin/pricing-plans" className="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-purple-50 hover:border-purple-100 hover:text-purple-600 transition-all group text-center">
                 <CurrencyDollarIcon className="w-6 h-6 mb-2 text-slate-400 group-hover:text-purple-600" />
                 <span className="text-xs font-semibold">Pricing</span>
@@ -291,6 +288,10 @@ export default function AdminDashboard() {
               <Link href="/admin/site-config" className="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-orange-50 hover:border-orange-100 hover:text-orange-600 transition-all group text-center">
                 <CheckCircleIcon className="w-6 h-6 mb-2 text-slate-400 group-hover:text-orange-600" />
                 <span className="text-xs font-semibold">Config</span>
+              </Link>
+              <Link href="/admin/testimonials" className="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-100 rounded-xl hover:bg-green-50 hover:border-green-100 hover:text-green-600 transition-all group text-center">
+                <ChatBubbleLeftRightIcon className="w-6 h-6 mb-2 text-slate-400 group-hover:text-green-600" />
+                <span className="text-xs font-semibold">Reviews</span>
               </Link>
             </div>
           </div>

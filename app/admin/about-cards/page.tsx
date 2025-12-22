@@ -284,12 +284,21 @@ function AboutCardModal({
         ? `/api/v1/about-cards/admin/${card.cardId}`
         : '/api/v1/about-cards/admin';
 
+      // Transform translations array to object map
+      const translationsMap: Record<string, any> = {};
+      formData.translations.forEach((t) => {
+        translationsMap[t.locale] = {
+          title: t.title,
+          description: t.description
+        };
+      });
+
       const submitData = {
         cardCode: formData.cardCode || formData.translations[0].title.toUpperCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_'),
         iconName: formData.iconName,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
-        translations: formData.translations,
+        translations: translationsMap,
       };
 
       console.log('[AboutCards] Save endpoint:', endpoint);

@@ -3,6 +3,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { API_BASE_URL } from "@/lib/api-config";
 
 interface Partner {
   partnerId?: number;
@@ -43,53 +44,45 @@ export default function Partners({ partners: propPartners, title, className = ""
 
   const fetchPartners = async () => {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-      const response = await fetch(`${baseUrl}/api/v1/partners?locale=${locale}`);
+      const baseUrl = API_BASE_URL;
+      const response = await fetch(`${baseUrl}/api/v1/partners?locale=${locale}`, { cache: 'no-store' });
       const data = await response.json();
 
       console.log('[Partners Public] API Response:', data);
-      
+
       if (data.success && Array.isArray(data.data)) {
         console.log('[Partners Public] Raw data count:', data.data.length);
         console.log('[Partners Public] Raw data:', data.data);
-        
+
         // Map API response to component format and filter invalid logos
         const mappedPartners = data.data
           .filter((p: any) => {
-            // Only include partners with valid image URLs
+            // Relaxed filter: Accept if it has a logoUrl OR a logo object with fileId
             const logoUrl = p.logoUrl || '';
-            const isValid = logoUrl && (
-              logoUrl.startsWith('/images/') ||
-              logoUrl.startsWith('/uploads/') ||
-              logoUrl.startsWith('/2025/') ||  // Accept uploaded files
-              (logoUrl.startsWith('http') && (
-                logoUrl.includes('.png') ||
-                logoUrl.includes('.jpg') ||
-                logoUrl.includes('.jpeg') ||
-                logoUrl.includes('.svg') ||
-                logoUrl.includes('.webp')
-              ))
-            );
-            
-            if (!isValid && logoUrl) {
-              console.log('[Partners Public] Filtered out partner:', p.partnerName, 'logoUrl:', logoUrl);
+            const hasLogoObject = p.logo && p.logo.fileId;
+
+            // Basic validation - must have SOME image source
+            const isValid = (logoUrl && logoUrl.length > 0) || hasLogoObject;
+
+            if (!isValid) {
+              console.log('[Partners Public] ❌ Filtered out (No Image):', p.partnerName, JSON.stringify(p));
             }
-            
+
             return isValid;
           })
           .map((p: any) => {
             // Convert logoUrl to full URL
-            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+            const baseUrl = API_BASE_URL;
             let imageUrl = p.logoUrl;
-            
+
             console.log('[Partners] Mapping partner:', p.partnerName, 'logoUrl:', p.logoUrl, 'logo:', p.logo);
-            
+
             // If logoUrl is relative path, convert to backend serve URL using fileId
             if (imageUrl && imageUrl.startsWith('/') && p.logo?.fileId) {
               imageUrl = `${baseUrl}/api/v1/media-files/serve/${p.logo.fileId}`;
               console.log('[Partners] Converted to serve URL:', imageUrl);
             }
-            
+
             return {
               partnerId: p.partnerId,
               partnerName: p.partnerName,

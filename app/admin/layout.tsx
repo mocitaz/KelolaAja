@@ -95,7 +95,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       name: "Content Management",
       icon: DocumentTextIcon,
       children: [
-        { name: "Features", href: "/admin/features", icon: SparklesIcon },
         { name: "Partners", href: "/admin/partners", icon: BuildingOfficeIcon },
         { name: "Testimonials", href: "/admin/testimonials", icon: ChatBubbleLeftRightIcon },
         { name: "FAQs", href: "/admin/faqs", icon: QuestionMarkCircleIcon },
@@ -103,7 +102,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: "Company Profile", href: "/admin/company-profile", icon: BuildingOfficeIcon }
       ]
     },
-    { name: "Industries", href: "/admin/industries", icon: BriefcaseIcon },
     { name: "Media Files", href: "/admin/media-files", icon: PhotoIcon },
     { name: "Contact Submissions", href: "/admin/contact-submissions", icon: EnvelopeIcon },
     {
