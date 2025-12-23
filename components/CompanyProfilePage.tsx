@@ -66,11 +66,9 @@ export default function CompanyProfilePage() {
         setAboutCards(cardsResponse.data)
       }
 
-      // Fetch content sections (simple single request, no params)
-      // The public API seems to reject 'page', 'limit', and 'locale' params with 400 Bad Request
-      // IMPORTANT: Backend does NOT return localized data, it only returns English
-      // So we will ALWAYS use mock data from translations context for proper localization
-      console.log('[CompanyProfile] Fetching content sections (no params)...');
+      // Fetch content sections
+      // Backend NOW supports multi-language with translations object: { id: {...}, en: {...} }
+      console.log('[CompanyProfile] Fetching content sections from API...');
       const sectionsResponse = await fetchPublicData<any>(
         API_ENDPOINTS.PUBLIC.CONTENT_SECTIONS.LIST,
         { cache: 'no-store' }
@@ -79,121 +77,158 @@ export default function CompanyProfilePage() {
       let fetchedSections: ContentSection[] = [];
       let fetchSuccess = false;
 
-      // Check if API returned data
       if (sectionsResponse.success && sectionsResponse.data) {
         const responseData = sectionsResponse.data;
-        console.log('[CompanyProfile] Sections raw data received from API');
-        console.log('[CompanyProfile] ⚠️ API data is NOT localized - will use translations context instead');
+        console.log('[CompanyProfile] API Response received');
+
+        // Handle various response structures
+        let rawSections: any[] = [];
+        if (Array.isArray(responseData)) {
+          rawSections = responseData;
+        } else if (responseData.data && Array.isArray(responseData.data)) {
+          rawSections = responseData.data;
+        }
+
+        // Process sections - backend now returns translations object
+        if (rawSections.length > 0) {
+          console.log('[CompanyProfile] Processing sections for locale:', locale);
+          console.log('[CompanyProfile] Sample section structure:', JSON.stringify(rawSections[0], null, 2));
+
+          fetchedSections = rawSections.map(section => {
+            // Backend returns translations object: { id: {...}, en: {...} }
+            if (section.translations && typeof section.translations === 'object') {
+              const localeData = section.translations[locale];
+              if (localeData) {
+                console.log(`[CompanyProfile] Using translations[${locale}] for ${section.sectionKey}`);
+                return {
+                  ...section,
+                  title: localeData.title,
+                  subtitle: localeData.subtitle,
+                  description: localeData.description,
+                  content: localeData.content || localeData.description
+                };
+              } else {
+                console.warn(`[CompanyProfile] No translation for locale ${locale} in ${section.sectionKey}, using fallback`);
+              }
+            }
+            // Fallback: return as-is if no translations object
+            return section;
+          });
+
+          fetchSuccess = fetchedSections.length > 0;
+          console.log(`[CompanyProfile] Successfully processed ${fetchedSections.length} sections`);
+        }
       } else {
         console.error('[CompanyProfile] Failed to fetch sections', sectionsResponse.error);
       }
 
-      // ALWAYS use Mock Data from translations context for proper localization
-      // Backend does not support multi-language for content sections
-      console.warn('[CompanyProfile] Using translations context for AGILE and IMPACT data (backend does not support localization)');
-      fetchedSections = [
-        // AGILE MOCK DATA from translations
-        {
-          sectionKey: 'company_profile_agile_A',
-          sectionType: 'agile_value',
-          title: companyProfile?.agileValues?.values?.A?.title || 'Add Value',
-          subtitle: companyProfile?.agileValues?.values?.A?.subtitle || 'Menciptakan Nilai Tambah',
-          content: companyProfile?.agileValues?.values?.A?.description || 'Kami selalu memberikan nilai tambah bagi para mitra bisnis, lingkungan sekitar dan masyarakat',
-          displayOrder: 1,
-          isActive: true
-        },
-        {
-          sectionKey: 'company_profile_agile_G',
-          sectionType: 'agile_value',
-          title: companyProfile?.agileValues?.values?.G?.title || 'Grateful & Prosperous',
-          subtitle: companyProfile?.agileValues?.values?.G?.subtitle || 'Bersyukur & Sejahtera',
-          content: companyProfile?.agileValues?.values?.G?.description || 'Kami selalu bersyukur atas segala hal yang kami terima',
-          displayOrder: 2,
-          isActive: true
-        },
-        {
-          sectionKey: 'company_profile_agile_I',
-          sectionType: 'agile_value',
-          title: companyProfile?.agileValues?.values?.I?.title || 'Integrity & Commitment',
-          subtitle: companyProfile?.agileValues?.values?.I?.subtitle || 'Amanah & Berkomitmen',
-          content: companyProfile?.agileValues?.values?.I?.description || 'Kami adalah pribadi-pribadi yang amanah, bertanggung jawab dan berdisiplin tinggi',
-          displayOrder: 3,
-          isActive: true
-        },
-        {
-          sectionKey: 'company_profile_agile_L',
-          sectionType: 'agile_value',
-          title: companyProfile?.agileValues?.values?.L?.title || 'Learn, Growth & Fun',
-          subtitle: companyProfile?.agileValues?.values?.L?.subtitle || 'Senantiasa Belajar, Mengembangkan Diri & Menuntaskan Tugas dengan Riang Gembira',
-          content: companyProfile?.agileValues?.values?.L?.description || 'Segala kejadian yang kami alami adalah pelajaran bagi kami untuk menjadi pribadi yang senantiasa melakukan perbaikan',
-          displayOrder: 4,
-          isActive: true
-        },
-        {
-          sectionKey: 'company_profile_agile_E',
-          sectionType: 'agile_value',
-          title: companyProfile?.agileValues?.values?.E?.title || 'Enthusiast & High Performance',
-          subtitle: companyProfile?.agileValues?.values?.E?.subtitle || 'Bersemangat & Kinerja Tinggi',
-          content: companyProfile?.agileValues?.values?.E?.description || 'Kami selalu bersemangat dan aktif memancarkan energi positif dalam setiap kesempatan',
-          displayOrder: 5,
-          isActive: true
-        },
-        // IMPACT MOCK DATA from translations
-        {
-          sectionKey: 'company_profile_impact_I',
-          sectionType: 'impact_value',
-          title: companyProfile?.coreValues?.values?.I?.title || 'Innovation',
-          subtitle: companyProfile?.coreValues?.values?.I?.subtitle || 'Inovasi Berkelanjutan',
-          content: companyProfile?.coreValues?.values?.I?.description || 'Kami terus mengembangkan KelolaAja agar selalu relevan, modern, dan mampu menjawab kebutuhan bisnis yang terus berubah',
-          displayOrder: 1,
-          isActive: true
-        },
-        {
-          sectionKey: 'company_profile_impact_M',
-          sectionType: 'impact_value',
-          title: companyProfile?.coreValues?.values?.M?.title || 'Measurable Value',
-          subtitle: companyProfile?.coreValues?.values?.M?.subtitle || 'Nilai yang Dapat Diukur',
-          content: companyProfile?.coreValues?.values?.M?.description || 'Setiap fitur yang kami bangun harus memberikan dampak nyata bagi pengguna',
-          displayOrder: 2,
-          isActive: true
-        },
-        {
-          sectionKey: 'company_profile_impact_P',
-          sectionType: 'impact_value',
-          title: companyProfile?.coreValues?.values?.P?.title || 'Practical & Simple',
-          subtitle: companyProfile?.coreValues?.values?.P?.subtitle || 'Praktis dan Sederhana',
-          content: companyProfile?.coreValues?.values?.P?.description || 'KelolaAja dirancang agar mudah digunakan oleh siapa pun, tanpa perlu pengalaman teknis ERP',
-          displayOrder: 3,
-          isActive: true
-        },
-        {
-          sectionKey: 'company_profile_impact_A',
-          sectionType: 'impact_value',
-          title: companyProfile?.coreValues?.values?.A?.title || 'Accountability & Accuracy',
-          subtitle: companyProfile?.coreValues?.values?.A?.subtitle || 'Akuntabilitas dan Akurasi Data',
-          content: companyProfile?.coreValues?.values?.A?.description || 'Kami menjaga integritas data sebagai prioritas utama',
-          displayOrder: 4,
-          isActive: true
-        },
-        {
-          sectionKey: 'company_profile_impact_C',
-          sectionType: 'impact_value',
-          title: companyProfile?.coreValues?.values?.C?.title || 'Customer-Centric',
-          subtitle: companyProfile?.coreValues?.values?.C?.subtitle || 'Berfokus pada Pengguna',
-          content: companyProfile?.coreValues?.values?.C?.description || 'Seluruh pengembangan KelolaAja didesain berdasarkan kebutuhan nyata bisnis di Indonesia',
-          displayOrder: 5,
-          isActive: true
-        },
-        {
-          sectionKey: 'company_profile_impact_T',
-          sectionType: 'impact_value',
-          title: companyProfile?.coreValues?.values?.T?.title || 'Trust & Security',
-          subtitle: companyProfile?.coreValues?.values?.T?.subtitle || 'Kepercayaan dan Keamanan',
-          content: companyProfile?.coreValues?.values?.T?.description || 'Kami membangun KelolaAja dengan standar keamanan modern untuk melindungi data pengguna',
-          displayOrder: 6,
-          isActive: true
-        }
-      ];
+      // Fallback to Mock Data only if API completely fails
+      if (!fetchSuccess || fetchedSections.length === 0) {
+        console.warn('[CompanyProfile] ⚠️ API failed - using fallback mock data from translations context');
+        fetchedSections = [
+          // AGILE MOCK DATA from translations
+          {
+            sectionKey: 'company_profile_agile_A',
+            sectionType: 'agile_value',
+            title: companyProfile?.agileValues?.values?.A?.title || 'Add Value',
+            subtitle: companyProfile?.agileValues?.values?.A?.subtitle || 'Menciptakan Nilai Tambah',
+            content: companyProfile?.agileValues?.values?.A?.description || 'Kami selalu memberikan nilai tambah bagi para mitra bisnis, lingkungan sekitar dan masyarakat',
+            displayOrder: 1,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_agile_G',
+            sectionType: 'agile_value',
+            title: companyProfile?.agileValues?.values?.G?.title || 'Grateful & Prosperous',
+            subtitle: companyProfile?.agileValues?.values?.G?.subtitle || 'Bersyukur & Sejahtera',
+            content: companyProfile?.agileValues?.values?.G?.description || 'Kami selalu bersyukur atas segala hal yang kami terima',
+            displayOrder: 2,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_agile_I',
+            sectionType: 'agile_value',
+            title: companyProfile?.agileValues?.values?.I?.title || 'Integrity & Commitment',
+            subtitle: companyProfile?.agileValues?.values?.I?.subtitle || 'Amanah & Berkomitmen',
+            content: companyProfile?.agileValues?.values?.I?.description || 'Kami adalah pribadi-pribadi yang amanah, bertanggung jawab dan berdisiplin tinggi',
+            displayOrder: 3,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_agile_L',
+            sectionType: 'agile_value',
+            title: companyProfile?.agileValues?.values?.L?.title || 'Learn, Growth & Fun',
+            subtitle: companyProfile?.agileValues?.values?.L?.subtitle || 'Senantiasa Belajar, Mengembangkan Diri & Menuntaskan Tugas dengan Riang Gembira',
+            content: companyProfile?.agileValues?.values?.L?.description || 'Segala kejadian yang kami alami adalah pelajaran bagi kami untuk menjadi pribadi yang senantiasa melakukan perbaikan',
+            displayOrder: 4,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_agile_E',
+            sectionType: 'agile_value',
+            title: companyProfile?.agileValues?.values?.E?.title || 'Enthusiast & High Performance',
+            subtitle: companyProfile?.agileValues?.values?.E?.subtitle || 'Bersemangat & Kinerja Tinggi',
+            content: companyProfile?.agileValues?.values?.E?.description || 'Kami selalu bersemangat dan aktif memancarkan energi positif dalam setiap kesempatan',
+            displayOrder: 5,
+            isActive: true
+          },
+          // IMPACT MOCK DATA from translations
+          {
+            sectionKey: 'company_profile_impact_I',
+            sectionType: 'impact_value',
+            title: companyProfile?.coreValues?.values?.I?.title || 'Innovation',
+            subtitle: companyProfile?.coreValues?.values?.I?.subtitle || 'Inovasi Berkelanjutan',
+            content: companyProfile?.coreValues?.values?.I?.description || 'Kami terus mengembangkan KelolaAja agar selalu relevan, modern, dan mampu menjawab kebutuhan bisnis yang terus berubah',
+            displayOrder: 1,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_impact_M',
+            sectionType: 'impact_value',
+            title: companyProfile?.coreValues?.values?.M?.title || 'Measurable Value',
+            subtitle: companyProfile?.coreValues?.values?.M?.subtitle || 'Nilai yang Dapat Diukur',
+            content: companyProfile?.coreValues?.values?.M?.description || 'Setiap fitur yang kami bangun harus memberikan dampak nyata bagi pengguna',
+            displayOrder: 2,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_impact_P',
+            sectionType: 'impact_value',
+            title: companyProfile?.coreValues?.values?.P?.title || 'Practical & Simple',
+            subtitle: companyProfile?.coreValues?.values?.P?.subtitle || 'Praktis dan Sederhana',
+            content: companyProfile?.coreValues?.values?.P?.description || 'KelolaAja dirancang agar mudah digunakan oleh siapa pun, tanpa perlu pengalaman teknis ERP',
+            displayOrder: 3,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_impact_A',
+            sectionType: 'impact_value',
+            title: companyProfile?.coreValues?.values?.A?.title || 'Accountability & Accuracy',
+            subtitle: companyProfile?.coreValues?.values?.A?.subtitle || 'Akuntabilitas dan Akurasi Data',
+            content: companyProfile?.coreValues?.values?.A?.description || 'Kami menjaga integritas data sebagai prioritas utama',
+            displayOrder: 4,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_impact_C',
+            sectionType: 'impact_value',
+            title: companyProfile?.coreValues?.values?.C?.title || 'Customer-Centric',
+            subtitle: companyProfile?.coreValues?.values?.C?.subtitle || 'Berfokus pada Pengguna',
+            content: companyProfile?.coreValues?.values?.C?.description || 'Seluruh pengembangan KelolaAja didesain berdasarkan kebutuhan nyata bisnis di Indonesia',
+            displayOrder: 5,
+            isActive: true
+          },
+          {
+            sectionKey: 'company_profile_impact_T',
+            sectionType: 'impact_value',
+            title: companyProfile?.coreValues?.values?.T?.title || 'Trust & Security',
+            subtitle: companyProfile?.coreValues?.values?.T?.subtitle || 'Kepercayaan dan Keamanan',
+            content: companyProfile?.coreValues?.values?.T?.description || 'Kami membangun KelolaAja dengan standar keamanan modern untuk melindungi data pengguna',
+            displayOrder: 6,
+            isActive: true
+          }
+        ];
+      }
 
       console.log(`[CompanyProfile] Successfully fetched/mocked ${fetchedSections.length} sections`);
       setContentSections(fetchedSections);
