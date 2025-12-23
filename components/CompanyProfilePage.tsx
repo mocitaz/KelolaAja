@@ -68,7 +68,8 @@ export default function CompanyProfilePage() {
 
       // Fetch content sections (simple single request, no params)
       // The public API seems to reject 'page', 'limit', and 'locale' params with 400 Bad Request
-      // We will try to fetch the default list and hope it contains everything or defaults to all.
+      // IMPORTANT: Backend does NOT return localized data, it only returns English
+      // So we will ALWAYS use mock data from translations context for proper localization
       console.log('[CompanyProfile] Fetching content sections (no params)...');
       const sectionsResponse = await fetchPublicData<any>(
         API_ENDPOINTS.PUBLIC.CONTENT_SECTIONS.LIST,
@@ -78,118 +79,121 @@ export default function CompanyProfilePage() {
       let fetchedSections: ContentSection[] = [];
       let fetchSuccess = false;
 
+      // Check if API returned data
       if (sectionsResponse.success && sectionsResponse.data) {
         const responseData = sectionsResponse.data;
-        console.log('[CompanyProfile] Sections raw data:', responseData);
-
-        // Handle various response structures
-        if (Array.isArray(responseData)) {
-          fetchedSections = responseData;
-          fetchSuccess = true;
-        } else if (responseData.data && Array.isArray(responseData.data)) {
-          fetchedSections = responseData.data;
-          fetchSuccess = true;
-        }
+        console.log('[CompanyProfile] Sections raw data received from API');
+        console.log('[CompanyProfile] ⚠️ API data is NOT localized - will use translations context instead');
       } else {
         console.error('[CompanyProfile] Failed to fetch sections', sectionsResponse.error);
       }
 
-      // Fallback Mock Data if Fetch Fails (Temporary Solution while backend is stabilized)
-      if (!fetchSuccess || fetchedSections.length === 0) {
-        console.warn('[CompanyProfile] Using MOCK DATA because API failed or returned empty.');
-        fetchedSections = [
-          // AGILE MOCK DATA
-          {
-            sectionKey: 'company_profile_agile_A',
-            sectionType: 'agile_value',
-            title: 'Adaptive',
-            content: 'Kemampuan beradaptasi dengan perubahan teknologi dan kebutuhan bisnis yang dinamis.',
-            displayOrder: 1,
-            isActive: true
-          },
-          {
-            sectionKey: 'company_profile_agile_G',
-            sectionType: 'agile_value',
-            title: 'Growth-Oriented',
-            content: 'Fokus pada pertumbuhan berkelanjutan bagi klien dan internal perusahaan.',
-            displayOrder: 2,
-            isActive: true
-          },
-          {
-            sectionKey: 'company_profile_agile_I',
-            sectionType: 'agile_value',
-            title: 'Innovative',
-            content: 'Selalu mencari solusi baru yang kreatif untuk memecahkan masalah kompleks.',
-            displayOrder: 3,
-            isActive: true
-          },
-          {
-            sectionKey: 'company_profile_agile_L',
-            sectionType: 'agile_value',
-            title: 'Lean',
-            content: 'Efisiensi dalam setiap proses pengembangan tanpa mengurangi kualitas.',
-            displayOrder: 4,
-            isActive: true
-          },
-          {
-            sectionKey: 'company_profile_agile_E',
-            sectionType: 'agile_value',
-            title: 'Excellent',
-            content: 'Berkomitmen memberikan hasil terbaik dengan standar kualitas tinggi.',
-            displayOrder: 5,
-            isActive: true
-          },
-          // IMPACT MOCK DATA
-          {
-            sectionKey: 'company_profile_impact_I',
-            sectionType: 'impact_value',
-            title: 'Integrity',
-            content: 'Menjunjung tinggi kejujuran, etika, dan transparansi dalam setiap tindakan.',
-            displayOrder: 1,
-            isActive: true
-          },
-          {
-            sectionKey: 'company_profile_impact_M',
-            sectionType: 'impact_value',
-            title: 'Meaningful',
-            content: 'Menciptakan solusi yang memberikan nilai nyata dan manfaat positif bagi pengguna.',
-            displayOrder: 2,
-            isActive: true
-          },
-          {
-            sectionKey: 'company_profile_impact_P',
-            sectionType: 'impact_value',
-            title: 'Professional',
-            content: 'Bekerja dengan dedikasi tinggi, kompetensi, dan tanggung jawab penuh.',
-            displayOrder: 3,
-            isActive: true
-          },
-          {
-            sectionKey: 'company_profile_impact_A',
-            sectionType: 'impact_value',
-            title: 'Action-Oriented',
-            content: 'Fokus pada eksekusi nyata untuk mengubah rencana menjadi hasil konkret.',
-            displayOrder: 4,
-            isActive: true
-          },
-          {
-            sectionKey: 'company_profile_impact_C',
-            sectionType: 'impact_value',
-            title: 'Collaborative',
-            content: 'Membangun sinergi kuat antara tim, klien, dan mitra untuk kesuksesan bersama.',
-            displayOrder: 5,
-            isActive: true
-          },
-          {
-            sectionKey: 'company_profile_impact_T',
-            sectionType: 'impact_value',
-            title: 'Trustworthy',
-            content: 'Menjadi mitra terpercaya yang selalu dapat diandalkan dalam segala situasi.',
-            displayOrder: 6,
-            isActive: true
-          }
-        ];
-      }
+      // ALWAYS use Mock Data from translations context for proper localization
+      // Backend does not support multi-language for content sections
+      console.warn('[CompanyProfile] Using translations context for AGILE and IMPACT data (backend does not support localization)');
+      fetchedSections = [
+        // AGILE MOCK DATA from translations
+        {
+          sectionKey: 'company_profile_agile_A',
+          sectionType: 'agile_value',
+          title: companyProfile?.agileValues?.values?.A?.title || 'Add Value',
+          subtitle: companyProfile?.agileValues?.values?.A?.subtitle || 'Menciptakan Nilai Tambah',
+          content: companyProfile?.agileValues?.values?.A?.description || 'Kami selalu memberikan nilai tambah bagi para mitra bisnis, lingkungan sekitar dan masyarakat',
+          displayOrder: 1,
+          isActive: true
+        },
+        {
+          sectionKey: 'company_profile_agile_G',
+          sectionType: 'agile_value',
+          title: companyProfile?.agileValues?.values?.G?.title || 'Grateful & Prosperous',
+          subtitle: companyProfile?.agileValues?.values?.G?.subtitle || 'Bersyukur & Sejahtera',
+          content: companyProfile?.agileValues?.values?.G?.description || 'Kami selalu bersyukur atas segala hal yang kami terima',
+          displayOrder: 2,
+          isActive: true
+        },
+        {
+          sectionKey: 'company_profile_agile_I',
+          sectionType: 'agile_value',
+          title: companyProfile?.agileValues?.values?.I?.title || 'Integrity & Commitment',
+          subtitle: companyProfile?.agileValues?.values?.I?.subtitle || 'Amanah & Berkomitmen',
+          content: companyProfile?.agileValues?.values?.I?.description || 'Kami adalah pribadi-pribadi yang amanah, bertanggung jawab dan berdisiplin tinggi',
+          displayOrder: 3,
+          isActive: true
+        },
+        {
+          sectionKey: 'company_profile_agile_L',
+          sectionType: 'agile_value',
+          title: companyProfile?.agileValues?.values?.L?.title || 'Learn, Growth & Fun',
+          subtitle: companyProfile?.agileValues?.values?.L?.subtitle || 'Senantiasa Belajar, Mengembangkan Diri & Menuntaskan Tugas dengan Riang Gembira',
+          content: companyProfile?.agileValues?.values?.L?.description || 'Segala kejadian yang kami alami adalah pelajaran bagi kami untuk menjadi pribadi yang senantiasa melakukan perbaikan',
+          displayOrder: 4,
+          isActive: true
+        },
+        {
+          sectionKey: 'company_profile_agile_E',
+          sectionType: 'agile_value',
+          title: companyProfile?.agileValues?.values?.E?.title || 'Enthusiast & High Performance',
+          subtitle: companyProfile?.agileValues?.values?.E?.subtitle || 'Bersemangat & Kinerja Tinggi',
+          content: companyProfile?.agileValues?.values?.E?.description || 'Kami selalu bersemangat dan aktif memancarkan energi positif dalam setiap kesempatan',
+          displayOrder: 5,
+          isActive: true
+        },
+        // IMPACT MOCK DATA from translations
+        {
+          sectionKey: 'company_profile_impact_I',
+          sectionType: 'impact_value',
+          title: companyProfile?.coreValues?.values?.I?.title || 'Innovation',
+          subtitle: companyProfile?.coreValues?.values?.I?.subtitle || 'Inovasi Berkelanjutan',
+          content: companyProfile?.coreValues?.values?.I?.description || 'Kami terus mengembangkan KelolaAja agar selalu relevan, modern, dan mampu menjawab kebutuhan bisnis yang terus berubah',
+          displayOrder: 1,
+          isActive: true
+        },
+        {
+          sectionKey: 'company_profile_impact_M',
+          sectionType: 'impact_value',
+          title: companyProfile?.coreValues?.values?.M?.title || 'Measurable Value',
+          subtitle: companyProfile?.coreValues?.values?.M?.subtitle || 'Nilai yang Dapat Diukur',
+          content: companyProfile?.coreValues?.values?.M?.description || 'Setiap fitur yang kami bangun harus memberikan dampak nyata bagi pengguna',
+          displayOrder: 2,
+          isActive: true
+        },
+        {
+          sectionKey: 'company_profile_impact_P',
+          sectionType: 'impact_value',
+          title: companyProfile?.coreValues?.values?.P?.title || 'Practical & Simple',
+          subtitle: companyProfile?.coreValues?.values?.P?.subtitle || 'Praktis dan Sederhana',
+          content: companyProfile?.coreValues?.values?.P?.description || 'KelolaAja dirancang agar mudah digunakan oleh siapa pun, tanpa perlu pengalaman teknis ERP',
+          displayOrder: 3,
+          isActive: true
+        },
+        {
+          sectionKey: 'company_profile_impact_A',
+          sectionType: 'impact_value',
+          title: companyProfile?.coreValues?.values?.A?.title || 'Accountability & Accuracy',
+          subtitle: companyProfile?.coreValues?.values?.A?.subtitle || 'Akuntabilitas dan Akurasi Data',
+          content: companyProfile?.coreValues?.values?.A?.description || 'Kami menjaga integritas data sebagai prioritas utama',
+          displayOrder: 4,
+          isActive: true
+        },
+        {
+          sectionKey: 'company_profile_impact_C',
+          sectionType: 'impact_value',
+          title: companyProfile?.coreValues?.values?.C?.title || 'Customer-Centric',
+          subtitle: companyProfile?.coreValues?.values?.C?.subtitle || 'Berfokus pada Pengguna',
+          content: companyProfile?.coreValues?.values?.C?.description || 'Seluruh pengembangan KelolaAja didesain berdasarkan kebutuhan nyata bisnis di Indonesia',
+          displayOrder: 5,
+          isActive: true
+        },
+        {
+          sectionKey: 'company_profile_impact_T',
+          sectionType: 'impact_value',
+          title: companyProfile?.coreValues?.values?.T?.title || 'Trust & Security',
+          subtitle: companyProfile?.coreValues?.values?.T?.subtitle || 'Kepercayaan dan Keamanan',
+          content: companyProfile?.coreValues?.values?.T?.description || 'Kami membangun KelolaAja dengan standar keamanan modern untuk melindungi data pengguna',
+          displayOrder: 6,
+          isActive: true
+        }
+      ];
 
       console.log(`[CompanyProfile] Successfully fetched/mocked ${fetchedSections.length} sections`);
       setContentSections(fetchedSections);
@@ -235,14 +239,19 @@ export default function CompanyProfilePage() {
       console.log(`[CompanyProfile] Matching AGILE letter ${letter} with key ${sectionKey}:`, section ? 'FOUND' : 'NOT FOUND');
 
       if (letter === 'A') {
-        console.log('[CompanyProfile] DEBUG AGILE A:', JSON.stringify(section, null, 2));
-        console.log('[CompanyProfile] Locale:', locale);
-        console.log('[CompanyProfile] Translation check:', section?.translations?.[locale]);
+        console.log('[CompanyProfile] DEBUG AGILE A - Full section:', JSON.stringify(section, null, 2));
+        console.log('[CompanyProfile] Current locale:', locale);
+        console.log('[CompanyProfile] Section has translations?', !!section?.translations);
+        console.log('[CompanyProfile] Section title:', section?.title);
+        console.log('[CompanyProfile] Section subtitle:', section?.subtitle);
+        console.log('[CompanyProfile] Section description:', section?.description);
+        console.log('[CompanyProfile] Section content:', section?.content);
       }
 
       // Check if we have dynamic data. 
       // Prioritize explicit translations object if available
       if (section?.translations?.[locale]) {
+        console.log(`[CompanyProfile] AGILE ${letter}: Using translations[${locale}]`);
         values[letter] = {
           title: section.translations[locale].title,
           subtitle: section.translations[locale].subtitle,
@@ -251,14 +260,16 @@ export default function CompanyProfilePage() {
       }
       // If the public API returns localized flat fields (backend handled localization):
       else if (section?.title) {
+        console.log(`[CompanyProfile] AGILE ${letter}: Using flat fields (title: ${section.title})`);
         values[letter] = {
           title: section.title,
           subtitle: section.subtitle || '',
-          description: section.description || ''
+          description: section.description || section.content || ''
         };
       }
       // Fallback to static translations
       else {
+        console.log(`[CompanyProfile] AGILE ${letter}: Using fallback from translations context`);
         values[letter] = companyProfile?.agileValues?.values?.[letter as keyof typeof companyProfile.agileValues.values] || {
           title: '', subtitle: '', description: ''
         };
@@ -299,7 +310,7 @@ export default function CompanyProfilePage() {
         values[letter] = {
           title: section.title,
           subtitle: section.subtitle || '',
-          description: section.description || ''
+          description: section.description || section.content || ''
         };
       }
       else {
