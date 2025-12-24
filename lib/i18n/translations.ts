@@ -1866,7 +1866,7 @@ export const translations: Record<Locale, Translations> = {
         badge: 'Our Philosophy',
         title: 'IMPACT',
         impact: 'IMPACT',
-        fromImpact: 'dari Our Philosophy',
+        fromImpact: 'dari Impact',
         values: {
           I: {
             title: 'Innovation',
