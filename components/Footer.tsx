@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 export default function Footer() {
   const { t } = useLanguage()
-  
+
   return (
     <footer className="bg-gray-100 border-t-2 border-gray-200 text-gray-700 py-10 lg:py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,7 +77,7 @@ export default function Footer() {
                   href="/features/finance"
                   className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
                 >
-                  {t.navDropdown.features.finance}
+                  {t.navDropdown?.features?.finance}
                 </Link>
               </li>
               <li>
@@ -85,7 +85,7 @@ export default function Footer() {
                   href="/features/project"
                   className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
                 >
-                  {t.navDropdown.features.project}
+                  {t.navDropdown?.features?.project}
                 </Link>
               </li>
               <li>
@@ -93,7 +93,7 @@ export default function Footer() {
                   href="/features/manufacturing"
                   className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
                 >
-                  {t.navDropdown.features.manufacturing}
+                  {t.navDropdown?.features?.manufacturing}
                 </Link>
               </li>
               <li>
@@ -101,7 +101,7 @@ export default function Footer() {
                   href="/features/sales"
                   className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
                 >
-                  {t.navDropdown.features.sales}
+                  {t.navDropdown?.features?.sales}
                 </Link>
               </li>
               <li>
@@ -109,7 +109,7 @@ export default function Footer() {
                   href="/features/inventory"
                   className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
                 >
-                  {t.navDropdown.features.inventory}
+                  {t.navDropdown?.features?.inventory}
                 </Link>
               </li>
               <li>
@@ -118,7 +118,7 @@ export default function Footer() {
                   onClick={(e) => e.preventDefault()}
                   className="text-gray-600 hover:text-primary-600 transition-colors duration-200 cursor-default"
                 >
-                  {t.navDropdown.features.hr}
+                  {t.navDropdown?.features?.hr}
                 </a>
               </li>
             </ul>
@@ -135,7 +135,7 @@ export default function Footer() {
                   href="/industries/fnb"
                   className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
                 >
-                  {t.navDropdown.industries.fnb}
+                  {t.navDropdown?.industries?.fnb}
                 </Link>
               </li>
               <li>
@@ -143,7 +143,7 @@ export default function Footer() {
                   href="/industries/contractor"
                   className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
                 >
-                  {t.navDropdown.industries.contractor}
+                  {t.navDropdown?.industries?.contractor}
                 </Link>
               </li>
               <li>
@@ -151,7 +151,7 @@ export default function Footer() {
                   href="/industries/manufaktur"
                   className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
                 >
-                  {t.navDropdown.industries.manufacturing}
+                  {t.navDropdown?.industries?.manufacturing}
                 </Link>
               </li>
               <li>
@@ -159,7 +159,7 @@ export default function Footer() {
                   href="/industries/retail"
                   className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
                 >
-                  {t.navDropdown.industries.retail}
+                  {t.navDropdown?.industries?.retail}
                 </Link>
               </li>
             </ul>

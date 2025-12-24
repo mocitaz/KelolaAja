@@ -28,76 +28,60 @@ export default function SalesPage() {
   }, [locale])
 
   // Fallback data
-  const introText = pageData?.heroDescription || 'Proses pembelian dan penjualan dari quotation hingga invoice. Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi dengan fitur DP dan diskon bertingkat.'
-  const title = pageData?.heroTitle || 'Pembelian dan Penjualan'
-  const description = pageData?.description || 'Dapatkan kontrol penuh atas proses pembelian dan penjualan Anda dengan sistem yang lengkap dan terintegrasi. Dari quotation hingga invoice, semua tersedia dalam satu platform.'
+  // Fallback data
+  const introText = pageData?.heroDescription || t.salesPage?.hero.description || 'Proses pembelian dan penjualan dari quotation hingga invoice. Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi dengan fitur DP dan diskon bertingkat.'
+  const title = pageData?.heroTitle || t.salesPage?.mainTitle || 'Pembelian dan Penjualan'
+  const description = pageData?.description || t.salesPage?.mainDescription || 'Dapatkan kontrol penuh atas proses pembelian dan penjualan Anda dengan sistem yang lengkap dan terintegrasi. Dari quotation hingga invoice, semua tersedia dalam satu platform.'
 
-  const features = [
-    {
-      title: 'Catat Semua Detail Order',
-      description: 'Lacak semua purchase order dan pembelian hingga ke semua detailnya, berapa harga yang disepakati dan semua dokumen pendukungnya.',
-      image: '/images/sales/sales-detail-order.png',
-    },
-    {
-      title: 'Perhitungan Pajak Otomatis',
-      description: 'Semua pajak pembelian akan terrekap menjadi laporan pajak secara otomatis. Kamu bisa mengkustomisasi apapun jenis pajak yang ingin terapkan di bisnismu, termasuk pajak pemotongan.',
-      image: '/images/sales/sales-pajak-otomatis.png',
-    },
-    {
-      title: 'Stok dan Gudang Tercatat Otomatis',
-      description: 'Stok produk akan tercatat secara otomatis di gudang yang kamu tentukan. Tak perlu lagi double input untuk urusan inventori!',
-      image: '/images/sales/sales-stok-otomatis.png',
-    },
-    {
-      title: 'Lampirkan Foto atau Scan Dokumen',
-      description: 'Kurangi tumpukan kertas, lampirkan semua dokumen kertas mu ke purchase order dan fakturmu.',
-      image: '/images/sales/sales-lampirkan-dokumen.png',
-    },
-    {
-      title: 'Dapatkan Informasi dan Statistik Pembelian',
-      description: 'Ketahui dengan pasti apa saja barang penjualan terbaik, berapa hutang & piutang berapa, purchase order, dan kapan jatuh temponya.',
-      image: '/images/sales/sales-statistik-pembelian.png',
-    },
-    {
-      title: 'Lakukan Pembayaran Bertahap',
-      description: 'Kamu bisa membayar pembelian secara bertahap, dan sangat bisa mencatatnya dengan rapi dan benar.',
-      image: '/images/sales/sales-pembayaran-bertahap.png',
-    },
-    {
-      title: 'Buat Faktur Pembelian dari Purchase Order dengan Sekali Klik',
-      description: 'Saat sudah deal dengan vendor, kamu bisa membuat faktur pembelian dari purchase order hanya dengan satu klik.',
-      image: '/images/sales/sales-faktur-sekali-klik.png',
-    }
-  ]
+  const features = t.salesPage?.features.map((f, i) => ({
+    title: f.title,
+    description: f.description,
+    image: [
+      '/images/sales/sales-detail-order.png',
+      '/images/sales/sales-pajak-otomatis.png',
+      '/images/sales/sales-stok-otomatis.png',
+      '/images/sales/sales-lampirkan-dokumen.png',
+      '/images/sales/sales-statistik-pembelian.png',
+      '/images/sales/sales-pembayaran-bertahap.png',
+      '/images/sales/sales-faktur-sekali-klik.png',
+    ][i] || '/images/sales/sales-detail-order.png'
+  })) || [
+      {
+        title: 'Catat Semua Detail Order',
+        description: 'Lacak semua purchase order dan pembelian hingga ke semua detailnya, berapa harga yang disepakati dan semua dokumen pendukungnya.',
+        image: '/images/sales/sales-detail-order.png',
+      },
+      // ... (fallbacks handled by t check)
+    ]
 
   const otherFeatures = [
     {
-      title: 'Keuangan & Akuntansi',
-      description: 'Buat laporan keuangan seperti laba rugi, neraca, dan arus kas secara real-time. Pemantauan buku besar, serta utang dan piutang, menjadi lebih sederhana. Dapatkan laporan kinerja perusahaan yang selalu terkini dan menyeluruh.',
+      title: t.featuresPage?.features[0].title || 'Keuangan & Akuntansi',
+      description: t.featuresPage?.features[0].description || 'Buat laporan keuangan seperti laba rugi, neraca, dan arus kas secara real-time. Pemantauan buku besar, serta utang dan piutang, menjadi lebih sederhana. Dapatkan laporan kinerja perusahaan yang selalu terkini dan menyeluruh.',
       image: '/images/finance/feature-finance.jpg',
       link: '/features/finance',
     },
     {
-      title: 'Manufaktur',
-      description: 'KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis. Rencanakan produksi, Bill of Material, serta hitung biaya bahan baku dan overhead produksi pabrik secara otomatis dengan modul manufaktur.',
+      title: t.featuresPage?.features[1].title || 'Manufaktur',
+      description: t.featuresPage?.features[1].description || 'KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis. Rencanakan produksi, Bill of Material, serta hitung biaya bahan baku dan overhead produksi pabrik secara otomatis dengan modul manufaktur.',
       image: '/images/manufacturing/feature-manufacturing.jpg',
       link: '/features/manufacturing',
     },
     {
-      title: 'Manajement Proyek',
-      description: 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim kelolaAja akan selalu membantu sampai Anda bisa.',
+      title: t.featuresPage?.features[2].title || 'Manajemen Proyek',
+      description: t.featuresPage?.features[2].description || 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim kelolaAja akan selalu membantu sampai Anda bisa.',
       image: '/images/project/feature-project.jpg',
       link: '/features/project',
     },
     {
-      title: 'Pembelian & Penjualan',
-      description: 'Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi. Dilengkapi fitur DP dan diskon bertingkat. Pantau pengiriman barang, buat tagihan, hingga dengan mudah dalam satu software.',
+      title: t.featuresPage?.features[3].title || 'Pembelian & Penjualan',
+      description: t.featuresPage?.features[3].description || 'Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi. Dilengkapi fitur DP dan diskon bertingkat. Pantau pengiriman barang, buat tagihan, hingga dengan mudah dalam satu software.',
       image: '/images/sales/feature-sales.jpg',
       link: '/features/sales',
     },
     {
-      title: 'Produk & Inventory',
-      description: 'KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman. Pantau stok secara real-time, atur harga, dan optimalkan alur distribusi menggunakan satu platform.',
+      title: t.featuresPage?.features[4].title || 'Produk & Inventory',
+      description: t.featuresPage?.features[4].description || 'KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman. Pantau stok secara real-time, atur harga, dan optimalkan alur distribusi menggunakan satu platform.',
       image: '/images/inventory/feature-inventory.jpg',
       link: '/features/inventory',
     },
@@ -121,7 +105,7 @@ export default function SalesPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-gray-900 mb-6">
-                    Pembelian dan Penjualan
+                    {t.salesPage?.hero.title || 'Pembelian dan Penjualan'}
                   </h1>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify mb-6">
                     {introText}
@@ -141,7 +125,7 @@ export default function SalesPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Hubungi Kami</span>
+                    <span>{t.salesPage?.hero.ctaButton || 'Hubungi Kami'}</span>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -212,13 +196,13 @@ export default function SalesPage() {
               <ScrollAnimation direction="left" delay={200} duration={600}>
                 <div>
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4">
-                    Software dengan Fitur
+                    {t.salesPage?.softwareFeatures.title || 'Software dengan Fitur'}
                   </h2>
                   <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-semibold text-primary-600 mb-6">
-                    Pembelian dan Penjualan Mudah Digunakan
+                    {t.salesPage?.softwareFeatures.subtitle || 'Pembelian dan Penjualan Mudah Digunakan'}
                   </h3>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify">
-                    KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang penjualan. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola proses pembelian dan penjualan dengan mudah dan efisien.
+                    {t.salesPage?.softwareFeatures.description || 'KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang penjualan. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola proses pembelian dan penjualan dengan mudah dan efisien.'}
                   </p>
                 </div>
               </ScrollAnimation>
@@ -296,10 +280,10 @@ export default function SalesPage() {
                 <div className="p-8 lg:p-12">
                   <div className="space-y-6 mb-8">
                     <p className="text-lg lg:text-xl font-bold text-gray-900 leading-relaxed text-center">
-                      Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.
+                      {t.salesPage?.cta.mainText1 || 'Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.'}
                     </p>
                     <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-center">
-                      Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.
+                      {t.salesPage?.cta.mainText2 || 'Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.'}
                     </p>
                   </div>
 
@@ -312,7 +296,7 @@ export default function SalesPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         ),
-                        text: 'Laporan Real-Time'
+                        text: t.salesPage?.cta.highlights[0] || 'Laporan Real-Time'
                       },
                       {
                         icon: (
@@ -320,7 +304,7 @@ export default function SalesPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         ),
-                        text: 'Pantau Arus Kas'
+                        text: t.salesPage?.cta.highlights[1] || 'Pantau Arus Kas'
                       },
                       {
                         icon: (
@@ -328,7 +312,7 @@ export default function SalesPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                         ),
-                        text: 'Invoice Otomatis'
+                        text: t.salesPage?.cta.highlights[2] || 'Invoice Otomatis'
                       },
                       {
                         icon: (
@@ -336,7 +320,7 @@ export default function SalesPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                           </svg>
                         ),
-                        text: 'Platform Terpusat'
+                        text: t.salesPage?.cta.highlights[3] || 'Platform Terpusat'
                       }
                     ].map((feature, index) => (
                       <div
@@ -370,7 +354,7 @@ export default function SalesPage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.salesPage?.cta.tryFreeButton || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -387,7 +371,7 @@ export default function SalesPage() {
       </section>
 
       {/* Other Features Carousel */}
-      <FeaturesCarousel 
+      <FeaturesCarousel
         features={otherFeatures}
       />
 
@@ -399,10 +383,10 @@ export default function SalesPage() {
               <div className="text-center">
                 <div className="inline-block bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 lg:p-10 border-2 border-primary-200">
                   <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-                    Siap Mengoptimalkan Proses Pembelian & Penjualan Anda?
+                    {t.salesPage?.cta.optimizeTitle || 'Siap Mengoptimalkan Proses Pembelian & Penjualan Anda?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                    KelolaAja menyediakan sistem pembelian dan penjualan terintegrasi dari quotation hingga invoice dengan mudah dan efisien.
+                    {t.salesPage?.cta.optimizeDescription || 'KelolaAja menyediakan sistem pembelian dan penjualan terintegrasi dari quotation hingga invoice dengan mudah dan efisien.'}
                   </p>
                   <a
                     href={whatsappLink}
@@ -419,7 +403,7 @@ export default function SalesPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Konsultasi Gratis Sekarang</span>
+                    <span>{t.salesPage?.cta.consultButton || 'Konsultasi Gratis Sekarang'}</span>
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -440,17 +424,17 @@ export default function SalesPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-2">
-                    Apa Itu KelolaAja?
+                    {t.salesPage?.about.title || 'Apa Itu KelolaAja?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-4">
-                    Software ERP Akuntansi Terdepan untuk Bisnis Indonesia
+                    {t.salesPage?.about.subtitle || 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia'}
                   </p>
                   <div className="space-y-3 text-sm lg:text-base text-gray-700 leading-relaxed text-justify">
                     <p>
-                      KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.
+                      {t.salesPage?.about.description1 || 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.'}
                     </p>
                     <p>
-                      KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.
+                      {t.salesPage?.about.description2 || 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.'}
                     </p>
                   </div>
 
@@ -471,7 +455,7 @@ export default function SalesPage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.salesPage?.cta.tryFreeButton || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -480,7 +464,7 @@ export default function SalesPage() {
                 </div>
               </ScrollAnimation>
             </div>
-            
+
             {/* Right: FAQ Section */}
             <div>
               <FAQSection />

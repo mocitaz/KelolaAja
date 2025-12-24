@@ -50,22 +50,22 @@ export default function CompanyProfilePage() {
       // Fetch with high limit to get all sections, or fetch multiple pages
       const response = await apiFetch(`${API_ENDPOINTS.ADMIN.CONTENT_SECTIONS.LIST}?page=1&limit=100`);
       const data = await response.json();
-      
+
       // Handle both direct array response and paginated response
       const sections = Array.isArray(data.data) ? data.data : (data.data?.data || []);
-      
+
       if (sections && Array.isArray(sections)) {
-        
+
         // Filter AGILE values
         const agile = AGILE_LETTERS.map(letter => {
           const sectionKey = `company_profile_agile_${letter}`;
           const section = sections.find((s: any) => s.sectionKey === sectionKey);
-          
+
           const translations: any = {
             id: { title: '', subtitle: '', description: '' },
             en: { title: '', subtitle: '', description: '' }
           };
-          
+
           if (section?.translations) {
             // Backend returns merged translations as object with id and en keys
             if (section.translations.id) {
@@ -83,7 +83,7 @@ export default function CompanyProfilePage() {
               };
             }
           }
-          
+
           return {
             letter,
             sectionKey,
@@ -91,17 +91,17 @@ export default function CompanyProfilePage() {
             sectionId: section?.sectionId
           };
         });
-        
+
         // Filter IMPACT values
         const impact = IMPACT_LETTERS.map(letter => {
           const sectionKey = `company_profile_impact_${letter}`;
           const section = sections.find((s: any) => s.sectionKey === sectionKey);
-          
+
           const translations: any = {
             id: { title: '', subtitle: '', description: '' },
             en: { title: '', subtitle: '', description: '' }
           };
-          
+
           if (section?.translations) {
             // Backend returns merged translations as object with id and en keys
             if (section.translations.id) {
@@ -119,7 +119,7 @@ export default function CompanyProfilePage() {
               };
             }
           }
-          
+
           return {
             letter,
             sectionKey,
@@ -127,7 +127,7 @@ export default function CompanyProfilePage() {
             sectionId: section?.sectionId
           };
         });
-        
+
         setAgileValues(agile);
         setImpactValues(impact);
       }
@@ -160,15 +160,15 @@ export default function CompanyProfilePage() {
 
     try {
       const sectionKey = editingValue.sectionKey;
-      
+
       // Use sectionId from editingValue if available, otherwise fetch from API
       let sectionId = editingValue.sectionId;
-      
+
       if (!sectionId) {
         // Get current sections to find existing sectionId
         const listResponse = await apiFetch(API_ENDPOINTS.ADMIN.CONTENT_SECTIONS.LIST);
         const listData = await listResponse.json();
-        const existing = listData.success && Array.isArray(listData.data) 
+        const existing = listData.success && Array.isArray(listData.data)
           ? listData.data.find((s: any) => s.sectionKey === sectionKey)
           : null;
         sectionId = existing?.sectionId;
@@ -178,7 +178,7 @@ export default function CompanyProfilePage() {
         sectionType: 'company_profile',
         sectionKey,
         pageLocation: 'about',
-        displayOrder: activeTab === 'agile' 
+        displayOrder: activeTab === 'agile'
           ? AGILE_LETTERS.indexOf(editingValue.letter)
           : IMPACT_LETTERS.indexOf(editingValue.letter),
         isActive: true,
@@ -237,7 +237,7 @@ export default function CompanyProfilePage() {
     <div className="space-y-6">
       <PageHeader
         title="Company Profile"
-        description="Kelola Core Values (AGILE) dan Our Philosophy (IMPACT)"
+        description="Kelola Core Values (AGILE) dan Our IMPACT (IMPACT)"
       />
 
       {/* Tabs */}
@@ -245,21 +245,19 @@ export default function CompanyProfilePage() {
         <div className="flex gap-2 border-b border-gray-200">
           <button
             onClick={() => setActiveTab('agile')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'agile'
-                ? 'border-[#0498da] text-[#0498da]'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'agile'
+              ? 'border-[#0498da] text-[#0498da]'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
           >
             Core Values (AGILE)
           </button>
           <button
             onClick={() => setActiveTab('impact')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'impact'
-                ? 'border-[#0498da] text-[#0498da]'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'impact'
+              ? 'border-[#0498da] text-[#0498da]'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+              }`}
           >
             Our Philosophy (IMPACT)
           </button>
@@ -288,7 +286,7 @@ export default function CompanyProfilePage() {
                     Edit
                   </button>
                 </div>
-                
+
                 <div className="space-y-2">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Title (ID)</p>
@@ -320,7 +318,7 @@ export default function CompanyProfilePage() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowModal(false)}></div>
-            
+
             <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div className="flex items-center justify-between mb-4">

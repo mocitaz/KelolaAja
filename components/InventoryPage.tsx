@@ -28,44 +28,44 @@ export default function InventoryPage() {
   }, [locale])
 
   // Fallback data
-  const introText = pageData?.heroDescription || 'Manajemen inventory dengan tracking real-time. KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman dengan optimasi alur distribusi.'
-  const title = pageData?.heroTitle || 'Produk dan Inventory'
-  const description = pageData?.description || 'Dapatkan kontrol penuh atas manajemen inventory Anda dengan sistem yang lengkap dan terintegrasi. Dari tracking stok hingga laporan inventory real-time, semua tersedia dalam satu platform.'
+  const introText = pageData?.heroDescription || t.inventoryPage?.hero.description || 'Manajemen inventory dengan tracking real-time. KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman dengan optimasi alur distribusi.'
+  const title = pageData?.heroTitle || t.inventoryPage?.mainTitle || 'Produk dan Inventory'
+  const description = pageData?.description || t.inventoryPage?.mainDescription || 'Dapatkan kontrol penuh atas manajemen inventory Anda dengan sistem yang lengkap dan terintegrasi. Dari tracking stok hingga laporan inventory real-time, semua tersedia dalam satu platform.'
 
   const features = [
     {
-      title: 'Lacak Produk Paling Laris',
-      description: 'Dapatkan pembaruan laporan produk terlaris, total profit yang dihasilkan, dan stok produk yang habis secara real-time. Manfaatkan data ini untuk membuat keputusan yang lebih tepat dalam melakukan reorder dan menetapkan harga produk Anda.',
+      title: t.inventoryPage?.features[0].title || 'Lacak Produk Paling Laris',
+      description: t.inventoryPage?.features[0].description || 'Dapatkan pembaruan laporan produk terlaris, total profit yang dihasilkan, dan stok produk yang habis secara real-time. Manfaatkan data ini untuk membuat keputusan yang lebih tepat dalam melakukan reorder dan menetapkan harga produk Anda.',
       image: '/images/inventory/inventory-produk-laris.png',
     },
     {
-      title: 'Import dari Excel',
-      description: 'Tidak perlu lagi repot memasukkan data produk dan stok secara manual, cukup ketik di Excel dan unggah. Semua informasi akan otomatis terintegrasi ke dalam sistem KelolaAja.',
+      title: t.inventoryPage?.features[1].title || 'Import dari Excel',
+      description: t.inventoryPage?.features[1].description || 'Tidak perlu lagi repot memasukkan data produk dan stok secara manual, cukup ketik di Excel dan unggah. Semua informasi akan otomatis terintegrasi ke dalam sistem KelolaAja.',
       image: '/images/inventory/inventory-import-excel.png',
     },
     {
-      title: 'Multi Gudang',
-      description: 'KelolaAja stok produkmu dibanyak tempat dengan mudah dan pantau stok pergudang secara realtime.',
+      title: t.inventoryPage?.features[2].title || 'Multi Gudang',
+      description: t.inventoryPage?.features[2].description || 'KelolaAja stok produkmu dibanyak tempat dengan mudah dan pantau stok pergudang secara realtime.',
       image: '/images/inventory/inventory-multi-gudang.png',
     },
     {
-      title: 'Laporan Realtime',
-      description: 'Akses laporan stok di setiap gudang secara detail dan real-time, tanpa perlu menunggu akhir bulan. Pantau pergerakan stok secara langsung dan pastikan barang selalu terpantau dengan baik.',
+      title: t.inventoryPage?.features[3].title || 'Laporan Realtime',
+      description: t.inventoryPage?.features[3].description || 'Akses laporan stok di setiap gudang secara detail dan real-time, tanpa perlu menunggu akhir bulan. Pantau pergerakan stok secara langsung dan pastikan barang selalu terpantau dengan baik.',
       image: '/images/inventory/inventory-laporan-realtime.png',
     },
     {
-      title: 'Stok Opname',
-      description: 'Proses stok opname jadi lebih praktis! Unduh laporan stok terbaru dalam format Excel, perbarui jumlah stok, dan langsung unggah ke KelolaAja. Cepat dan mudah!',
+      title: t.inventoryPage?.features[4].title || 'Stok Opname',
+      description: t.inventoryPage?.features[4].description || 'Proses stok opname jadi lebih praktis! Unduh laporan stok terbaru dalam format Excel, perbarui jumlah stok, dan langsung unggah ke KelolaAja. Cepat dan mudah!',
       image: '/images/inventory/inventory-stok-opname.png',
     },
     {
-      title: 'Transfer Gudang',
-      description: 'Pindahkan barang antar gudang dengan simpel. Nikmati pencatatan stok yang rapi dan teratur tanpa kerepotan.',
+      title: t.inventoryPage?.features[5].title || 'Transfer Gudang',
+      description: t.inventoryPage?.features[5].description || 'Pindahkan barang antar gudang dengan simpel. Nikmati pencatatan stok yang rapi dan teratur tanpa kerepotan.',
       image: '/images/inventory/inventory-transfer-gudang.png',
     },
     {
-      title: 'Pantau Kapan Saja dan Di Mana Saja',
-      description: 'Pantau stok kapan saja, tanpa harus ke kantor atau gudang. Cukup buka laporan dari ponsel atau laptop, di mana pun Anda berada.',
+      title: t.inventoryPage?.features[6].title || 'Pantau Kapan Saja dan Di Mana Saja',
+      description: t.inventoryPage?.features[6].description || 'Pantau stok kapan saja, tanpa harus ke kantor atau gudang. Cukup buka laporan dari ponsel atau laptop, di mana pun Anda berada.',
       image: '/images/inventory/inventory-pantau-kapan-saja.png',
     }
   ]
@@ -121,7 +121,7 @@ export default function InventoryPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-gray-900 mb-6">
-                    Produk dan Inventory
+                    {t.inventoryPage?.hero.title || 'Produk dan Inventory'}
                   </h1>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify mb-6">
                     {introText}
@@ -141,7 +141,7 @@ export default function InventoryPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Hubungi Kami</span>
+                    <span>{t.inventoryPage?.hero.ctaButton || 'Hubungi Kami'}</span>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -212,13 +212,13 @@ export default function InventoryPage() {
               <ScrollAnimation direction="left" delay={200} duration={600}>
                 <div>
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4">
-                    Software dengan Fitur
+                    {t.inventoryPage?.softwareFeatures.title || 'Software dengan Fitur'}
                   </h2>
                   <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-semibold text-primary-600 mb-6">
-                    Produk dan Inventory Mudah Digunakan
+                    {t.inventoryPage?.softwareFeatures.subtitle || 'Produk dan Inventory Mudah Digunakan'}
                   </h3>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify">
-                    KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang inventory. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola produk dan inventory dengan mudah dan efisien.
+                    {t.inventoryPage?.softwareFeatures.description || 'KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang inventory. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola produk dan inventory dengan mudah dan efisien.'}
                   </p>
                 </div>
               </ScrollAnimation>
@@ -296,10 +296,10 @@ export default function InventoryPage() {
                 <div className="p-8 lg:p-12">
                   <div className="space-y-6 mb-8">
                     <p className="text-lg lg:text-xl font-bold text-gray-900 leading-relaxed text-center">
-                      Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.
+                      {t.inventoryPage?.cta.mainText1 || 'Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.'}
                     </p>
                     <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-center">
-                      Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.
+                      {t.inventoryPage?.cta.mainText2 || 'Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.'}
                     </p>
                   </div>
 
@@ -312,7 +312,7 @@ export default function InventoryPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         ),
-                        text: 'Laporan Real-Time'
+                        text: t.inventoryPage?.cta.highlights[0] || 'Laporan Real-Time'
                       },
                       {
                         icon: (
@@ -320,7 +320,7 @@ export default function InventoryPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         ),
-                        text: 'Pantau Arus Kas'
+                        text: t.inventoryPage?.cta.highlights[1] || 'Pantau Arus Kas'
                       },
                       {
                         icon: (
@@ -328,7 +328,7 @@ export default function InventoryPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                         ),
-                        text: 'Invoice Otomatis'
+                        text: t.inventoryPage?.cta.highlights[2] || 'Invoice Otomatis'
                       },
                       {
                         icon: (
@@ -336,7 +336,7 @@ export default function InventoryPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                           </svg>
                         ),
-                        text: 'Platform Terpusat'
+                        text: t.inventoryPage?.cta.highlights[3] || 'Platform Terpusat'
                       }
                     ].map((feature, index) => (
                       <div
@@ -370,7 +370,7 @@ export default function InventoryPage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.inventoryPage?.cta.tryFreeButton || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -387,7 +387,7 @@ export default function InventoryPage() {
       </section>
 
       {/* Other Features Carousel */}
-      <FeaturesCarousel 
+      <FeaturesCarousel
         features={otherFeatures}
       />
 
@@ -399,10 +399,10 @@ export default function InventoryPage() {
               <div className="text-center">
                 <div className="inline-block bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 lg:p-10 border-2 border-primary-200">
                   <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-                    Siap Mengoptimalkan Manajemen Inventory Anda?
+                    {t.inventoryPage?.cta.optimizeTitle || 'Siap Mengoptimalkan Manajemen Inventory Anda?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                    KelolaAja menyediakan sistem inventory dengan tracking real-time untuk mengelola produk dari pengadaan hingga pengiriman.
+                    {t.inventoryPage?.cta.optimizeDescription || 'KelolaAja menyediakan sistem inventory dengan tracking real-time untuk mengelola produk dari pengadaan hingga pengiriman.'}
                   </p>
                   <a
                     href={whatsappLink}
@@ -419,7 +419,7 @@ export default function InventoryPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Konsultasi Gratis Sekarang</span>
+                    <span>{t.inventoryPage?.cta.consultButton || 'Konsultasi Gratis Sekarang'}</span>
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -440,17 +440,17 @@ export default function InventoryPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-2">
-                    Apa Itu KelolaAja?
+                    {t.inventoryPage?.about.title || 'Apa Itu KelolaAja?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-4">
-                    Software ERP Akuntansi Terdepan untuk Bisnis Indonesia
+                    {t.inventoryPage?.about.subtitle || 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia'}
                   </p>
                   <div className="space-y-3 text-sm lg:text-base text-gray-700 leading-relaxed text-justify">
                     <p>
-                      KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.
+                      {t.inventoryPage?.about.description1 || 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.'}
                     </p>
                     <p>
-                      KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.
+                      {t.inventoryPage?.about.description2 || 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.'}
                     </p>
                   </div>
 
@@ -471,7 +471,7 @@ export default function InventoryPage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.inventoryPage?.cta.tryFreeButton || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -480,7 +480,7 @@ export default function InventoryPage() {
                 </div>
               </ScrollAnimation>
             </div>
-            
+
             {/* Right: FAQ Section */}
             <div>
               <FAQSection />

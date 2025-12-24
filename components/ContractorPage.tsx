@@ -28,15 +28,15 @@ export default function ContractorPage() {
   }, [locale])
 
   // Fallback data
-  const introText = industryData?.heroDescription || 'KelolaAja setiap proyek dengan lebih efisien dan optimalkan keuntungan bisnis Anda menggunakan software ERP KelolaAja. Dirancang khusus untuk memenuhi kebutuhan semua jenis usaha kontraktor di Indonesia, KelolaAja memudahkan pengelolaan keuangan dan operasional Proyek Anda.'
-  const pageTitle = industryData?.heroTitle || 'Kontraktor'
-  const title = 'Apakah Masalah Ini Sering Menghambat Bisnis Kontraktor Anda?'
-  const description = 'Seringkali, jumlah proyek yang Anda tangani tidak berbanding lurus dengan keuntungan yang diperoleh. Ini terutama terjadi jika sistem pencatatan akuntansi untuk kontraktor Anda tidak terstruktur dengan baik atau tidak sesuai dengan standar yang seharusnya.'
+  const introText = industryData?.heroDescription || t.industryPages?.contractor?.introText || 'KelolaAja setiap proyek dengan lebih efisien dan optimalkan keuntungan bisnis Anda menggunakan software ERP KelolaAja. Dirancang khusus untuk memenuhi kebutuhan semua jenis usaha kontraktor di Indonesia, KelolaAja memudahkan pengelolaan keuangan dan operasional Proyek Anda.'
+  const pageTitle = industryData?.heroTitle || t.industryPages?.contractor?.heroTitle || 'Kontraktor'
+  const title = t.industryPages?.contractor?.title || 'Apakah Masalah Ini Sering Menghambat Bisnis Kontraktor Anda?'
+  const description = t.industryPages?.contractor?.description || 'Seringkali, jumlah proyek yang Anda tangani tidak berbanding lurus dengan keuntungan yang diperoleh. Ini terutama terjadi jika sistem pencatatan akuntansi untuk kontraktor Anda tidak terstruktur dengan baik atau tidak sesuai dengan standar yang seharusnya.'
 
   const problems = [
     {
-      title: 'Kesalahan penghitungan aset tetap dapat merusak akurasi.',
-      description: 'Dalam bisnis konstruksi, terdapat banyak aset tetap yang harus di KelolaAja. Jika penyusutan dari setiap aset ini tidak dihitung dengan tepat, data keuangan Anda akan menjadi tidak akurat dan mengganggu perencanaan serta pengambilan keputusan bisnis.',
+      title: t.industryPages?.contractor?.problems[0]?.title || 'Kesalahan penghitungan aset tetap dapat merusak akurasi.',
+      description: t.industryPages?.contractor?.problems[0]?.description || 'Dalam bisnis konstruksi, terdapat banyak aset tetap yang harus di KelolaAja. Jika penyusutan dari setiap aset ini tidak dihitung dengan tepat, data keuangan Anda akan menjadi tidak akurat dan mengganggu perencanaan serta pengambilan keputusan bisnis.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-5m-6 5v-5m6 5h-6m6-10h-6m6 0v5m-6-5v5M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2zM9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -44,8 +44,8 @@ export default function ContractorPage() {
       )
     },
     {
-      title: 'Biaya operasional dapat mengganggu kesehatan keuangan bisnis.',
-      description: 'Biaya operasional dalam bisnis kontraktor merupakan pengeluaran penting yang perlu Anda pantau dengan cermat, karena dapat langsung mempengaruhi keuntungan perusahaan.',
+      title: t.industryPages?.contractor?.problems[1]?.title || 'Biaya operasional dapat mengganggu kesehatan keuangan bisnis.',
+      description: t.industryPages?.contractor?.problems[1]?.description || 'Biaya operasional dalam bisnis kontraktor merupakan pengeluaran penting yang perlu Anda pantau dengan cermat, karena dapat langsung mempengaruhi keuntungan perusahaan.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -54,8 +54,8 @@ export default function ContractorPage() {
       )
     },
     {
-      title: 'Kesulitan menghitung laba per proyek menghambat analisis keuangan.',
-      description: 'Apakah Anda yakin setiap proyek yang Anda KelolaAja menguntungkan? Tanpa data keuangan yang akurat, bisnis Anda berjalan hanya berdasarkan perkiraan.',
+      title: t.industryPages?.contractor?.problems[2]?.title || 'Kesulitan menghitung laba per proyek menghambat analisis keuangan.',
+      description: t.industryPages?.contractor?.problems[2]?.description || 'Apakah Anda yakin setiap proyek yang Anda KelolaAja menguntungkan? Tanpa data keuangan yang akurat, bisnis Anda berjalan hanya berdasarkan perkiraan.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -161,7 +161,7 @@ export default function ContractorPage() {
                   <div className="bg-white rounded-xl border-2 border-gray-200 hover:border-primary-500 p-6 transition-all duration-300 hover:shadow-xl overflow-hidden flex flex-col h-full group relative">
                     {/* Gradient Accent */}
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
+
                     {/* Icon */}
                     <div className="mb-4 text-primary-600 flex-shrink-0">
                       {problem.icon}
@@ -173,7 +173,7 @@ export default function ContractorPage() {
                       <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
                         {problem.title}
                       </h3>
-                      
+
                       {/* Description */}
                       <p className="text-sm text-gray-600 leading-relaxed">
                         {problem.description}
@@ -199,7 +199,7 @@ export default function ContractorPage() {
             <ScrollAnimation direction="fade" delay={0} duration={500}>
               <div className="text-center mb-12 lg:mb-16">
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4">
-                  Bagaimana KelolaAja Mendukung Bisnis Kontraktor Anda?
+                  {t.industryPages?.contractor?.solutionsTitle || 'Bagaimana KelolaAja Mendukung Bisnis Kontraktor Anda?'}
                 </h2>
               </div>
             </ScrollAnimation>
@@ -208,23 +208,23 @@ export default function ContractorPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch max-w-5xl mx-auto">
               {[
                 {
-                  title: 'KelolaAja aja multi proyek dengan satu Klik',
-                  description: 'Bisnis kontraktor membutuhkan pengelolaan proyek yang efisien. Dengan KelolaAja, Anda dapat dengan mudah mengelola banyak proyek sekaligus, memantau anggaran, dan menjadikan manajemen proyek Anda lebih terstruktur dan terorganisir.',
+                  title: t.industryPages?.contractor?.solutions[0]?.title || 'KelolaAja aja multi proyek dengan satu Klik',
+                  description: t.industryPages?.contractor?.solutions[0]?.description || 'Bisnis kontraktor membutuhkan pengelolaan proyek yang efisien. Dengan KelolaAja, Anda dapat dengan mudah mengelola banyak proyek sekaligus, memantau anggaran, dan menjadikan manajemen proyek Anda lebih terstruktur dan terorganisir.',
                   image: '/images/industries/contractor/contractor-multi-project.jpg',
                 },
                 {
-                  title: 'Perhitungan aset tetap otomatis dan akurat',
-                  description: 'Berhenti menghitung nilai aset tetap secara manual. Dengan KelolaAja, penyusutan setiap aset dihitung otomatis dan jurnal penyesuaian tersedia setiap bulan tanpa perlu usaha tambahan.',
+                  title: t.industryPages?.contractor?.solutions[1]?.title || 'Perhitungan aset tetap otomatis dan akurat',
+                  description: t.industryPages?.contractor?.solutions[1]?.description || 'Berhenti menghitung nilai aset tetap secara manual. Dengan KelolaAja, penyusutan setiap aset dihitung otomatis dan jurnal penyesuaian tersedia setiap bulan tanpa perlu usaha tambahan.',
                   image: '/images/industries/contractor/contractor-fixed-asset.jpg',
                 },
                 {
-                  title: 'Catat seluruh biaya operasional dengan mudah',
-                  description: 'Dengan KelolaAja, Anda dapat dengan mudah mencatat dan mengelola biaya kapan saja dan di mana saja, memastikan efisiensi yang lebih baik, mengurangi pemborosan, dan meningkatkan profitabilitas proyek Anda.',
+                  title: t.industryPages?.contractor?.solutions[2]?.title || 'Catat seluruh biaya operasional dengan mudah',
+                  description: t.industryPages?.contractor?.solutions[2]?.description || 'Dengan KelolaAja, Anda dapat dengan mudah mencatat dan mengelola biaya kapan saja dan di mana saja, memastikan efisiensi yang lebih baik, mengurangi pemborosan, dan meningkatkan profitabilitas proyek Anda.',
                   image: '/images/industries/contractor/contractor-operational-cost.jpg',
                 },
                 {
-                  title: 'Real-time, di mana saja dan kapan saja',
-                  description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha kontraktor Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan dengan detail.',
+                  title: t.industryPages?.contractor?.solutions[3]?.title || 'Real-time, di mana saja dan kapan saja',
+                  description: t.industryPages?.contractor?.solutions[3]?.description || 'Tidak ada lagi pemborosan yang terjadi dalam usaha kontraktor Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan dengan detail.',
                   image: '/images/industries/contractor/contractor-realtime.jpg',
                 }
               ].map((benefit, index) => (
@@ -284,10 +284,10 @@ export default function ContractorPage() {
               <div className="text-center">
                 <div className="inline-block bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 lg:p-10 border-2 border-primary-200">
                   <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-                    Siap Mengatasi Masalah Bisnis Kontraktor Anda?
+                    {t.industryPages?.contractor?.cta?.title || 'Siap Mengatasi Masalah Bisnis Kontraktor Anda?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                    KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional bisnis kontraktor Anda secara otomatis dan efisien.
+                    {t.industryPages?.contractor?.cta?.description || 'KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional bisnis kontraktor Anda secara otomatis dan efisien.'}
                   </p>
                   <a
                     href={whatsappLink}
@@ -304,7 +304,7 @@ export default function ContractorPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Konsultasi Gratis Sekarang</span>
+                    <span>{t.industryPages?.contractor?.cta?.buttonText || 'Konsultasi Gratis Sekarang'}</span>
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -325,14 +325,14 @@ export default function ContractorPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-4">
-                    Apa Itu KelolaAja?
+                    {t.industryPages?.contractor?.about?.title || 'Apa Itu KelolaAja?'}
                   </h2>
                   <div className="space-y-3 text-sm lg:text-base text-gray-700 leading-relaxed text-justify">
                     <p>
-                      KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.
+                      {t.industryPages?.contractor?.about?.description1 || 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.'}
                     </p>
                     <p>
-                      Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.
+                      {t.industryPages?.contractor?.about?.description2 || 'Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.'}
                     </p>
                   </div>
 
@@ -353,7 +353,7 @@ export default function ContractorPage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.industryPages?.contractor?.about?.buttonText || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>

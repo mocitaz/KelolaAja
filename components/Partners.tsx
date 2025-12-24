@@ -77,10 +77,14 @@ export default function Partners({ partners: propPartners, title, className = ""
 
             console.log('[Partners] Mapping partner:', p.partnerName, 'logoUrl:', p.logoUrl, 'logo:', p.logo);
 
-            // If logoUrl is relative path, convert to backend serve URL using fileId
-            if (imageUrl && imageUrl.startsWith('/') && p.logo?.fileId) {
+            // If we have a fileId, prioritize using the serve endpoint
+            if (p.logo?.fileId) {
               imageUrl = `${baseUrl}/api/v1/media-files/serve/${p.logo.fileId}`;
-              console.log('[Partners] Converted to serve URL:', imageUrl);
+              console.log('[Partners] Generated serve URL from fileId:', imageUrl);
+            } else if (imageUrl && imageUrl.startsWith('/') && !imageUrl.startsWith('/images/')) {
+              // Fallback: If it looks like a relative path but we don't have fileId, 
+              // and it's not a local static image, we might need adjustments. 
+              // But for now, let's assume local images are fine.
             }
 
             return {
@@ -287,6 +291,12 @@ function PartnerItem({ partner }: { partner: Partner }) {
   const websiteUrl = partner.website || partner.websiteUrl;
   const imageUrl = partner.image || partner.logoUrl || "";
   const partnerName = partner.name || partner.partnerName || "";
+
+  // If no image is available, do not render this item or render a placeholder
+  // Returning null here prevents the "Image is missing required 'src' property" error
+  if (!imageUrl) {
+    return null;
+  }
 
   return (
     <div className="flex-shrink-0 flex items-center justify-center group">

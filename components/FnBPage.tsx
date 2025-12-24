@@ -28,15 +28,16 @@ export default function FnBPage() {
   }, [locale])
 
   // Fallback data
-  const introText = industryData?.heroDescription || 'Setiap aspek pengelolaan keuangan restoran Anda tercatat dan terpantau dengan akurat. Fokus pada menyajikan hidangan lezat, biarkan KelolaAja yang mengurus pembukuan dan laporan keuangan Anda secara otomatis dan efisien.'
-  const pageTitle = industryData?.heroTitle || 'Food and Beverages'
-  const title = 'Masalah Bisnis Restoran dan Cafe Anda Kewalahan?'
-  const description = 'Setiap bahan baku dari menu yang Anda sajikan perlu dicatat dan dihitung dengan teliti untuk menjaga profitabilitas restoran. Namun, banyak pemilik restoran di Indonesia yang belum memiliki sistem akuntansi yang efektif.'
+  const introText = industryData?.heroDescription || t.industryPages?.fnb?.introText || 'Setiap aspek pengelolaan keuangan restoran Anda tercatat dan terpantau dengan akurat. Fokus pada menyajikan hidangan lezat, biarkan KelolaAja yang mengurus pembukuan dan laporan keuangan Anda secara otomatis dan efisien.'
+  const pageTitle = industryData?.heroTitle || t.industryPages?.fnb?.heroTitle || 'Food and Beverages'
+  const title = t.industryPages?.fnb?.title || 'Masalah Bisnis Restoran dan Cafe Anda Kewalahan?'
+  const description = t.industryPages?.fnb?.description || 'Setiap bahan baku dari menu yang Anda sajikan perlu dicatat dan dihitung dengan teliti untuk menjaga profitabilitas restoran. Namun, banyak pemilik restoran di Indonesia yang belum memiliki sistem akuntansi yang efektif.'
 
+  const problemsList = t.industryPages?.fnb?.problems || []
   const problems = [
     {
-      title: 'Pencatatan bahan baku tidak optimal',
-      description: 'Manajemen bahan baku merupakan hal penting agar setiap menu yang Anda sajikan bisa terpenuhi sesuai dengan permintaan pelanggan di restoran Anda.',
+      title: problemsList[0]?.title || 'Pencatatan bahan baku tidak optimal',
+      description: problemsList[0]?.description || 'Manajemen bahan baku merupakan hal penting agar setiap menu yang Anda sajikan bisa terpenuhi sesuai dengan permintaan pelanggan di restoran Anda.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
@@ -44,8 +45,8 @@ export default function FnBPage() {
       )
     },
     {
-      title: 'Sulit Melacak Laba Rugi per Cabang',
-      description: 'Biaya impor dan biaya lainnya yang tidak tercatat dalam HPP dapat mengganggu akurasi laporan laba rugi, membuat analisis keuangan menjadi tidak lengkap dan membingungkan.',
+      title: problemsList[1]?.title || 'Sulit Melacak Laba Rugi per Cabang',
+      description: problemsList[1]?.description || 'Biaya impor dan biaya lainnya yang tidak tercatat dalam HPP dapat mengganggu akurasi laporan laba rugi, membuat analisis keuangan menjadi tidak lengkap dan membingungkan.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -53,8 +54,8 @@ export default function FnBPage() {
       )
     },
     {
-      title: 'Laporan keuangan tidak sesuai standar',
-      description: 'Laporan keuangan adalah kunci pengambilan keputusan yang tepat dalam bisnis apa pun. Sayangnya, banyak pemilik restoran yang masih mengabaikan pentingnya hal ini.',
+      title: problemsList[2]?.title || 'Laporan keuangan tidak sesuai standar',
+      description: problemsList[2]?.description || 'Laporan keuangan adalah kunci pengambilan keputusan yang tepat dalam bisnis apa pun. Sayangnya, banyak pemilik restoran yang masih mengabaikan pentingnya hal ini.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -62,8 +63,8 @@ export default function FnBPage() {
       )
     },
     {
-      title: 'Harga Beli Barang Naik Turun',
-      description: 'Fluktuasi HPP (COGS) yang tidak konsisten membuat perhitungan profit menjadi sulit dan tidak akurat.',
+      title: problemsList[3]?.title || 'Harga Beli Barang Naik Turun',
+      description: problemsList[3]?.description || 'Fluktuasi HPP (COGS) yang tidak konsisten membuat perhitungan profit menjadi sulit dan tidak akurat.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -71,8 +72,8 @@ export default function FnBPage() {
       )
     },
     {
-      title: 'Pemakaian Satu Jenis Stok dengan Unit Berbeda-beda',
-      description: 'Penggunaan stok dengan berbagai unit untuk setiap menu membuat pencatatan stok menjadi lebih kompleks dan membingungkan.',
+      title: problemsList[4]?.title || 'Pemakaian Satu Jenis Stok dengan Unit Berbeda-beda',
+      description: problemsList[4]?.description || 'Penggunaan stok dengan berbagai unit untuk setiap menu membuat pencatatan stok menjadi lebih kompleks dan membingungkan.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -80,8 +81,8 @@ export default function FnBPage() {
       )
     },
     {
-      title: 'Stock Opname',
-      description: 'Proses stock opname yang masih dilakukan secara manual memakan waktu lama, menghambat efisiensi, dan meningkatkan potensi kesalahan dalam pencatatan stok.',
+      title: problemsList[5]?.title || 'Stock Opname',
+      description: problemsList[5]?.description || 'Proses stock opname yang masih dilakukan secara manual memakan waktu lama, menghambat efisiensi, dan meningkatkan potensi kesalahan dalam pencatatan stok.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
@@ -89,6 +90,7 @@ export default function FnBPage() {
       )
     }
   ]
+  const solutionsList = t.industryPages?.fnb?.solutions || []
 
   return (
     <main className="min-h-screen bg-white">
@@ -122,7 +124,7 @@ export default function FnBPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Hubungi Kami</span>
+                    <span>{t.hero.ctaText}</span>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -187,7 +189,7 @@ export default function FnBPage() {
                   <div className="bg-white rounded-xl border-2 border-gray-200 hover:border-primary-500 p-6 transition-all duration-300 hover:shadow-xl overflow-hidden flex flex-col h-full group relative">
                     {/* Gradient Accent */}
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
+
                     {/* Icon */}
                     <div className="mb-4 text-primary-600 flex-shrink-0">
                       {problem.icon}
@@ -199,7 +201,7 @@ export default function FnBPage() {
                       <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
                         {problem.title}
                       </h3>
-                      
+
                       {/* Description */}
                       <p className="text-sm text-gray-600 leading-relaxed">
                         {problem.description}
@@ -225,7 +227,7 @@ export default function FnBPage() {
             <ScrollAnimation direction="fade" delay={0} duration={500}>
               <div className="text-center mb-12 lg:mb-16">
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4">
-                  Bagaimana KelolaAja Membuat Bisnis Restoran Anda Menjadi Lebih Baik?
+                  {t.industryPages?.fnb?.solutionsTitle || 'Bagaimana KelolaAja Membuat Bisnis Restoran Anda Menjadi Lebih Baik?'}
                 </h2>
               </div>
             </ScrollAnimation>
@@ -234,33 +236,33 @@ export default function FnBPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
               {[
                 {
-                  title: 'Mudah digunakan',
-                  description: 'Sekalipun Anda awam akuntansi, Anda akan mudah menggunakan KelolaAja. Jika merasa tetap kesulitan, kami menjanjikan training gratis.',
+                  title: solutionsList[0]?.title || 'Mudah digunakan',
+                  description: solutionsList[0]?.description || 'Sekalipun Anda awam akuntansi, Anda akan mudah menggunakan KelolaAja. Jika merasa tetap kesulitan, kami menjanjikan training gratis.',
                   image: '/images/common/feature-easy.jpg',
                 },
                 {
-                  title: 'Support Barcode Scanner',
-                  description: 'Tingkatkan kecepatan dalam proses pencatatan penjualan dan stok opname pada bisnis dengan bantuan barcode scanner yang juga didukung di sistem KelolaAja.',
+                  title: solutionsList[1]?.title || 'Support Barcode Scanner',
+                  description: solutionsList[1]?.description || 'Tingkatkan kecepatan dalam proses pencatatan penjualan dan stok opname pada bisnis dengan bantuan barcode scanner yang juga didukung di sistem KelolaAja.',
                   image: '/images/common/feature-barcode.jpg',
                 },
                 {
-                  title: 'Real-time, di mana saja dan kapan saja',
-                  description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha restoran Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan pengeluaran dengan detail.',
+                  title: solutionsList[2]?.title || 'Real-time, di mana saja dan kapan saja',
+                  description: solutionsList[2]?.description || 'Tidak ada lagi pemborosan yang terjadi dalam usaha restoran Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan pengeluaran dengan detail.',
                   image: '/images/common/feature-realtime.jpg',
                 },
                 {
-                  title: 'Multi cabang & multi gudang',
-                  description: 'Pantau dan buat laporan keuangan dengan praktis dan buat keputusan bisnis lebih cepat dalam satu klik. Anda juga akan mendapatkan grafik dari operasional dalam bisnis dengan tampilan yang mudah dipahami.',
+                  title: solutionsList[3]?.title || 'Multi cabang & multi gudang',
+                  description: solutionsList[3]?.description || 'Pantau dan buat laporan keuangan dengan praktis dan buat keputusan bisnis lebih cepat dalam satu klik. Anda juga akan mendapatkan grafik dari operasional dalam bisnis dengan tampilan yang mudah dipahami.',
                   image: '/images/inventory/feature-warehouse.jpg',
                 },
                 {
-                  title: 'KelolaAja Purchasing Anti Ribet',
-                  description: 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
+                  title: solutionsList[4]?.title || 'KelolaAja Purchasing Anti Ribet',
+                  description: solutionsList[4]?.description || 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
                   image: '/images/common/feature-purchasing.jpg',
                 },
                 {
-                  title: 'Laporan diakses hitungan detik',
-                  description: 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
+                  title: solutionsList[5]?.title || 'Laporan diakses hitungan detik',
+                  description: solutionsList[5]?.description || 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
                   image: '/images/common/feature-reports.jpg',
                 }
               ].map((benefit, index) => (
@@ -320,10 +322,10 @@ export default function FnBPage() {
               <div className="text-center">
                 <div className="inline-block bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 lg:p-10 border-2 border-primary-200">
                   <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-                    Siap Mengatasi Masalah Bisnis Restoran Anda?
+                    {t.industryPages?.fnb?.cta.title || 'Siap Mengatasi Masalah Bisnis Restoran Anda?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                    KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional restoran Anda secara otomatis dan efisien.
+                    {t.industryPages?.fnb?.cta.description || 'KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional restoran Anda secara otomatis dan efisien.'}
                   </p>
                   <a
                     href={whatsappLink}
@@ -340,7 +342,7 @@ export default function FnBPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Konsultasi Gratis Sekarang</span>
+                    <span>{t.industryPages?.fnb?.cta.buttonText || 'Konsultasi Gratis Sekarang'}</span>
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -361,14 +363,14 @@ export default function FnBPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-4">
-                    Apa Itu KelolaAja?
+                    {t.industryPages?.fnb?.about.title || 'Apa Itu KelolaAja?'}
                   </h2>
                   <div className="space-y-3 text-sm lg:text-base text-gray-700 leading-relaxed text-justify">
                     <p>
-                      KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.
+                      {t.industryPages?.fnb?.about.description1 || 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.'}
                     </p>
                     <p>
-                      Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.
+                      {t.industryPages?.fnb?.about.description2 || 'Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.'}
                     </p>
                   </div>
 
@@ -389,7 +391,7 @@ export default function FnBPage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.industryPages?.fnb?.about.buttonText || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>

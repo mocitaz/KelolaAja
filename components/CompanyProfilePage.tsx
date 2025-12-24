@@ -635,7 +635,7 @@ export default function CompanyProfilePage() {
         </div>
       </section >
 
-      {/* Our Philosophy Section - Ultra Modern & Compact */}
+      {/* Our IMPACT Section - Ultra Modern & Compact */}
       < section className="py-12 lg:py-16 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden" >
         {/* Animated Background */}
         < div className="absolute inset-0 overflow-hidden pointer-events-none" >
@@ -651,12 +651,12 @@ export default function CompanyProfilePage() {
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-full mb-4 shadow-sm">
                   <div className="w-1.5 h-1.5 bg-[#0498da] rounded-full animate-pulse"></div>
                   <span className="text-[10px] font-bold text-gray-700 uppercase tracking-[0.15em]">
-                    {companyProfile?.coreValues.badge || 'Our Philosophy'}
+                    {companyProfile?.coreValues.badge || 'Our IMPACT'}
                   </span>
                   <div className="w-1.5 h-1.5 bg-[#71bf44] rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
                 </div>
                 <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black mb-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
-                  {companyProfile?.coreValues.impact || 'Our Philosophy'}
+                  {companyProfile?.coreValues.impact || 'Our IMPACT'}
                 </h2>
               </div>
             </ScrollAnimation>
@@ -700,7 +700,7 @@ export default function CompanyProfilePage() {
                       <div className="flex items-center gap-2 mb-4">
                         <div className="w-1 h-6 bg-gradient-to-b from-[#0498da] to-[#71bf44] rounded-full"></div>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                          {activeValue} {companyProfile?.coreValues.fromImpact || 'dari Our Philosophy'}
+                          {activeValue} {companyProfile?.coreValues.fromImpact || 'dari Our IMPACT'}
                         </span>
                       </div>
                       <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-black text-gray-900 mb-2 leading-tight">

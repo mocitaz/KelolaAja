@@ -28,29 +28,29 @@ export default function ManufacturingPage() {
   }, [locale])
 
   // Fallback data
-  const introText = pageData?.heroDescription || 'Sistem manufaktur terintegrasi untuk produksi dan supply chain. KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis dan optimalkan efisiensi produksi.'
-  const title = pageData?.heroTitle || 'Fitur Manufaktur'
-  const description = pageData?.description || 'Dapatkan kontrol penuh atas proses manufaktur Anda dengan sistem yang lengkap dan terintegrasi. Dari perencanaan produksi hingga laporan manufaktur real-time, semua tersedia dalam satu platform.'
+  const introText = pageData?.heroDescription || t.manufacturingPage?.hero.description || 'Sistem manufaktur terintegrasi untuk produksi dan supply chain. KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis dan optimalkan efisiensi produksi.'
+  const title = pageData?.heroTitle || t.manufacturingPage?.mainTitle || 'Fitur Manufaktur'
+  const description = pageData?.description || t.manufacturingPage?.mainDescription || 'Dapatkan kontrol penuh atas proses manufaktur Anda dengan sistem yang lengkap dan terintegrasi. Dari perencanaan produksi hingga laporan manufaktur real-time, semua tersedia dalam satu platform.'
 
   const features = [
     {
-      title: 'KelolaAja Proyek Menjadi Simpel',
-      description: 'Lihat profitabilitas setiap proyek dengan laporan budget dan realisasi anggaran. Pantau berapa pengeluaran, margin profit, dan budget tersisa setiap saat. Fitur approval bertingkat dan bisa disetting sesuai kebutuhan. Cek setiap pengeluaran lengkap dengan history.',
+      title: t.manufacturingPage?.features[0].title || 'KelolaAja Proyek Menjadi Simpel',
+      description: t.manufacturingPage?.features[0].description || 'Lihat profitabilitas setiap proyek dengan laporan budget dan realisasi anggaran. Pantau berapa pengeluaran, margin profit, dan budget tersisa setiap saat. Fitur approval bertingkat dan bisa disetting sesuai kebutuhan. Cek setiap pengeluaran lengkap dengan history.',
       image: '/images/manufacturing/manufacturing-simple.png',
     },
     {
-      title: 'Pantau Approval Secara Real Time',
-      description: 'Manajemen berbagai proyek dalam satu waktu secara real time. Pantau dan beri approval untuk pembelian barang dari mana saja, pantau budget dan profitabilitas lewat laporan laba rugi per proyek dan pantau progres dengan Task Management Dashboard.',
+      title: t.manufacturingPage?.features[1].title || 'Pantau Approval Secara Real Time',
+      description: t.manufacturingPage?.features[1].description || 'Manajemen berbagai proyek dalam satu waktu secara real time. Pantau dan beri approval untuk pembelian barang dari mana saja, pantau budget dan profitabilitas lewat laporan laba rugi per proyek dan pantau progres dengan Task Management Dashboard.',
       image: '/images/manufacturing/manufacturing-approval.png',
     },
     {
-      title: 'Laporan Keuangan Otomatis',
-      description: 'Pantau berapa pengeluaran, margin profit, dan budget tersisa setiap saat. Fitur approval bertingkat dan bisa disetting sesuai kebutuhan. Cek setiap pengeluaran lengkap dengan history. Pengeluaran dan pemasukan di lapangan saat operasional berjalan dengan otomatis dan semua invoice dan payment terdokumentasi di satu modul. Laporan pengeluaran terintegrasi dengan modul keuangan dan akuntansi dan terdokumentasi lengkap untuk pembelian barang, penggunaan bahan baku.',
+      title: t.manufacturingPage?.features[2].title || 'Laporan Keuangan Otomatis',
+      description: t.manufacturingPage?.features[2].description || 'Pantau berapa pengeluaran, margin profit, dan budget tersisa setiap saat. Fitur approval bertingkat dan bisa disetting sesuai kebutuhan. Cek setiap pengeluaran lengkap dengan history. Pengeluaran dan pemasukan di lapangan saat operasional berjalan dengan otomatis dan semua invoice dan payment terdokumentasi di satu modul. Laporan pengeluaran terintegrasi dengan modul keuangan dan akuntansi dan terdokumentasi lengkap untuk pembelian barang, penggunaan bahan baku.',
       image: '/images/manufacturing/manufacturing-laporan-keuangan.png',
     },
     {
-      title: 'Analisis Laba Rugi',
-      description: 'Dapatkan gambaran kesehatan keuangan semua proyek dalam satu dashboard. Laporan Laba Rugi lengkap dengan visualisasi. Cari tahu keuntungan dari setiap jenis kategori proyek. Ketahui proyek-proyek dengan performa terbaik. Ekspor data ke format Excel, CSV dan PDF kapanpun dibutuhkan.',
+      title: t.manufacturingPage?.features[3].title || 'Analisis Laba Rugi',
+      description: t.manufacturingPage?.features[3].description || 'Dapatkan gambaran kesehatan keuangan semua proyek dalam satu dashboard. Laporan Laba Rugi lengkap dengan visualisasi. Cari tahu keuntungan dari setiap jenis kategori proyek. Ketahui proyek-proyek dengan performa terbaik. Ekspor data ke format Excel, CSV dan PDF kapanpun dibutuhkan.',
       image: '/images/manufacturing/manufacturing-analisis.png',
     }
   ]
@@ -106,7 +106,7 @@ export default function ManufacturingPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-gray-900 mb-6">
-                    Fitur Manufaktur
+                    {t.manufacturingPage?.hero.title || 'Fitur Manufaktur'}
                   </h1>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify mb-6">
                     {introText}
@@ -126,7 +126,7 @@ export default function ManufacturingPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Hubungi Kami</span>
+                    <span>{t.manufacturingPage?.hero.ctaButton || 'Hubungi Kami'}</span>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -197,13 +197,13 @@ export default function ManufacturingPage() {
               <ScrollAnimation direction="left" delay={200} duration={600}>
                 <div>
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4">
-                    Software dengan Fitur
+                    {t.manufacturingPage?.softwareFeatures.title || 'Software dengan Fitur'}
                   </h2>
                   <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-semibold text-primary-600 mb-6">
-                    Manufaktur dan Mudah Digunakan
+                    {t.manufacturingPage?.softwareFeatures.subtitle || 'Manufaktur dan Mudah Digunakan'}
                   </h3>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify">
-                    KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang manufaktur. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola proses manufaktur dengan mudah dan efisien.
+                    {t.manufacturingPage?.softwareFeatures.description || 'KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang manufaktur. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola proses manufaktur dengan mudah dan efisien.'}
                   </p>
                 </div>
               </ScrollAnimation>
@@ -281,10 +281,10 @@ export default function ManufacturingPage() {
                 <div className="p-8 lg:p-12">
                   <div className="space-y-6 mb-8">
                     <p className="text-lg lg:text-xl font-bold text-gray-900 leading-relaxed text-center">
-                      Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.
+                      {t.manufacturingPage?.cta.mainText1 || 'Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.'}
                     </p>
                     <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-center">
-                      Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.
+                      {t.manufacturingPage?.cta.mainText2 || 'Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.'}
                     </p>
                   </div>
 
@@ -297,7 +297,7 @@ export default function ManufacturingPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         ),
-                        text: 'Laporan Real-Time'
+                        text: t.manufacturingPage?.cta.highlights[0] || 'Laporan Real-Time'
                       },
                       {
                         icon: (
@@ -305,7 +305,7 @@ export default function ManufacturingPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         ),
-                        text: 'Pantau Arus Kas'
+                        text: t.manufacturingPage?.cta.highlights[1] || 'Pantau Arus Kas'
                       },
                       {
                         icon: (
@@ -313,7 +313,7 @@ export default function ManufacturingPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                         ),
-                        text: 'Invoice Otomatis'
+                        text: t.manufacturingPage?.cta.highlights[2] || 'Invoice Otomatis'
                       },
                       {
                         icon: (
@@ -321,7 +321,7 @@ export default function ManufacturingPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                           </svg>
                         ),
-                        text: 'Platform Terpusat'
+                        text: t.manufacturingPage?.cta.highlights[3] || 'Platform Terpusat'
                       }
                     ].map((feature, index) => (
                       <div
@@ -355,7 +355,7 @@ export default function ManufacturingPage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.manufacturingPage?.cta.tryFreeButton || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -372,7 +372,7 @@ export default function ManufacturingPage() {
       </section>
 
       {/* Other Features Carousel */}
-      <FeaturesCarousel 
+      <FeaturesCarousel
         features={otherFeatures}
       />
 
@@ -384,10 +384,10 @@ export default function ManufacturingPage() {
               <div className="text-center">
                 <div className="inline-block bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 lg:p-10 border-2 border-primary-200">
                   <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-                    Siap Mengoptimalkan Proses Manufaktur Anda?
+                    {t.manufacturingPage?.cta.optimizeTitle || 'Siap Mengoptimalkan Proses Manufaktur Anda?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                    KelolaAja menyediakan sistem manufaktur terintegrasi untuk produksi dan supply chain dengan mudah dan efisien.
+                    {t.manufacturingPage?.cta.optimizeDescription || 'KelolaAja menyediakan sistem manufaktur terintegrasi untuk produksi dan supply chain dengan mudah dan efisien.'}
                   </p>
                   <a
                     href={whatsappLink}
@@ -404,7 +404,7 @@ export default function ManufacturingPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Konsultasi Gratis Sekarang</span>
+                    <span>{t.manufacturingPage?.cta.consultButton || 'Konsultasi Gratis Sekarang'}</span>
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -425,17 +425,17 @@ export default function ManufacturingPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-2">
-                    Apa Itu KelolaAja?
+                    {t.manufacturingPage?.about.title || 'Apa Itu KelolaAja?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-4">
-                    Software ERP Akuntansi Terdepan untuk Bisnis Indonesia
+                    {t.manufacturingPage?.about.subtitle || 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia'}
                   </p>
                   <div className="space-y-3 text-sm lg:text-base text-gray-700 leading-relaxed text-justify">
                     <p>
-                      KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.
+                      {t.manufacturingPage?.about.description1 || 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.'}
                     </p>
                     <p>
-                      KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.
+                      {t.manufacturingPage?.about.description2 || 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.'}
                     </p>
                   </div>
 
@@ -456,7 +456,7 @@ export default function ManufacturingPage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.manufacturingPage?.cta.tryFreeButton || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -465,7 +465,7 @@ export default function ManufacturingPage() {
                 </div>
               </ScrollAnimation>
             </div>
-            
+
             {/* Right: FAQ Section */}
             <div>
               <FAQSection />

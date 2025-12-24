@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import ScrollAnimation from '@/components/ScrollAnimation'
 import { useState } from 'react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface Feature {
   title: string
@@ -17,8 +18,9 @@ interface FeaturesCarouselProps {
 }
 
 export default function FeaturesCarousel({ features, title }: FeaturesCarouselProps) {
+  const { t } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(0)
-  
+
   const totalSlides = Math.ceil(features.length / 3)
   const maxIndex = totalSlides - 1
 
@@ -167,11 +169,11 @@ export default function FeaturesCarousel({ features, title }: FeaturesCarouselPr
                                 {feature.description}
                               </p>
                               <div className="text-primary-600 hover:text-primary-700 font-medium text-sm lg:text-base inline-flex items-center gap-1.5 transition-colors duration-300 group/link w-fit flex-shrink-0 mt-auto">
-                                Pelajari Selengkapnya
-                                <svg 
-                                  className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" 
-                                  fill="none" 
-                                  stroke="currentColor" 
+                                {t.featuresPage?.learnMore || 'Pelajari Selengkapnya'}
+                                <svg
+                                  className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300"
+                                  fill="none"
+                                  stroke="currentColor"
                                   viewBox="0 0 24 24"
                                 >
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -193,11 +195,10 @@ export default function FeaturesCarousel({ features, title }: FeaturesCarouselPr
                 <button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    index === currentIndex
-                      ? 'w-8 bg-primary-600'
-                      : 'w-2 bg-gray-300 hover:bg-gray-400'
-                  }`}
+                  className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex
+                    ? 'w-8 bg-primary-600'
+                    : 'w-2 bg-gray-300 hover:bg-gray-400'
+                    }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}

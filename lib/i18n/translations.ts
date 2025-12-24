@@ -327,6 +327,7 @@ export interface Translations {
   }
   industryPages?: {
     fnb?: {
+      heroTitle: string
       introText: string
       title: string
       description: string
@@ -334,6 +335,7 @@ export interface Translations {
         title: string
         description: string
       }>
+      solutionsTitle: string
       solutions: Array<{
         title: string
         description: string
@@ -345,17 +347,18 @@ export interface Translations {
       }
       about: {
         title: string
-        subtitle: string
+        subtitle?: string
         description1: string
         description2: string
         buttonText: string
       }
-      faq: {
+      faq: Array<{
         question: string
         answer: string
-      }
+      }>
     }
     contractor?: {
+      heroTitle: string
       introText: string
       title: string
       description: string
@@ -363,6 +366,7 @@ export interface Translations {
         title: string
         description: string
       }>
+      solutionsTitle: string
       solutions: Array<{
         title: string
         description: string
@@ -374,17 +378,18 @@ export interface Translations {
       }
       about: {
         title: string
-        subtitle: string
+        subtitle?: string
         description1: string
         description2: string
         buttonText: string
       }
-      faq: {
+      faq: Array<{
         question: string
         answer: string
-      }
+      }>
     }
     retail?: {
+      heroTitle: string
       introText: string
       title: string
       description: string
@@ -392,6 +397,7 @@ export interface Translations {
         title: string
         description: string
       }>
+      solutionsTitle: string
       solutions: Array<{
         title: string
         description: string
@@ -403,17 +409,18 @@ export interface Translations {
       }
       about: {
         title: string
-        subtitle: string
+        subtitle?: string
         description1: string
         description2: string
         buttonText: string
       }
-      faq: {
+      faq: Array<{
         question: string
         answer: string
-      }
+      }>
     }
     manufacturing?: {
+      heroTitle: string
       introText: string
       title: string
       description: string
@@ -421,6 +428,7 @@ export interface Translations {
         title: string
         description: string
       }>
+      solutionsTitle: string
       solutions: Array<{
         title: string
         description: string
@@ -432,15 +440,15 @@ export interface Translations {
       }
       about: {
         title: string
-        subtitle: string
+        subtitle?: string
         description1: string
         description2: string
         buttonText: string
       }
-      faq: {
+      faq: Array<{
         question: string
         answer: string
-      }
+      }>
     }
   }
   companyProfile?: {
@@ -534,6 +542,171 @@ export interface Translations {
           description: string
         }
       }
+    }
+  }
+  financePage?: {
+    hero: {
+      title: string
+      description: string
+      ctaButton: string
+    }
+    softwareFeatures: {
+      title: string
+      subtitle: string
+      description: string
+    }
+    mainTitle: string
+    mainDescription: string
+    features: Array<{
+      title: string
+      description: string
+    }>
+    cta: {
+      mainText1: string
+      mainText2: string
+      highlights: string[]
+      tryFreeButton: string
+      consultButton: string
+      optimizeTitle: string
+      optimizeDescription: string
+    }
+    about: {
+      title: string
+      subtitle: string
+      description1: string
+      description2: string
+    }
+  }
+  manufacturingPage?: {
+    hero: {
+      title: string
+      description: string
+      ctaButton: string
+    }
+    softwareFeatures: {
+      title: string
+      subtitle: string
+      description: string
+    }
+    mainTitle: string
+    mainDescription: string
+    features: Array<{
+      title: string
+      description: string
+    }>
+    cta: {
+      mainText1: string
+      mainText2: string
+      highlights: string[]
+      tryFreeButton: string
+      consultButton: string
+      optimizeTitle: string
+      optimizeDescription: string
+    }
+    about: {
+      title: string
+      subtitle: string
+      description1: string
+      description2: string
+    }
+  }
+  inventoryPage?: {
+    hero: {
+      title: string
+      description: string
+      ctaButton: string
+    }
+    softwareFeatures: {
+      title: string
+      subtitle: string
+      description: string
+    }
+    mainTitle: string
+    mainDescription: string
+    features: Array<{
+      title: string
+      description: string
+    }>
+    cta: {
+      mainText1: string
+      mainText2: string
+      highlights: string[]
+      tryFreeButton: string
+      consultButton: string
+      optimizeTitle: string
+      optimizeDescription: string
+    }
+    about: {
+      title: string
+      subtitle: string
+      description1: string
+      description2: string
+    }
+  }
+  projectPage?: {
+    hero: {
+      title: string
+      description: string
+      ctaButton: string
+    }
+    softwareFeatures: {
+      title: string
+      subtitle: string
+      description: string
+    }
+    mainTitle: string
+    mainDescription: string
+    features: Array<{
+      title: string
+      description: string
+    }>
+    cta: {
+      mainText1: string
+      mainText2: string
+      highlights: string[]
+      tryFreeButton: string
+      consultButton: string
+      optimizeTitle: string
+      optimizeDescription: string
+    }
+    about: {
+      title: string
+      subtitle: string
+      description1: string
+      description2: string
+    }
+  }
+  salesPage?: {
+    hero: {
+      title: string
+      description: string
+      ctaButton: string
+    }
+    softwareFeatures: {
+      title: string
+      subtitle: string
+      description: string
+    }
+    mainTitle: string
+    mainDescription: string
+    features: Array<{
+      title: string
+      description: string
+    }>
+    cta: {
+      mainText1: string
+      mainText2: string
+      highlights: string[]
+      tryFreeButton: string
+      consultButton: string
+      optimizeTitle: string
+      optimizeDescription: string
+    }
+    about: {
+      title: string
+      subtitle: string
+      description1: string
+      description2: string
     }
   }
 }
@@ -988,6 +1161,159 @@ export const translations: Record<Locale, Translations> = {
         'Anda dapat mengikuti sesi demo atau konsultasi melalui smartphone, laptop, atau PC, pastikan juga koneksi internet Anda stabil.',
       ],
     },
+    financePage: {
+      hero: {
+        title: 'Keuangan dan Akuntansi',
+        description: 'Sistem keuangan lengkap untuk arus kas, pembukuan, dan laporan. KelolaAja menyediakan solusi terintegrasi untuk mengelola seluruh aspek keuangan bisnis Anda dengan mudah dan efisien.',
+        ctaButton: 'Hubungi Kami',
+      },
+      softwareFeatures: {
+        title: 'Software dengan Fitur',
+        subtitle: 'Pembukuan dan Mudah Digunakan',
+        description: 'KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang akuntansi. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola pembukuan bisnis dengan mudah dan efisien.',
+      },
+      mainTitle: 'Keuangan dan Akuntansi',
+      mainDescription: 'Dapatkan kontrol penuh atas keuangan bisnis Anda dengan sistem akuntansi yang lengkap dan terintegrasi. Dari pencatatan transaksi hingga laporan keuangan real-time, semua tersedia dalam satu platform.',
+      features: [
+        {
+          title: 'Mudah Untuk Pemula',
+          description: 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim KelolaAja akan selalu membantu sampai Anda bisa.',
+        },
+        {
+          title: 'Pencatatan Data Lebih Mudah',
+          description: 'Semua alur bisnis menjadi lebih mudah dipantau. Mulai dari proses pembelian, Penjualan, utang dan piutang, sampai dengan penghitungan penyusutan aset bisa Anda lakukan dengan mudah di KelolaAja.',
+        },
+        {
+          title: 'Pelaporan Konsolidasi',
+          description: 'Punya banyak bisnis tapi ingin data keuangan dalam 1 database terpusat? Dengan KelolaAja bisa! Fitur konsolidasi akan secara otomatis mengkompilasi laporan dari masing-masing perusahaan ke dalam satu laporan konsolidasi.',
+        },
+        {
+          title: 'Laporan Realtime',
+          description: 'KelolaAja Anda akan mendapatkan lebih dari 35 laporan keuangan yang bisa Anda hasilkan secara instan dalam 1 klik. Kini tidak ada lagi informasi keuangan yang Anda lewatkan dan memudahkan Anda mengambil keputusan yang lebih baik.',
+        },
+      ],
+      cta: {
+        mainText1: 'Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.',
+        mainText2: 'Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.',
+        highlights: ['Laporan Real-Time', 'Pantau Arus Kas', 'Invoice Otomatis', 'Platform Terpusat'],
+        tryFreeButton: 'Coba Gratis Sekarang',
+        consultButton: 'Konsultasi Gratis Sekarang',
+        optimizeTitle: 'Siap Mengoptimalkan Keuangan Bisnis Anda?',
+        optimizeDescription: 'KelolaAja menyediakan sistem keuangan lengkap untuk mengelola arus kas, pembukuan, dan laporan dengan mudah dan efisien.',
+      },
+      about: {
+        title: 'Apa Itu KelolaAja?',
+        subtitle: 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia',
+        description1: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.',
+        description2: 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+      },
+    },
+    manufacturingPage: {
+      hero: {
+        title: 'Fitur Manufaktur',
+        description: 'Sistem manufaktur terintegrasi untuk produksi dan supply chain. KelolaAja proses manufaktur dengan mudah, hitung Harga Pokok Penjualan produk secara otomatis dan optimalkan efisiensi produksi.',
+        ctaButton: 'Hubungi Kami',
+      },
+      softwareFeatures: {
+        title: 'Software dengan Fitur',
+        subtitle: 'Manufaktur dan Mudah Digunakan',
+        description: 'KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang manufaktur. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola proses manufaktur dengan mudah dan efisien.',
+      },
+      mainTitle: 'Fitur Manufaktur',
+      mainDescription: 'Dapatkan kontrol penuh atas proses manufaktur Anda dengan sistem yang lengkap dan terintegrasi. Dari perencanaan produksi hingga laporan manufaktur real-time, semua tersedia dalam satu platform.',
+      features: [
+        {
+          title: 'KelolaAja Proyek Menjadi Simpel',
+          description: 'Lihat profitabilitas setiap proyek dengan laporan budget dan realisasi anggaran. Pantau berapa pengeluaran, margin profit, dan budget tersisa setiap saat. Fitur approval bertingkat dan bisa disetting sesuai kebutuhan. Cek setiap pengeluaran lengkap dengan history.',
+        },
+        {
+          title: 'Pantau Approval Secara Real Time',
+          description: 'Manajemen berbagai proyek dalam satu waktu secara real time. Pantau dan beri approval untuk pembelian barang dari mana saja, pantau budget dan profitabilitas lewat laporan laba rugi per proyek dan pantau progres dengan Task Management Dashboard.',
+        },
+        {
+          title: 'Laporan Keuangan Otomatis',
+          description: 'Pantau berapa pengeluaran, margin profit, dan budget tersisa setiap saat. Fitur approval bertingkat dan bisa disetting sesuai kebutuhan. Cek setiap pengeluaran lengkap dengan history. Pengeluaran dan pemasukan di lapangan saat operasional berjalan dengan otomatis dan semua invoice dan payment terdokumentasi di satu modul. Laporan pengeluaran terintegrasi dengan modul keuangan dan akuntansi dan terdokumentasi lengkap untuk pembelian barang, penggunaan bahan baku.',
+        },
+        {
+          title: 'Analisis Laba Rugi',
+          description: 'Dapatkan gambaran kesehatan keuangan semua proyek dalam satu dashboard. Laporan Laba Rugi lengkap dengan visualisasi. Cari tahu keuntungan dari setiap jenis kategori proyek. Ketahui proyek-proyek dengan performa terbaik. Ekspor data ke format Excel, CSV dan PDF kapanpun dibutuhkan.',
+        },
+      ],
+      cta: {
+        mainText1: 'Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.',
+        mainText2: 'Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.',
+        highlights: ['Laporan Real-Time', 'Pantau Arus Kas', 'Invoice Otomatis', 'Platform Terpusat'],
+        tryFreeButton: 'Coba Gratis Sekarang',
+        consultButton: 'Konsultasi Gratis Sekarang',
+        optimizeTitle: 'Siap Mengoptimalkan Proses Manufaktur Anda?',
+        optimizeDescription: 'KelolaAja menyediakan sistem manufaktur terintegrasi untuk produksi dan supply chain dengan mudah dan efisien.',
+      },
+      about: {
+        title: 'Apa Itu KelolaAja?',
+        subtitle: 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia',
+        description1: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.',
+        description2: 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+      },
+    },
+    inventoryPage: {
+      hero: {
+        title: 'Produk dan Inventory',
+        description: 'Manajemen inventory dengan tracking real-time. KelolaAja produk dan inventory dengan efisien, mulai dari pengadaan hingga pengiriman dengan optimasi alur distribusi.',
+        ctaButton: 'Hubungi Kami',
+      },
+      softwareFeatures: {
+        title: 'Software dengan Fitur',
+        subtitle: 'Produk dan Inventory Mudah Digunakan',
+        description: 'KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang inventory. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola produk dan inventory dengan mudah dan efisien.',
+      },
+      mainTitle: 'Produk dan Inventory',
+      mainDescription: 'Dapatkan kontrol penuh atas manajemen inventory Anda dengan sistem yang lengkap dan terintegrasi. Dari tracking stok hingga laporan inventory real-time, semua tersedia dalam satu platform.',
+      features: [
+        {
+          title: 'Lacak Produk Paling Laris',
+          description: 'Dapatkan pembaruan laporan produk terlaris, total profit yang dihasilkan, dan stok produk yang habis secara real-time. Manfaatkan data ini untuk membuat keputusan yang lebih tepat dalam melakukan reorder dan menetapkan harga produk Anda.',
+        },
+        {
+          title: 'Import dari Excel',
+          description: 'Tidak perlu lagi repot memasukkan data produk dan stok secara manual, cukup ketik di Excel dan unggah. Semua informasi akan otomatis terintegrasi ke dalam sistem KelolaAja.',
+        },
+        {
+          title: 'Multi Gudang',
+          description: 'KelolaAja stok produkmu dibanyak tempat dengan mudah dan pantau stok pergudang secara realtime.',
+        },
+        {
+          title: 'Laporan Realtime',
+          description: 'Akses laporan stok di setiap gudang secara detail dan real-time, tanpa perlu menunggu akhir bulan. Pantau pergerakan stok secara langsung dan pastikan barang selalu terpantau dengan baik.',
+        },
+        {
+          title: 'Stok Opname',
+          description: 'Proses stok opname jadi lebih praktis! Unduh laporan stok terbaru dalam format Excel, perbarui jumlah stok, dan langsung unggah ke KelolaAja. Cepat dan mudah!',
+        },
+        {
+          title: 'Transfer Gudang',
+          description: 'Pindahkan barang antar gudang dengan simpel. Nikmati pencatatan stok yang rapi dan teratur tanpa kerepotan.',
+        },
+        {
+          title: 'Pantau Kapan Saja dan Di Mana Saja',
+          description: 'Pantau stok kapan saja, tanpa harus ke kantor atau gudang. Cukup buka laporan dari ponsel atau laptop, di mana pun Anda berada.',
+        },
+      ],
+      cta: {
+        mainText1: 'Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.',
+        mainText2: 'Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.',
+        highlights: ['Laporan Real-Time', 'Pantau Arus Kas', 'Invoice Otomatis', 'Platform Terpusat'],
+        tryFreeButton: 'Coba Gratis Sekarang',
+        consultButton: 'Konsultasi Gratis Sekarang',
+        optimizeTitle: 'Siap Mengoptimalkan Manajemen Inventory Anda?',
+        optimizeDescription: 'KelolaAja menyediakan sistem inventory dengan tracking real-time untuk mengelola produk dari pengadaan hingga pengiriman.',
+      },
+      about: {
+        title: 'Apa Itu KelolaAja?',
+        subtitle: 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia',
+        description1: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.',
+        description2: 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+      },
+    },
     featuresPage: {
       hero: {
         title: 'Fitur KelolaAja',
@@ -1083,6 +1409,112 @@ export const translations: Record<Locale, Translations> = {
       },
       learnMore: 'Pelajari Selengkapnya',
     },
+    projectPage: {
+      hero: {
+        title: 'Manajemen Proyek',
+        description: 'Kelola proyek, track progress, dan monitor timeline dengan mudah. Sistem manajemen proyek terintegrasi untuk memastikan setiap proyek berjalan sesuai rencana dan budget.',
+        ctaButton: 'Hubungi Kami',
+      },
+      softwareFeatures: {
+        title: 'Software dengan Fitur',
+        subtitle: 'Manajemen Proyek dan Mudah Digunakan',
+        description: 'KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang manajemen proyek. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola proyek bisnis dengan mudah dan efisien.',
+      },
+      mainTitle: 'Manajemen Proyek',
+      mainDescription: 'Dapatkan kontrol penuh atas manajemen proyek Anda dengan sistem yang lengkap dan terintegrasi. Dari tracking progress hingga laporan proyek real-time, semua tersedia dalam satu platform.',
+      features: [
+        {
+          title: 'KelolaAja Proyek Menjadi Simpel',
+          description: 'Lihat profitabilitas setiap proyek dengan laporan budget dan realisasi anggaran. Pantau berapa pengeluaran, margin profit, dan budget tersisa setiap saat. Fitur approval bertingkat dan bisa disetting sesuai kebutuhan. Cek setiap pengeluaran lengkap dengan history.',
+        },
+        {
+          title: 'Pantau Approval Secara Real Time',
+          description: 'Manajemen berbagai proyek dalam satu waktu secara real time. Pantau dan beri approval untuk pembelian barang dari mana saja, pantau budget dan profitabilitas lewat laporan laba rugi per proyek dan pantau progres dengan Task Management Dashboard.',
+        },
+        {
+          title: 'Laporan Keuangan Otomatis',
+          description: 'Pantau berapa pengeluaran, margin profit, dan budget tersisa setiap saat. Fitur approval bertingkat dan bisa disetting sesuai kebutuhan. Cek setiap pengeluaran lengkap dengan history. Pengeluaran dan pemasukan di lapangan saat operasional berjalan dengan otomatis dan semua invoice dan payment terdokumentasi di satu modul. Laporan pengeluaran terintegrasi dengan modul keuangan dan akuntansi dan terdokumentasi lengkap untuk pembelian barang, penggunaan bahan baku.',
+        },
+        {
+          title: 'Analisis Laba Rugi',
+          description: 'Dapatkan gambaran kesehatan keuangan semua proyek dalam satu dashboard. Laporan Laba Rugi lengkap dengan visualisasi. Cari tahu keuntungan dari setiap jenis kategori proyek. Ketahui proyek-proyek dengan performa terbaik. Ekspor data ke format Excel, CSV dan PDF kapanpun dibutuhkan.',
+        },
+      ],
+      cta: {
+        mainText1: 'Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.',
+        mainText2: 'Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.',
+        highlights: ['Laporan Real-Time', 'Pantau Arus Kas', 'Invoice Otomatis', 'Platform Terpusat'],
+        tryFreeButton: 'Coba Gratis Sekarang',
+        consultButton: 'Konsultasi Gratis Sekarang',
+        optimizeTitle: 'Siap Mengoptimalkan Manajemen Proyek Anda?',
+        optimizeDescription: 'KelolaAja menyediakan sistem manajemen proyek terintegrasi untuk track progress dan monitor timeline dengan mudah.',
+      },
+      about: {
+        title: 'Apa Itu KelolaAja?',
+        subtitle: 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia',
+        description1: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.',
+        description2: 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+      },
+    },
+    salesPage: {
+      hero: {
+        title: 'Pembelian dan Penjualan',
+        description: 'Proses pembelian dan penjualan dari quotation hingga invoice. Proses jual-beli yang lebih fleksibel, bisa pilih jual putus atau konsinyasi dengan fitur DP dan diskon bertingkat.',
+        ctaButton: 'Hubungi Kami',
+      },
+      softwareFeatures: {
+        title: 'Software dengan Fitur',
+        subtitle: 'Pembelian dan Penjualan Mudah Digunakan',
+        description: 'KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang penjualan. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola proses pembelian dan penjualan dengan mudah dan efisien.',
+      },
+      mainTitle: 'Pembelian dan Penjualan',
+      mainDescription: 'Dapatkan kontrol penuh atas proses pembelian dan penjualan Anda dengan sistem yang lengkap dan terintegrasi. Dari quotation hingga invoice, semua tersedia dalam satu platform.',
+      features: [
+        {
+          title: 'Catat Semua Detail Order',
+          description: 'Lacak semua purchase order dan pembelian hingga ke semua detailnya, berapa harga yang disepakati dan semua dokumen pendukungnya.',
+        },
+        {
+          title: 'Perhitungan Pajak Otomatis',
+          description: 'Semua pajak pembelian akan terrekap menjadi laporan pajak secara otomatis. Kamu bisa mengkustomisasi apapun jenis pajak yang ingin terapkan di bisnismu, termasuk pajak pemotongan.',
+        },
+        {
+          title: 'Stok dan Gudang Tercatat Otomatis',
+          description: 'Stok produk akan tercatat secara otomatis di gudang yang kamu tentukan. Tak perlu lagi double input untuk urusan inventori!',
+        },
+        {
+          title: 'Lampirkan Foto atau Scan Dokumen',
+          description: 'Kurangi tumpukan kertas, lampirkan semua dokumen kertas mu ke purchase order dan fakturmu.',
+        },
+        {
+          title: 'Dapatkan Informasi dan Statistik Pembelian',
+          description: 'Ketahui dengan pasti apa saja barang penjualan terbaik, berapa hutang & piutang berapa, purchase order, dan kapan jatuh temponya.',
+        },
+        {
+          title: 'Lakukan Pembayaran Bertahap',
+          description: 'Kamu bisa membayar pembelian secara bertahap, dan sangat bisa mencatatnya dengan rapi dan benar.',
+        },
+        {
+          title: 'Buat Faktur Pembelian dari Purchase Order dengan Sekali Klik',
+          description: 'Saat sudah deal dengan vendor, kamu bisa membuat faktur pembelian dari purchase order hanya dengan satu klik.',
+        },
+      ],
+      cta: {
+        mainText1: 'Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.',
+        mainText2: 'Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.',
+        highlights: ['Laporan Real-Time', 'Pantau Arus Kas', 'Invoice Otomatis', 'Platform Terpusat'],
+        tryFreeButton: 'Coba Gratis Sekarang',
+        consultButton: 'Konsultasi Gratis Sekarang',
+        optimizeTitle: 'Siap Mengoptimalkan Proses Pembelian & Penjualan Anda?',
+        optimizeDescription: 'KelolaAja menyediakan sistem pembelian dan penjualan terintegrasi dari quotation hingga invoice dengan mudah dan efisien.',
+      },
+      about: {
+        title: 'Apa Itu KelolaAja?',
+        subtitle: 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia',
+        description1: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.',
+        description2: 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+      },
+    },
     industriesPage: {
       hero: {
         badge: 'Solusi ERP untuk Semua Industri',
@@ -1090,6 +1522,286 @@ export const translations: Record<Locale, Translations> = {
         subtitle: 'KelolaAja hadir dengan solusi ERP yang disesuaikan untuk berbagai industri. Dari restoran hingga manufaktur, kami membantu bisnis Anda tumbuh lebih efisien dan profesional.',
       },
       learnMore: 'Pelajari Selengkapnya',
+    },
+    industryPages: {
+      fnb: {
+        heroTitle: 'Food & Beverage',
+        introText: 'Setiap aspek pengelolaan keuangan restoran Anda tercatat dan terpantau dengan akurat. Fokus pada menyajikan hidangan lezat, biarkan KelolaAja yang mengurus pembukuan dan laporan keuangan Anda secara otomatis dan efisien.',
+        title: 'Masalah Bisnis Restoran dan Cafe Anda Kewalahan?',
+        description: 'Setiap bahan baku dari menu yang Anda sajikan perlu dicatat dan dihitung dengan teliti untuk menjaga profitabilitas restoran. Namun, banyak pemilik restoran di Indonesia yang belum memiliki sistem akuntansi yang efektif.',
+        problems: [
+          {
+            title: 'Pencatatan bahan baku tidak optimal',
+            description: 'Manajemen bahan baku merupakan hal penting agar setiap menu yang Anda sajikan bisa terpenuhi sesuai dengan permintaan pelanggan di restoran Anda.',
+          },
+          {
+            title: 'Sulit Melacak Laba Rugi per Cabang',
+            description: 'Biaya impor dan biaya lainnya yang tidak tercatat dalam HPP dapat mengganggu akurasi laporan laba rugi, membuat analisis keuangan menjadi tidak lengkap dan membingungkan.',
+          },
+          {
+            title: 'Laporan keuangan tidak sesuai standar',
+            description: 'Laporan keuangan adalah kunci pengambilan keputusan yang tepat dalam bisnis apa pun. Sayangnya, banyak pemilik restoran yang masih mengabaikan pentingnya hal ini.',
+          },
+          {
+            title: 'Harga Beli Barang Naik Turun',
+            description: 'Fluktuasi HPP (COGS) yang tidak konsisten membuat perhitungan profit menjadi sulit dan tidak akurat.',
+          },
+          {
+            title: 'Pemakaian Satu Jenis Stok dengan Unit Berbeda-beda',
+            description: 'Penggunaan stok dengan berbagai unit untuk setiap menu membuat pencatatan stok menjadi lebih kompleks dan membingungkan.',
+          },
+          {
+            title: 'Stock Opname',
+            description: 'Proses stock opname yang masih dilakukan secara manual memakan waktu lama, menghambat efisiensi, dan meningkatkan potensi kesalahan dalam pencatatan stok.',
+          },
+        ],
+        solutionsTitle: 'Bagaimana KelolaAja Membuat Bisnis Restoran Anda Menjadi Lebih Baik?',
+        solutions: [
+          {
+            title: 'Mudah digunakan',
+            description: 'Sekalipun Anda awam akuntansi, Anda akan mudah menggunakan KelolaAja. Jika merasa tetap kesulitan, kami menjanjikan training gratis.',
+          },
+          {
+            title: 'Support Barcode Scanner',
+            description: 'Tingkatkan kecepatan dalam proses pencatatan penjualan dan stok opname pada bisnis dengan bantuan barcode scanner yang juga didukung di sistem KelolaAja.',
+          },
+          {
+            title: 'Real-time, di mana saja dan kapan saja',
+            description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha restoran Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan pengeluaran dengan detail.',
+          },
+          {
+            title: 'Multi cabang & multi gudang',
+            description: 'Pantau dan buat laporan keuangan dengan praktis dan buat keputusan bisnis lebih cepat dalam satu klik. Anda juga akan mendapatkan grafik dari operasional dalam bisnis dengan tampilan yang mudah dipahami.',
+          },
+          {
+            title: 'KelolaAja Purchasing Anti Ribet',
+            description: 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
+          },
+          {
+            title: 'Laporan diakses hitungan detik',
+            description: 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
+          },
+        ],
+        cta: {
+          title: 'Siap Mengatasi Masalah Bisnis Restoran Anda?',
+          description: 'KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional restoran Anda secara otomatis dan efisien.',
+          buttonText: 'Konsultasi Gratis Sekarang',
+        },
+        about: {
+          title: 'Apa Itu KelolaAja?',
+          subtitle: 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia',
+          description1: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.',
+          description2: 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+          buttonText: 'Coba Gratis Sekarang',
+        },
+        faq: [
+          {
+            question: 'Apakah KelolaAja cocok untuk bisnis F&B?',
+            answer: 'Ya, KelolaAja memiliki fitur khusus untuk inventory bahan baku, resep, dan manajemen outlet yang sangat cocok untuk bisnis F&B.',
+          }
+        ],
+      },
+      manufacturing: {
+        heroTitle: 'Manufaktur',
+        introText: 'Setiap tahapan mulai dari perencanaan hingga penyelesaian produksi dapat dilakukan secara lebih efisien. Proses pengambilan keputusan menjadi lebih cepat, memungkinkan Anda untuk merespons tantangan dengan lebih sigap, sekaligus meningkatkan produktivitas dan kualitas di setiap langkah produksi bisnis Anda.',
+        title: 'Ingin tahu bagaimana software KelolaAja bisa menyederhanakan seluruh proses bisnis manufaktur Anda?',
+        description: 'Seringkali, volume produksi yang Anda jalankan tidak sebanding dengan margin keuntungan yang dihasilkan. Hal ini bisa terjadi jika sistem pengelolaan biaya dan pencatatan akuntansi di pabrik Anda kurang terstruktur atau tidak mengikuti standar yang tepat, mengakibatkan pemborosan dan inefisiensi dalam proses produksi.',
+        problems: [
+          {
+            title: 'Proses konversi bahan baku menjadi produk akhir.',
+            description: 'Proses produksi membutuhkan sistem pencatatan yang akurat untuk mengubah bahan baku menjadi produk jadi. Tanpa pencatatan dan perhitungan yang tepat, Anda akan kesulitan menghitung Harga Pokok Produksi (HPP) secara efektif.',
+          },
+          {
+            title: 'Perhitungan penyusutan aset.',
+            description: 'Bisnis manufaktur umumnya memiliki berbagai aset yang perlu dihitung penyusutannya dengan teliti, karena hal ini berdampak langsung pada akurasi laporan keuangan perusahaan.',
+          },
+          {
+            title: 'Pengelolaan biaya overhead yang kompleks.',
+            description: 'Biaya overhead pabrik dalam industri manufaktur memiliki dampak signifikan terhadap keputusan bisnis yang diambil pemilik perusahaan. Oleh karena itu, pencatatan biaya ini sangat krusial untuk memastikan keakuratan analisis dan pengambilan keputusan yang tepat.',
+          },
+        ],
+        solutionsTitle: 'Bagaimana KelolaAja Mendukung Bisnis Manufaktur Anda?',
+        solutions: [
+          {
+            title: 'KelolaAja aja multi proyek dengan satu Klik',
+            description: 'Bisnis manufaktur membutuhkan pengelolaan proyek yang efisien. Dengan KelolaAja, Anda dapat dengan mudah mengelola banyak proyek sekaligus, memantau anggaran, dan menjadikan manajemen proyek Anda lebih terstruktur dan terorganisir.',
+          },
+          {
+            title: 'Perhitungan aset tetap otomatis dan akurat',
+            description: 'Berhenti menghitung nilai aset tetap secara manual. Dengan KelolaAja, penyusutan setiap aset dihitung otomatis dan jurnal penyesuaian tersedia setiap bulan tanpa perlu usaha tambahan.',
+          },
+          {
+            title: 'Catat seluruh biaya operasional dengan mudah',
+            description: 'Dengan KelolaAja, Anda dapat dengan mudah mencatat dan mengelola biaya kapan saja dan di mana saja, memastikan efisiensi yang lebih baik, mengurangi pemborosan, dan meningkatkan profitabilitas proyek Anda.',
+          },
+          {
+            title: 'Real-time, di mana saja dan kapan saja',
+            description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha manufaktur Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan dengan detail.',
+          },
+          {
+            title: 'KelolaAja Purchasing Anti Ribet',
+            description: 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
+          },
+          {
+            title: 'Laporan diakses hitungan detik',
+            description: 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
+          },
+        ],
+        cta: {
+          title: 'Siap Mengatasi Masalah Bisnis Manufaktur Anda?',
+          description: 'KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional bisnis manufaktur Anda secara otomatis dan efisien.',
+          buttonText: 'Konsultasi Gratis Sekarang',
+        },
+        about: {
+          title: 'Apa Itu KelolaAja?',
+          subtitle: 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia',
+          description1: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.',
+          description2: 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+          buttonText: 'Coba Gratis Sekarang',
+        },
+        faq: [
+          {
+            question: 'Apakah KelolaAja bisa menghitung HPP Produksi?',
+            answer: 'Tentu, KelolaAja dapat menghitung HPP secara otomatis berdasarkan biaya bahan baku, biaya tenaga kerja, dan overhead pabrik.',
+          }
+        ],
+      },
+      contractor: {
+        heroTitle: 'Kontraktor',
+        introText: 'KelolaAja setiap proyek dengan lebih efisien dan optimalkan keuntungan bisnis Anda menggunakan software ERP KelolaAja. Dirancang khusus untuk memenuhi kebutuhan semua jenis usaha kontraktor di Indonesia, KelolaAja memudahkan pengelolaan keuangan dan operasional Proyek Anda.',
+        title: 'Apakah Masalah Ini Sering Menghambat Bisnis Kontraktor Anda?',
+        description: 'Seringkali, jumlah proyek yang Anda tangani tidak berbanding lurus dengan keuntungan yang diperoleh. Ini terutama terjadi jika sistem pencatatan akuntansi untuk kontraktor Anda tidak terstruktur dengan baik atau tidak sesuai dengan standar yang seharusnya.',
+        problems: [
+          {
+            title: 'Kesalahan penghitungan aset tetap dapat merusak akurasi.',
+            description: 'Dalam bisnis konstruksi, terdapat banyak aset tetap yang harus di KelolaAja. Jika penyusutan dari setiap aset ini tidak dihitung dengan tepat, data keuangan Anda akan menjadi tidak akurat dan mengganggu perencanaan serta pengambilan keputusan bisnis.',
+          },
+          {
+            title: 'Biaya operasional dapat mengganggu kesehatan keuangan bisnis.',
+            description: 'Biaya operasional dalam bisnis kontraktor merupakan pengeluaran penting yang perlu Anda pantau dengan cermat, karena dapat langsung mempengaruhi keuntungan perusahaan.',
+          },
+          {
+            title: 'Kesulitan menghitung laba per proyek menghambat analisis keuangan.',
+            description: 'Apakah Anda yakin setiap proyek yang Anda KelolaAja menguntungkan? Tanpa data keuangan yang akurat, bisnis Anda berjalan hanya berdasarkan perkiraan.',
+          },
+        ],
+        solutionsTitle: 'Bagaimana KelolaAja Mendukung Bisnis Kontraktor Anda?',
+        solutions: [
+          {
+            title: 'KelolaAja aja multi proyek dengan satu Klik',
+            description: 'Bisnis kontraktor membutuhkan pengelolaan proyek yang efisien. Dengan KelolaAja, Anda dapat dengan mudah mengelola banyak proyek sekaligus, memantau anggaran, dan menjadikan manajemen proyek Anda lebih terstruktur dan terorganisir.',
+          },
+          {
+            title: 'Perhitungan aset tetap otomatis dan akurat',
+            description: 'Berhenti menghitung nilai aset tetap secara manual. Dengan KelolaAja, penyusutan setiap aset dihitung otomatis dan jurnal penyesuaian tersedia setiap bulan tanpa perlu usaha tambahan.',
+          },
+          {
+            title: 'Catat seluruh biaya operasional dengan mudah',
+            description: 'Dengan KelolaAja, Anda dapat dengan mudah mencatat dan mengelola biaya kapan saja dan di mana saja, memastikan efisiensi yang lebih baik, mengurangi pemborosan, dan meningkatkan profitabilitas proyek Anda.',
+          },
+          {
+            title: 'Real-time, di mana saja dan kapan saja',
+            description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha kontraktor Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan dengan detail.',
+          },
+        ],
+        cta: {
+          title: 'Siap Mengatasi Masalah Bisnis Kontraktor Anda?',
+          description: 'KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional bisnis kontraktor Anda secara otomatis dan efisien.',
+          buttonText: 'Konsultasi Gratis Sekarang',
+        },
+        about: {
+          title: 'Apa Itu KelolaAja?',
+          description1: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.',
+          description2: 'Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+          buttonText: 'Coba Gratis Sekarang',
+        },
+        faq: [
+          {
+            question: 'Apakah saya bisa mencoba gratis?',
+            answer: 'Tentu saja! Kami menyediakan masa percobaan gratis agar Anda dapat mengeksplorasi fitur-fitur unggulan kami sebelum berlangganan.'
+          },
+          {
+            question: 'Apakah data saya aman?',
+            answer: 'Keamanan data Anda adalah prioritas kami. KelolaAja menggunakan enkripsi tingkat tinggi untuk memastikan data bisnis Anda tetap aman dan rahasia.'
+          },
+          {
+            question: 'Bagaimana jika saya butuh bantuan?',
+            answer: 'Tim support kami siap membantu Anda kapan saja melalui live chat, email, atau WhatsApp untuk memastikan bisnis Anda berjalan lancar.'
+          }
+        ]
+      },
+      retail: {
+        heroTitle: 'Retail',
+        introText: 'Optimalkan setiap aspek operasional ritel Anda. Dari manajemen stok hingga laporan penjualan, ambil keputusan lebih cepat dan tingkatkan keuntungan bisnis Anda.',
+        title: 'Masalah Bisnis Retail Anda Kewalahan?',
+        description: 'Akuntansi merupakan bagian yang vital bagi kelangsungan bisnis ritel Anda. Tanpa pencatatan yang tepat, Anda akan kesulitan untuk mengevaluasi kemajuan dan mengambil keputusan yang mendukung pertumbuhan bisnis secara maksimal.',
+        problems: [
+          {
+            title: 'Manajemen stok berantakan',
+            description: 'Banyak bisnis ritel yang belum memiliki sistem pengelolaan stok yang terstandarisasi, sehingga berisiko menghadapi masalah seperti produk yang tidak terjual, menumpuk di gudang, atau bahkan kedaluwarsa. Tanpa sistem yang tepat, stok bisa tidak terkontrol, merugikan bisnis, dan mengurangi keuntungan yang seharusnya dapat diperoleh.',
+          },
+          {
+            title: 'Pencatatan manual yang memakan waktu',
+            description: 'Pencatatan manual yang kompleks memakan banyak waktu berharga tim keuangan, dan kesalahan dalam pencatatan dapat berisiko menyebabkan kerugian yang tidak diinginkan bagi perusahaan.',
+          },
+          {
+            title: 'Informasi keuangan tidak transparan',
+            description: 'Banyak pemilik bisnis ritel menghadapi kesulitan dalam membuat keputusan strategis karena kurangnya akses ke data keuangan yang akurat dan mendetail.',
+          },
+        ],
+        solutionsTitle: 'Bagaimana KelolaAja Membuat Bisnis Retail Anda Menjadi Lebih Baik?',
+        solutions: [
+          {
+            title: 'Mudah digunakan',
+            description: 'Sekalipun Anda awam akuntansi, Anda akan mudah menggunakan KelolaAja. Jika merasa tetap kesulitan, kami menjanjikan training gratis.',
+          },
+          {
+            title: 'Laporan diakses hitungan detik',
+            description: 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
+          },
+          {
+            title: 'Real-time, di mana saja dan kapan saja',
+            description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha retail Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan pengeluaran dengan detail.',
+          },
+          {
+            title: 'Multi cabang & multi gudang',
+            description: 'Pantau dan buat laporan keuangan dengan praktis dan buat keputusan bisnis lebih cepat dalam satu klik. Anda juga akan mendapatkan grafik dari operasional dalam bisnis dengan tampilan yang mudah dipahami.',
+          },
+          {
+            title: 'Support Barcode Scanner',
+            description: 'Tingkatkan kecepatan dalam proses pencatatan penjualan dan stok opname pada bisnis dengan bantuan barcode scanner yang juga didukung di sistem KelolaAja.',
+          },
+          {
+            title: 'KelolaAja Purchasing Anti Ribet',
+            description: 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
+          },
+        ],
+        cta: {
+          title: 'Siap Mengatasi Masalah Bisnis Retail Anda?',
+          description: 'KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional bisnis retail Anda secara otomatis dan efisien.',
+          buttonText: 'Konsultasi Gratis Sekarang',
+        },
+        about: {
+          title: 'Apa Itu KelolaAja?',
+          description1: 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.',
+          description2: 'Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.',
+          buttonText: 'Coba Gratis Sekarang',
+        },
+        faq: [
+          {
+            question: 'Apakah saya bisa mencoba gratis?',
+            answer: 'Tentu saja! Kami menyediakan masa percobaan gratis agar Anda dapat mengeksplorasi fitur-fitur unggulan kami sebelum berlangganan.'
+          },
+          {
+            question: 'Apakah data saya aman?',
+            answer: 'Keamanan data Anda adalah prioritas kami. KelolaAja menggunakan enkripsi tingkat tinggi untuk memastikan data bisnis Anda tetap aman dan rahasia.'
+          },
+          {
+            question: 'Bagaimana jika saya butuh bantuan?',
+            answer: 'Tim support kami siap membantu Anda kapan saja melalui live chat, email, atau WhatsApp untuk memastikan bisnis Anda berjalan lancar.'
+          }
+        ]
+      },
     },
     companyProfile: {
       hero: {
@@ -1660,6 +2372,159 @@ export const translations: Record<Locale, Translations> = {
         'You can follow the demo or consultation session via smartphone, laptop, or PC, make sure your internet connection is stable.',
       ],
     },
+    financePage: {
+      hero: {
+        title: 'Finance and Accounting',
+        description: 'Complete financial system for cash flow, bookkeeping, and reports. KelolaAja provides integrated solutions to manage all aspects of your business finances easily and efficiently.',
+        ctaButton: 'Contact Us',
+      },
+      softwareFeatures: {
+        title: 'Software with Features',
+        subtitle: 'Bookkeeping Made Easy',
+        description: 'KelolaAja is specifically designed for ease of use, even for those without an accounting background. The intuitive and user-friendly interface ensures you can manage business bookkeeping easily and efficiently.',
+      },
+      mainTitle: 'Finance and Accounting',
+      mainDescription: 'Get full control over your business finances with a complete and integrated accounting system. From transaction recording to real-time financial reports, everything is available in one platform.',
+      features: [
+        {
+          title: 'Easy for Beginners',
+          description: 'KelolaAja is designed for all types & scales of businesses. Even if you don\'t understand it deeply, you will easily adapt to KelolaAja. In addition, the KelolaAja team will always help until you can.',
+        },
+        {
+          title: 'Easier Data Recording',
+          description: 'All business flows become easier to monitor. From purchasing processes, sales, accounts payable and receivable, to asset depreciation calculations can be done easily in KelolaAja.',
+        },
+        {
+          title: 'Consolidation Reporting',
+          description: 'Have many businesses but want financial data in 1 centralized database? With KelolaAja you can! The consolidation feature will automatically compile reports from each company into one consolidated report.',
+        },
+        {
+          title: 'Real-time Reports',
+          description: 'With KelolaAja you will get more than 35 financial reports that you can generate instantly in 1 click. Now there is no more financial information that you miss and makes it easier for you to make better decisions.',
+        },
+      ],
+      cta: {
+        mainText1: 'Forget complicated manual recording. With KelolaAja, real-time financial reports, from transactions to inventory, everything is centralized in one practical platform.',
+        mainText2: 'Monitor cash flow, send invoices, and manage purchases easily, so now you can focus more on growing your business than dealing with administration.',
+        highlights: ['Real-Time Reports', 'Monitor Cash Flow', 'Automatic Invoices', 'Centralized Platform'],
+        tryFreeButton: 'Try Free Now',
+        consultButton: 'Free Consultation Now',
+        optimizeTitle: 'Ready to Optimize Your Business Finances?',
+        optimizeDescription: 'KelolaAja provides a complete financial system to manage cash flow, bookkeeping, and reports easily and efficiently.',
+      },
+      about: {
+        title: 'What is KelolaAja?',
+        subtitle: 'Leading ERP Accounting Software for Indonesian Businesses',
+        description1: 'KelolaAja ERP Accounting software, founded in 2024 to answer the challenges of companies in managing management systems efficiently. With KelolaAja business software solutions present to meet the needs of various industries. Specifically designed for ease of use and adapted to the needs of Indonesian companies.',
+        description2: 'KelolaAja is the first ERP software that offers the advantage of financial report assistance up to tax reports.',
+      },
+    },
+    manufacturingPage: {
+      hero: {
+        title: 'Manufacturing Features',
+        description: 'Integrated manufacturing system for production and supply chain. Manage manufacturing processes easily, calculate Cost of Goods Sold automatically and optimize production efficiency.',
+        ctaButton: 'Contact Us',
+      },
+      softwareFeatures: {
+        title: 'Software with Features',
+        subtitle: 'Manufacturing Made Easy',
+        description: 'KelolaAja is specifically designed for ease of use, even for those without a manufacturing background. The intuitive and user-friendly interface ensures you can manage manufacturing processes easily and efficiently.',
+      },
+      mainTitle: 'Manufacturing Features',
+      mainDescription: 'Get full control over your manufacturing process with a complete and integrated system. From production planning to real-time manufacturing reports, everything is available in one platform.',
+      features: [
+        {
+          title: 'Simplify Project Management',
+          description: 'View the profitability of each project with budget reports and budget realization. Monitor expenses, profit margins, and remaining budget at any time. Multi-level approval features can be set according to needs. Check each expense complete with history.',
+        },
+        {
+          title: 'Monitor Approvals in Real Time',
+          description: 'Manage multiple projects at once in real time. Monitor and approve purchases from anywhere, monitor budget and profitability through profit and loss reports per project and monitor progress with the Task Management Dashboard.',
+        },
+        {
+          title: 'Automatic Financial Reports',
+          description: 'Monitor expenses, profit margins, and remaining budget at any time. Multi-level approval features can be set according to needs. Check each expense complete with history. Expenses and income in the field during operations run automatically and all invoices and payments are documented in one module. Expense reports are integrated with the financial and accounting module and fully documented for goods purchases, raw material usage.',
+        },
+        {
+          title: 'Profit and Loss Analysis',
+          description: 'Get an overview of the financial health of all projects in one dashboard. Complete Profit and Loss reports with visualization. Find out the profit from each type of project category. Know the projects with the best performance. Export data to Excel, CSV and PDF formats whenever needed.',
+        },
+      ],
+      cta: {
+        mainText1: 'Forget complicated manual recording. With KelolaAja, real-time financial reports, from transactions to inventory, everything is centralized in one practical platform.',
+        mainText2: 'Monitor cash flow, send invoices, and manage purchases easily, so now you can focus more on growing your business than dealing with administration.',
+        highlights: ['Real-Time Reports', 'Monitor Cash Flow', 'Automatic Invoices', 'Centralized Platform'],
+        tryFreeButton: 'Try Free Now',
+        consultButton: 'Free Consultation Now',
+        optimizeTitle: 'Ready to Optimize Your Manufacturing Process?',
+        optimizeDescription: 'KelolaAja provides an integrated manufacturing system for production and supply chain easily and efficiently.',
+      },
+      about: {
+        title: 'What is KelolaAja?',
+        subtitle: 'Leading ERP Accounting Software for Indonesian Businesses',
+        description1: 'KelolaAja ERP Accounting software, founded in 2024 to answer the challenges of companies in managing management systems efficiently. With KelolaAja business software solutions present to meet the needs of various industries. Specifically designed for ease of use and adapted to the needs of Indonesian companies.',
+        description2: 'KelolaAja is the first ERP software that offers the advantage of financial report assistance up to tax reports.',
+      },
+    },
+    inventoryPage: {
+      hero: {
+        title: 'Products and Inventory',
+        description: 'Inventory management with real-time tracking. Manage products and inventory efficiently, from procurement to delivery with optimized distribution flow.',
+        ctaButton: 'Contact Us',
+      },
+      softwareFeatures: {
+        title: 'Software with Features',
+        subtitle: 'Products and Inventory Made Easy',
+        description: 'KelolaAja is specifically designed for ease of use, even for those without an inventory background. The intuitive and user-friendly interface ensures you can manage products and inventory easily and efficiently.',
+      },
+      mainTitle: 'Products and Inventory',
+      mainDescription: 'Get full control over your inventory management with a complete and integrated system. From stock tracking to real-time inventory reports, everything is available in one platform.',
+      features: [
+        {
+          title: 'Track Best-Selling Products',
+          description: 'Get real-time updates on best-selling product reports, total profit generated, and out-of-stock products. Use this data to make better decisions in reordering and setting your product prices.',
+        },
+        {
+          title: 'Import from Excel',
+          description: 'No need to bother entering product and stock data manually, just type in Excel and upload. All information will be automatically integrated into the KelolaAja system.',
+        },
+        {
+          title: 'Multi Warehouse',
+          description: 'Manage your product stock in many places easily and monitor stock per warehouse in real-time.',
+        },
+        {
+          title: 'Real-time Reports',
+          description: 'Access detailed and real-time stock reports in each warehouse, without having to wait until the end of the month. Monitor stock movements directly and ensure goods are always monitored properly.',
+        },
+        {
+          title: 'Stock Opname',
+          description: 'Stock opname process becomes more practical! Download the latest stock report in Excel format, update the stock quantity, and upload directly to KelolaAja. Fast and easy!',
+        },
+        {
+          title: 'Warehouse Transfer',
+          description: 'Move goods between warehouses simply. Enjoy neat and orderly stock recording without hassle.',
+        },
+        {
+          title: 'Monitor Anytime and Anywhere',
+          description: 'Monitor stock anytime, without having to go to the office or warehouse. Just open the report from your phone or laptop, wherever you are.',
+        },
+      ],
+      cta: {
+        mainText1: 'Forget complicated manual recording. With KelolaAja, real-time financial reports, from transactions to inventory, everything is centralized in one practical platform.',
+        mainText2: 'Monitor cash flow, send invoices, and manage purchases easily, so now you can focus more on growing your business than dealing with administration.',
+        highlights: ['Real-Time Reports', 'Monitor Cash Flow', 'Automatic Invoices', 'Centralized Platform'],
+        tryFreeButton: 'Try Free Now',
+        consultButton: 'Free Consultation Now',
+        optimizeTitle: 'Ready to Optimize Your Inventory Management?',
+        optimizeDescription: 'KelolaAja provides an inventory system with real-time tracking to manage products from procurement to delivery.',
+      },
+      about: {
+        title: 'What is KelolaAja?',
+        subtitle: 'Leading ERP Accounting Software for Indonesian Businesses',
+        description1: 'KelolaAja ERP Accounting software, founded in 2024 to answer the challenges of companies in managing management systems efficiently. With KelolaAja business software solutions present to meet the needs of various industries. Specifically designed for ease of use and adapted to the needs of Indonesian companies.',
+        description2: 'KelolaAja is the first ERP software that offers the advantage of financial report assistance up to tax reports.',
+      },
+    },
     featuresPage: {
       hero: {
         title: 'KelolaAja Features',
@@ -1735,6 +2600,112 @@ export const translations: Record<Locale, Translations> = {
       },
       learnMore: 'Learn More',
     },
+    projectPage: {
+      hero: {
+        title: 'Project Management',
+        description: 'Manage projects, track progress, and monitor timelines easily. Integrated project management system to ensure every project runs according to plan and budget.',
+        ctaButton: 'Contact Us',
+      },
+      softwareFeatures: {
+        title: 'Software with Features',
+        subtitle: 'Project Management and Easy to Use',
+        description: 'KelolaAja is designed specifically for ease of use, even for those without a project management background. An intuitive and user-friendly interface ensures you can manage business projects easily and efficiently.',
+      },
+      mainTitle: 'Project Management',
+      mainDescription: 'Get full control over your project management with a complete and integrated system. From progress tracking to real-time project reports, everything is available in one platform.',
+      features: [
+        {
+          title: 'KelolaAja Makes Projects Simple',
+          description: 'View profitability of every project with budget reports and realization. Monitor expenses, profit margins, and remaining budget at any time. Multi-level approval features configurable as needed. Check every expense complete with history.',
+        },
+        {
+          title: 'Monitor Approvals in Real Time',
+          description: 'Manage multiple projects simultaneously in real time. Monitor and approve purchases from anywhere, monitor budget and profitability via profit and loss reports per project and monitor progress with Task Management Dashboard.',
+        },
+        {
+          title: 'Automatic Financial Reports',
+          description: 'Monitor expenses, profit margins, and remaining budget at any time. Multi-level approval features configurable as needed. Check every expense complete with history. Expenses and income in the field during operations run automatically and all invoices and payments are documented in one module. Expense reports integrated with finance and accounting modules and fully documented for goods purchasing, raw material usage.',
+        },
+        {
+          title: 'Profit and Loss Analysis',
+          description: 'Get a picture of financial health of all projects in one dashboard. Complete Profit and Loss Report with visualization. Find out profits from each project category type. Know best performing projects. Export data to Excel, CSV and PDF formats whenever needed.',
+        },
+      ],
+      cta: {
+        mainText1: 'Forget complicated manual recording. With KelolaAja, real-time financial reports, from transactions to inventory, are all centralized in one practical platform.',
+        mainText2: 'Monitor cash flow, send invoices, and Manage purchases easily, so now you can focus more on growing business rather than dealing with administration.',
+        highlights: ['Real-Time Reports', 'Monitor Cash Flow', 'Automatic Invoices', 'Centralized Platform'],
+        tryFreeButton: 'Try Free Now',
+        consultButton: 'Free Consultation Now',
+        optimizeTitle: 'Ready to Optimize Your Project Management?',
+        optimizeDescription: 'KelolaAja provides an integrated project management system to track progress and monitor timelines easily.',
+      },
+      about: {
+        title: 'What is KelolaAja?',
+        subtitle: 'Leading Accounting ERP Software for Indonesian Businesses',
+        description1: 'KelolaAja Accounting ERP software, established in 2024 to answer company challenges in managing management systems efficiently. With KelolaAja business software solutions present to meet the needs of various industries. Designed specifically for ease of use and tailored to the needs of Indonesian companies.',
+        description2: 'KelolaAja is the first ERP software offering the advantage of financial report assistance up to tax reporting.',
+      },
+    },
+    salesPage: {
+      hero: {
+        title: 'Purchasing and Sales',
+        description: 'Purchasing and sales processes from quotation to invoice. More flexible trading process, choose outright sale or consignment with down payment features and tiered discounts.',
+        ctaButton: 'Contact Us',
+      },
+      softwareFeatures: {
+        title: 'Software with Features',
+        subtitle: 'Purchasing and Sales Easy to Use',
+        description: 'KelolaAja is designed specifically for ease of use, even for those without a sales background. An intuitive and user-friendly interface ensures you can manage purchasing and sales processes easily and efficiently.',
+      },
+      mainTitle: 'Purchasing and Sales',
+      mainDescription: 'Get full control over your purchasing and sales processes with a complete and integrated system. From quotation to invoice, everything is available in one platform.',
+      features: [
+        {
+          title: 'Record All Order Details',
+          description: 'Track all purchase orders and purchases down to every detail, agreed prices and all supporting documents.',
+        },
+        {
+          title: 'Automatic Tax Calculation',
+          description: 'All purchase taxes will be automatically recapitalized into tax reports. You can customize any type of tax you want to apply to your business, including withholding tax.',
+        },
+        {
+          title: 'Stock and Warehouse Automatically Recorded',
+          description: 'Product stock will be automatically recorded in the warehouse you specify. No need for double input for inventory matters!',
+        },
+        {
+          title: 'Attach Photos or Scan Documents',
+          description: 'Reduce paper piles, attach all your paper documents to purchase orders and invoices.',
+        },
+        {
+          title: 'Get Purchasing Information and Statistics',
+          description: 'Know for sure what are the best-selling items, how much debt & receivables, purchase orders, and when they are due.',
+        },
+        {
+          title: 'Make Staggered Payments',
+          description: 'You can pay for purchases in installments, and can record them neatly and correctly.',
+        },
+        {
+          title: 'Create Purchase Invoice from Purchase Order with One Click',
+          description: 'When already dealt with vendor, you can create purchase invoice from purchase order with just one click.',
+        },
+      ],
+      cta: {
+        mainText1: 'Forget complicated manual recording. With KelolaAja, real-time financial reports, from transactions to inventory, are all centralized in one practical platform.',
+        mainText2: 'Monitor cash flow, send invoices, and Manage purchases easily, so now you can focus more on growing business rather than dealing with administration.',
+        highlights: ['Real-Time Reports', 'Monitor Cash Flow', 'Automatic Invoices', 'Centralized Platform'],
+        tryFreeButton: 'Try Free Now',
+        consultButton: 'Free Consultation Now',
+        optimizeTitle: 'Ready to Optimize Your Purchasing & Sales Process?',
+        optimizeDescription: 'KelolaAja provides an integrated purchasing and sales system from quotation to invoice easy and efficient.',
+      },
+      about: {
+        title: 'What is KelolaAja?',
+        subtitle: 'Leading Accounting ERP Software for Indonesian Businesses',
+        description1: 'KelolaAja Accounting ERP software, established in 2024 to answer company challenges in managing management systems efficiently. With KelolaAja business software solutions present to meet the needs of various industries. Designed specifically for ease of use and tailored to the needs of Indonesian companies.',
+        description2: 'KelolaAja is the first ERP software offering the advantage of financial report assistance up to tax reporting.',
+      },
+    },
     industriesPage: {
       hero: {
         badge: 'ERP Solutions for All Industries',
@@ -1742,6 +2713,286 @@ export const translations: Record<Locale, Translations> = {
         subtitle: 'KelolaAja comes with ERP solutions tailored for various industries. From restaurants to manufacturing, we help your business grow more efficiently and professionally.',
       },
       learnMore: 'Learn More',
+    },
+    industryPages: {
+      fnb: {
+        heroTitle: 'Food & Beverage',
+        introText: 'Every aspect of your restaurants financial management is recorded and monitored accurately. Focus on serving delicious dishes, let KelolaAja take care of your bookkeeping and financial reports automatically and efficiently.',
+        title: 'Is Your Restaurant and Cafe Business Overwhelmed?',
+        description: 'Every raw material from the menu you serve needs to be recorded and calculated carefully to maintain restaurant profitability. However, many restaurant owners in Indonesia do not yet have an effective accounting system.',
+        problems: [
+          {
+            title: 'Raw material recording is not optimal',
+            description: 'Raw material management is important so that every menu you serve can be fulfilled according to customer demand in your restaurant.',
+          },
+          {
+            title: 'Difficult to Track Profit and Loss per Branch',
+            description: 'Import costs and other costs not recorded in COGS can disrupt the accuracy of the income statement, making financial analysis incomplete and confusing.',
+          },
+          {
+            title: 'Financial reports do not meet standards',
+            description: 'Financial reports are key to making the right decisions in any business. Unfortunately, many restaurant owners still ignore the importance of this.',
+          },
+          {
+            title: 'Fluctuating Purchase Prices',
+            description: 'Inconsistent COGS fluctuations make profit calculation difficult and inaccurate.',
+          },
+          {
+            title: 'Use of One Type of Stock with Different Units',
+            description: 'Using stock with various units for each menu makes stock recording more complex and confusing.',
+          },
+          {
+            title: 'Stock Opname',
+            description: 'The stock taking process which is still done manually takes a long time, hinders efficiency, and increases the potential for errors in stock recording.',
+          },
+        ],
+        solutionsTitle: 'How KelolaAja Makes Your Restaurant Business Better?',
+        solutions: [
+          {
+            title: 'Easy to use',
+            description: 'Even if you are a layman in accounting, you will easily use KelolaAja. If you still find it difficult, we promise free training.',
+          },
+          {
+            title: 'Support Barcode Scanner',
+            description: 'Increase speed in the sales recording process and stock taking in business with the help of barcode scanners which are also supported in the KelolaAja system.',
+          },
+          {
+            title: 'Real-time, anywhere and anytime',
+            description: 'There is no more waste in your restaurant business, because you can easily monitor every expenditure item and get detailed expenditure reports.',
+          },
+          {
+            title: 'Multi branch & multi warehouse',
+            description: 'Monitor and create financial reports practically and make business decisions faster in one click. You will also get graphs of business operations with an easy-to-understand display.',
+          },
+          {
+            title: 'KelolaAja Purchasing Anti-Complicated',
+            description: 'From detailed purchase recording to automatic invoice creation, coupled with easy access to purchasing information and statistics, KelolaAja simplifies your entire purchasing process more efficiently.',
+          },
+          {
+            title: 'Reports accessed in seconds',
+            description: 'Monitor and create financial reports easily, in just one click, to make business decisions faster. Also get clear and easy-to-understand business operational charts, helping you analyze performance effectively.',
+          },
+        ],
+        cta: {
+          title: 'Ready to Overcome Your Restaurant Business Problems?',
+          description: 'KelolaAja comes with a complete solution to manage your restaurants finances, inventory, and operations automatically and efficiently.',
+          buttonText: 'Free Consultation Now',
+        },
+        about: {
+          title: 'What is KelolaAja?',
+          subtitle: 'Leading Accounting ERP Software for Indonesian Businesses',
+          description1: 'KelolaAja Accounting ERP software, established in 2024 to answer the challenge of companies in managing management systems efficiently. With business software solutions KelolaAja is here to meet the needs of various industries. Designed specifically for ease of use and tailored to the needs of Indonesian companies.',
+          description2: 'KelolaAja is the first ERP software that offers the advantage of financial report assistance up to tax reports.',
+          buttonText: 'Try Free Now',
+        },
+        faq: [
+          {
+            question: 'Is KelolaAja suitable for F&B business?',
+            answer: 'Yes, KelolaAja has specific features for raw material inventory, recipes, and outlet management that are very suitable for F&B businesses.',
+          }
+        ],
+      },
+      manufacturing: {
+        heroTitle: 'Manufacturing',
+        introText: 'Every stage from planning to production completion can be done more efficiently. The decision-making process becomes faster, allowing you to respond to challenges more alertly, while increasing productivity and quality in every step of your business production.',
+        title: 'Want to know how KelolaAja software can simplify your entire manufacturing business process?',
+        description: 'Often, the volume of production you run is not proportional to the profit margin generated. This can happen if the cost management and accounting recording system in your factory is less structured or does not follow proper standards, resulting in waste and inefficiency in the production process.',
+        problems: [
+          {
+            title: 'Process of converting raw materials into final products.',
+            description: 'The production process requires an accurate recording system to convert raw materials into finished products. Without proper recording and calculation, you will find it difficult to calculate Cost of Goods Manufactured (COGM) effectively.',
+          },
+          {
+            title: 'Asset depreciation calculation.',
+            description: 'Manufacturing businesses generally have various assets whose depreciation needs to be calculated carefully, because this has a direct impact on the accuracy of the companys financial statements.',
+          },
+          {
+            title: 'Complex overhead cost management.',
+            description: 'Factory overhead costs in the manufacturing industry have a significant impact on business decisions made by company owners. Therefore, recording these costs is crucial to ensure accurate analysis and proper decision making.',
+          },
+        ],
+        solutionsTitle: 'How KelolaAja Supports Your Manufacturing Business?',
+        solutions: [
+          {
+            title: 'Manage multi projects with one Click',
+            description: 'Manufacturing businesses require efficient project management. With KelolaAja, you can easily manage many projects at once, monitor budgets, and make your project management more structured and organized.',
+          },
+          {
+            title: 'Automatic and accurate fixed asset calculation',
+            description: 'Stop calculating fixed asset values manually. With KelolaAja, depreciation of each asset is calculated automatically and adjustment journals are available periodically without extra effort.',
+          },
+          {
+            title: 'Record all operational costs easily',
+            description: 'With KelolaAja, you can easily record and manage costs anytime and anywhere, ensuring better efficiency, reducing waste, and increasing your project profitability.',
+          },
+          {
+            title: 'Real-time, anywhere and anytime',
+            description: 'There is no more waste in your manufacturing business, because you can easily monitor every expenditure item and get detailed expenditure reports.',
+          },
+          {
+            title: 'KelolaAja Purchasing Anti-Complicated',
+            description: 'From detailed purchase recording to automatic invoice creation, coupled with easy access to purchasing information and statistics, KelolaAja simplifies your entire purchasing process more efficiently.',
+          },
+          {
+            title: 'Reports accessed in seconds',
+            description: 'Monitor and create financial reports easily, in just one click, to make business decisions faster. Also get clear and easy-to-understand business operational charts, helping you analyze performance effectively.',
+          },
+        ],
+        cta: {
+          title: 'Ready to Ovecrome Your Manufacturing Business Problems?',
+          description: 'KelolaAja comes with a complete solution to manage your manufacturing business finances, inventory, and operations automatically and efficiently.',
+          buttonText: 'Free Consultation Now',
+        },
+        about: {
+          title: 'What is KelolaAja?',
+          subtitle: 'Leading Accounting ERP Software for Indonesian Businesses',
+          description1: 'KelolaAja Accounting ERP software, established in 2024 to answer the challenge of companies in managing management systems efficiently. With business software solutions KelolaAja is here to meet the needs of various industries. Designed specifically for ease of use and tailored to the needs of Indonesian companies.',
+          description2: 'KelolaAja is the first ERP software that offers the advantage of financial report assistance up to tax reports.',
+          buttonText: 'Try Free Now',
+        },
+        faq: [
+          {
+            question: 'Can KelolaAja calculate Production COGS?',
+            answer: 'Sure, KelolaAja can calculate COGS automatically based on raw material costs, labor costs, and factory overhead.',
+          }
+        ],
+      },
+      contractor: {
+        heroTitle: 'Contractor',
+        introText: 'Manage every project more efficiently and optimize your business profits using KelolaAja ERP software. Designed specifically to meet the needs of all types of contractor businesses in Indonesia, KelolaAja makes it easy to manage your project finances and operations.',
+        title: 'Is This Problem Often Hindering Your Contractor Business?',
+        description: 'Often, the number of projects you handle is not directly proportional to the profit obtained. This is especially true if your contractor accounting recording system is not well structured or does not comply with the standards it should.',
+        problems: [
+          {
+            title: 'Fixed asset calculation errors can damage accuracy.',
+            description: 'In the construction business, there are many fixed assets that must be managed. If the depreciation of each of these assets is not calculated properly, your financial data will become inaccurate and disrupt business planning and decision making.',
+          },
+          {
+            title: 'Operational costs can disrupt business financial health.',
+            description: 'Operational costs in the contractor business are important expenses that you need to monitor carefully, because they can directly affect company profits.',
+          },
+          {
+            title: 'Difficulty calculating profit per project hinders financial analysis.',
+            description: 'Are you sure every project you manage is profitable? Without accurate financial data, your business runs only on estimates.',
+          },
+        ],
+        solutionsTitle: 'How KelolaAja Supports Your Contractor Business?',
+        solutions: [
+          {
+            title: 'Manage multi-projects with one Click',
+            description: 'Contractor businesses need efficient project management. With KelolaAja, you can easily manage multiple projects at once, monitor budgets, and make your project management more structured and organized.',
+          },
+          {
+            title: 'Automatic and accurate fixed asset calculation',
+            description: 'Stop calculating fixed asset values manually. With KelolaAja, depreciation of each asset is calculated automatically and adjustment journals are available every month without extra effort.',
+          },
+          {
+            title: 'Record all operational costs easily',
+            description: 'With KelolaAja, you can easily record and manage costs anytime and anywhere, ensuring better efficiency, reducing waste, and increasing profitability of your projects.',
+          },
+          {
+            title: 'Real-time, anywhere and anytime',
+            description: 'No more waste happening in your contractor business, because you can easily monitor every expense item and get detailed reports.',
+          },
+        ],
+        cta: {
+          title: 'Ready to Overcome Your Contractor Business Problems?',
+          description: 'KelolaAja comes with a complete solution to manage your contractor business finances, inventory, and operations automatically and efficiently.',
+          buttonText: 'Free Consultation Now',
+        },
+        about: {
+          title: 'What is KelolaAja?',
+          description1: 'KelolaAja Accounting ERP software, established in 2024 to answer company challenges in managing management systems efficiently. With business software solutions KelolaAja is here to meet the needs of various industries.',
+          description2: 'Designed specifically for ease of use and adapted to the needs of Indonesian companies. KelolaAja is the first ERP software that offers the advantage of assistance from financial reports to tax reports.',
+          buttonText: 'Try Free Now',
+        },
+        faq: [
+          {
+            question: 'Can I try for free?',
+            answer: 'Of course! We provide a free trial period so you can explore our premium features before subscribing.'
+          },
+          {
+            question: 'Is my data safe?',
+            answer: 'Your data security is our priority. KelolaAja uses high-level encryption to ensure your business data remains safe and confidential.'
+          },
+          {
+            question: 'What if I need help?',
+            answer: 'Our support team is ready to help you anytime via live chat, email, or WhatsApp to ensure your business runs smoothly.'
+          }
+        ]
+      },
+      retail: {
+        heroTitle: 'Retail',
+        introText: 'Optimize every aspect of your retail operations. From stock management to sales reports, make decisions faster and increase your business profits.',
+        title: 'Is Your Retail Business Problem Overwhelming?',
+        description: 'Accounting is a vital part of your retail business continuity. Without proper recording, you will find it difficult to evaluate progress and make decisions that support maximum business growth.',
+        problems: [
+          {
+            title: 'Messy stock management',
+            description: 'Many retail businesses do not yet have a standardized stock management system, risking problems such as unsold products, piling up in warehouses, or even expiring. Without the right system, stock can be uncontrolled, harming business, and reducing profits that should be obtained.',
+          },
+          {
+            title: 'Time-consuming manual recording',
+            description: 'Complex manual recording takes up a lot of valuable time for the finance team, and errors in recording can risk causing unwanted losses for the company.',
+          },
+          {
+            title: 'Financial information is not transparent',
+            description: 'Many retail business owners face difficulties in making strategic decisions due to lack of access to accurate and detailed financial data.',
+          },
+        ],
+        solutionsTitle: 'How KelolaAja Makes Your Retail Business Better?',
+        solutions: [
+          {
+            title: 'Easy to use',
+            description: 'Even if you are new to accounting, you will find it easy to use KelolaAja. If you still find it difficult, we promise free training.',
+          },
+          {
+            title: 'Reports accessed in seconds',
+            description: 'Monitor and create financial reports easily, in just one click, to make business decisions faster. Also get clear and easy-to-understand business operational graphs, helping you analyze performance effectively.',
+          },
+          {
+            title: 'Real-time, anywhere and anytime',
+            description: 'No more waste happening in your retail business, because you can easily monitor every expense item and get detailed expense reports.',
+          },
+          {
+            title: 'Multi-branch & multi-warehouse',
+            description: 'Monitor and create financial reports practically and make business decisions faster in one click. You will also get graphs of business operations with an easy-to-understand display.',
+          },
+          {
+            title: 'Barcode Scanner Support',
+            description: 'Increase speed in the sales recording process and stock opname in business with the help of barcode scanners which are also supported in the KelolaAja system.',
+          },
+          {
+            title: 'Hassle-free Purchasing Management',
+            description: 'From detailed purchase recording to automatic invoice creation, plus easy access to purchasing information and statistics, KelolaAja simplifies your entire purchasing process more efficiently.',
+          },
+        ],
+        cta: {
+          title: 'Ready to Overcome Your Retail Business Problems?',
+          description: 'KelolaAja comes with a complete solution to manage your retail business finances, inventory, and operations automatically and efficiently.',
+          buttonText: 'Free Consultation Now',
+        },
+        about: {
+          title: 'What is KelolaAja?',
+          description1: 'KelolaAja Accounting ERP software, established in 2024 to answer company challenges in managing management systems efficiently. With business software solutions KelolaAja is here to meet the needs of various industries.',
+          description2: 'Designed specifically for ease of use and adapted to the needs of Indonesian companies. KelolaAja is the first ERP software that offers the advantage of assistance from financial reports to tax reports.',
+          buttonText: 'Try Free Now',
+        },
+        faq: [
+          {
+            question: 'Can I try for free?',
+            answer: 'Of course! We provide a free trial period so you can explore our premium features before subscribing.'
+          },
+          {
+            question: 'Is my data safe?',
+            answer: 'Your data security is our priority. KelolaAja uses high-level encryption to ensure your business data remains safe and confidential.'
+          },
+          {
+            question: 'What if I need help?',
+            answer: 'Our support team is ready to help you anytime via live chat, email, or WhatsApp to ensure your business runs smoothly.'
+          }
+        ]
+      },
     },
     companyProfile: {
       hero: {
@@ -1803,10 +3054,10 @@ export const translations: Record<Locale, Translations> = {
         },
       },
       coreValues: {
-        badge: 'Our Philosophy',
+        badge: 'Our IMPACT',
         title: 'IMPACT',
         impact: 'IMPACT',
-        fromImpact: 'from Our Philosophy',
+        fromImpact: 'from Our IMPACT',
         values: {
           I: {
             title: 'Innovation',

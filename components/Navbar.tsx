@@ -69,11 +69,11 @@ export default function Navbar() {
     {
       label: locale === 'id' ? 'Utama' : 'Main',
       items: [
-        { label: t.navDropdown.features.finance, href: '/features/finance', description: locale === 'id' ? 'Sistem keuangan lengkap untuk arus kas, pembukuan, dan laporan' : 'Complete financial system for cash flow, bookkeeping, and reports' },
-        { label: t.navDropdown.features.project, href: '/features/project', description: locale === 'id' ? 'Kelola proyek, track progress, dan monitor timeline' : 'Manage projects, track progress, and monitor timeline' },
-        { label: t.navDropdown.features.manufacturing, href: '/features/manufacturing', description: locale === 'id' ? 'Sistem manufaktur terintegrasi untuk produksi dan supply chain' : 'Integrated manufacturing system for production and supply chain' },
-        { label: t.navDropdown.features.sales, href: '/features/sales', description: locale === 'id' ? 'Proses pembelian dan penjualan dari quotation hingga invoice' : 'Purchase and sales process from quotation to invoice' },
-        { label: t.navDropdown.features.inventory, href: '/features/inventory', description: locale === 'id' ? 'Manajemen inventory dengan tracking real-time' : 'Inventory management with real-time tracking' },
+        { label: t.navDropdown?.features?.finance, href: '/features/finance', description: locale === 'id' ? 'Sistem keuangan lengkap untuk arus kas, pembukuan, dan laporan' : 'Complete financial system for cash flow, bookkeeping, and reports' },
+        { label: t.navDropdown?.features?.project, href: '/features/project', description: locale === 'id' ? 'Kelola proyek, track progress, dan monitor timeline' : 'Manage projects, track progress, and monitor timeline' },
+        { label: t.navDropdown?.features?.manufacturing, href: '/features/manufacturing', description: locale === 'id' ? 'Sistem manufaktur terintegrasi untuk produksi dan supply chain' : 'Integrated manufacturing system for production and supply chain' },
+        { label: t.navDropdown?.features?.sales, href: '/features/sales', description: locale === 'id' ? 'Proses pembelian dan penjualan dari quotation hingga invoice' : 'Purchase and sales process from quotation to invoice' },
+        { label: t.navDropdown?.features?.inventory, href: '/features/inventory', description: locale === 'id' ? 'Manajemen inventory dengan tracking real-time' : 'Inventory management with real-time tracking' },
       ],
     },
   ]
@@ -83,10 +83,10 @@ export default function Navbar() {
     {
       label: locale === 'id' ? 'Layanan' : 'Services',
       items: [
-        { label: t.navDropdown.industries.fnb, href: '/industries/fnb', description: locale === 'id' ? 'Untuk restoran, kafe, dan bisnis kuliner' : 'For restaurants, cafes, and culinary businesses' },
-        { label: t.navDropdown.industries.contractor, href: '/industries/contractor', description: locale === 'id' ? 'Manajemen proyek konstruksi terintegrasi' : 'Integrated construction project management' },
-        { label: t.navDropdown.industries.manufacturing, href: '/industries/manufaktur', description: locale === 'id' ? 'Produksi dan inventory management' : 'Production and inventory management' },
-        { label: t.navDropdown.industries.retail, href: '/industries/retail', description: locale === 'id' ? 'Untuk toko retail dan e-commerce' : 'For retail stores and e-commerce' },
+        { label: t.navDropdown?.industries?.fnb, href: '/industries/fnb', description: locale === 'id' ? 'Untuk restoran, kafe, dan bisnis kuliner' : 'For restaurants, cafes, and culinary businesses' },
+        { label: t.navDropdown?.industries?.contractor, href: '/industries/contractor', description: locale === 'id' ? 'Manajemen proyek konstruksi terintegrasi' : 'Integrated construction project management' },
+        { label: t.navDropdown?.industries?.manufacturing, href: '/industries/manufaktur', description: locale === 'id' ? 'Produksi dan inventory management' : 'Production and inventory management' },
+        { label: t.navDropdown?.industries?.retail, href: '/industries/retail', description: locale === 'id' ? 'Untuk toko retail dan e-commerce' : 'For retail stores and e-commerce' },
       ],
     },
   ]
@@ -96,8 +96,8 @@ export default function Navbar() {
     {
       label: locale === 'id' ? 'Informasi' : 'Information',
       items: [
-        { label: t.navDropdown.company.about, href: '/company/profile', description: locale === 'id' ? 'Tentang KelolaAja dan tim kami' : 'About KelolaAja and our team' },
-        { label: t.navDropdown.company.contact, href: '/contact', description: locale === 'id' ? 'Hubungi kami untuk informasi dan dukungan' : 'Contact us for information and support' },
+        { label: t.navDropdown?.company?.about, href: '/company/profile', description: locale === 'id' ? 'Tentang KelolaAja dan tim kami' : 'About KelolaAja and our team' },
+        { label: t.navDropdown?.company?.contact, href: '/contact', description: locale === 'id' ? 'Hubungi kami untuk informasi dan dukungan' : 'Contact us for information and support' },
       ],
     },
     {
@@ -161,8 +161,8 @@ export default function Navbar() {
                       setIsCompanyDropdownOpen(false)
                     }}
                     className={`flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${isFeaturesDropdownOpen
-                        ? 'text-primary-600 border-b-2 border-primary-600'
-                        : 'text-gray-700 hover:text-primary-600'
+                      ? 'text-primary-600 border-b-2 border-primary-600'
+                      : 'text-gray-700 hover:text-primary-600'
                       }`}
                   >
                     <span>{t.nav.features}</span>
@@ -213,8 +213,8 @@ export default function Navbar() {
                                 onClick={() => setActiveFeaturesCategory(index)}
                                 onMouseEnter={() => setActiveFeaturesCategory(index)}
                                 className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors rounded-r-lg ${activeFeaturesCategory === index
-                                    ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
-                                    : 'text-gray-700 hover:bg-gray-100'
+                                  ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
+                                  : 'text-gray-700 hover:bg-gray-100'
                                   }`}
                               >
                                 {category.label}
@@ -275,8 +275,8 @@ export default function Navbar() {
                       setIsCompanyDropdownOpen(false)
                     }}
                     className={`flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${isIndustriesDropdownOpen
-                        ? 'text-primary-600 border-b-2 border-primary-600'
-                        : 'text-gray-700 hover:text-primary-600'
+                      ? 'text-primary-600 border-b-2 border-primary-600'
+                      : 'text-gray-700 hover:text-primary-600'
                       }`}
                   >
                     <span>{t.nav.industries}</span>
@@ -327,8 +327,8 @@ export default function Navbar() {
                                 onClick={() => setActiveIndustriesCategory(index)}
                                 onMouseEnter={() => setActiveIndustriesCategory(index)}
                                 className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors rounded-r-lg ${activeIndustriesCategory === index
-                                    ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
-                                    : 'text-gray-700 hover:bg-gray-100'
+                                  ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
+                                  : 'text-gray-700 hover:bg-gray-100'
                                   }`}
                               >
                                 {category.label}
@@ -397,8 +397,8 @@ export default function Navbar() {
                       setIsIndustriesDropdownOpen(false)
                     }}
                     className={`flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${isCompanyDropdownOpen
-                        ? 'text-primary-600 border-b-2 border-primary-600'
-                        : 'text-gray-700 hover:text-primary-600'
+                      ? 'text-primary-600 border-b-2 border-primary-600'
+                      : 'text-gray-700 hover:text-primary-600'
                       }`}
                   >
                     <span>{t.nav.company}</span>
@@ -449,8 +449,8 @@ export default function Navbar() {
                                 onClick={() => setActiveCompanyCategory(index)}
                                 onMouseEnter={() => setActiveCompanyCategory(index)}
                                 className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors rounded-r-lg ${activeCompanyCategory === index
-                                    ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
-                                    : 'text-gray-700 hover:bg-gray-100'
+                                  ? 'bg-white text-primary-600 border-r-2 border-primary-600 shadow-sm'
+                                  : 'text-gray-700 hover:bg-gray-100'
                                   }`}
                               >
                                 {category.label}
@@ -546,8 +546,8 @@ export default function Navbar() {
                     <button
                       onClick={() => toggleLanguage('id')}
                       className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${locale === 'id'
-                          ? 'bg-primary-50 text-primary-600 font-semibold'
-                          : 'text-gray-700 hover:bg-gray-50'
+                        ? 'bg-primary-50 text-primary-600 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-50'
                         }`}
                     >
                       <svg
@@ -568,8 +568,8 @@ export default function Navbar() {
                     <button
                       onClick={() => toggleLanguage('en')}
                       className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${locale === 'en'
-                          ? 'bg-primary-50 text-primary-600 font-semibold'
-                          : 'text-gray-700 hover:bg-gray-50'
+                        ? 'bg-primary-50 text-primary-600 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-50'
                         }`}
                     >
                       <svg
@@ -657,8 +657,8 @@ export default function Navbar() {
                     <button
                       onClick={() => toggleLanguage('id')}
                       className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${locale === 'id'
-                          ? 'bg-primary-50 text-primary-600 font-semibold'
-                          : 'text-gray-700 hover:bg-gray-50'
+                        ? 'bg-primary-50 text-primary-600 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-50'
                         }`}
                     >
                       <svg
@@ -679,8 +679,8 @@ export default function Navbar() {
                     <button
                       onClick={() => toggleLanguage('en')}
                       className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2 ${locale === 'en'
-                          ? 'bg-primary-50 text-primary-600 font-semibold'
-                          : 'text-gray-700 hover:bg-gray-50'
+                        ? 'bg-primary-50 text-primary-600 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-50'
                         }`}
                     >
                       <svg

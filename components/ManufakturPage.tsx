@@ -28,15 +28,16 @@ export default function ManufakturPage() {
   }, [locale])
 
   // Fallback data
-  const introText = industryData?.heroDescription || 'Setiap tahapan mulai dari perencanaan hingga penyelesaian produksi dapat dilakukan secara lebih efisien. Proses pengambilan keputusan menjadi lebih cepat, memungkinkan Anda untuk merespons tantangan dengan lebih sigap, sekaligus meningkatkan produktivitas dan kualitas di setiap langkah produksi bisnis Anda.'
-  const pageTitle = industryData?.heroTitle || 'Manufaktur'
-  const title = 'Ingin tahu bagaimana software KelolaAja bisa menyederhanakan seluruh proses bisnis manufaktur Anda?'
-  const description = 'Seringkali, volume produksi yang Anda jalankan tidak sebanding dengan margin keuntungan yang dihasilkan. Hal ini bisa terjadi jika sistem pengelolaan biaya dan pencatatan akuntansi di pabrik Anda kurang terstruktur atau tidak mengikuti standar yang tepat, mengakibatkan pemborosan dan inefisiensi dalam proses produksi.'
+  const introText = industryData?.heroDescription || t.industryPages?.manufacturing?.introText || 'Setiap tahapan mulai dari perencanaan hingga penyelesaian produksi dapat dilakukan secara lebih efisien. Proses pengambilan keputusan menjadi lebih cepat, memungkinkan Anda untuk merespons tantangan dengan lebih sigap, sekaligus meningkatkan produktivitas dan kualitas di setiap langkah produksi bisnis Anda.'
+  const pageTitle = industryData?.heroTitle || t.industryPages?.manufacturing?.heroTitle || 'Manufaktur'
+  const title = t.industryPages?.manufacturing?.title || 'Ingin tahu bagaimana software KelolaAja bisa menyederhanakan seluruh proses bisnis manufaktur Anda?'
+  const description = t.industryPages?.manufacturing?.description || 'Seringkali, volume produksi yang Anda jalankan tidak sebanding dengan margin keuntungan yang dihasilkan. Hal ini bisa terjadi jika sistem pengelolaan biaya dan pencatatan akuntansi di pabrik Anda kurang terstruktur atau tidak mengikuti standar yang tepat, mengakibatkan pemborosan dan inefisiensi dalam proses produksi.'
 
+  const problemsList = t.industryPages?.manufacturing?.problems || []
   const problems = [
     {
-      title: 'Proses konversi bahan baku menjadi produk akhir.',
-      description: 'Proses produksi membutuhkan sistem pencatatan yang akurat untuk mengubah bahan baku menjadi produk jadi. Tanpa pencatatan dan perhitungan yang tepat, Anda akan kesulitan menghitung Harga Pokok Produksi (HPP) secara efektif.',
+      title: problemsList[0]?.title || 'Proses konversi bahan baku menjadi produk akhir.',
+      description: problemsList[0]?.description || 'Proses produksi membutuhkan sistem pencatatan yang akurat untuk mengubah bahan baku menjadi produk jadi. Tanpa pencatatan dan perhitungan yang tepat, Anda akan kesulitan menghitung Harga Pokok Produksi (HPP) secara efektif.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
@@ -44,8 +45,8 @@ export default function ManufakturPage() {
       )
     },
     {
-      title: 'Perhitungan penyusutan aset.',
-      description: 'Bisnis manufaktur umumnya memiliki berbagai aset yang perlu dihitung penyusutannya dengan teliti, karena hal ini berdampak langsung pada akurasi laporan keuangan perusahaan.',
+      title: problemsList[1]?.title || 'Perhitungan penyusutan aset.',
+      description: problemsList[1]?.description || 'Bisnis manufaktur umumnya memiliki berbagai aset yang perlu dihitung penyusutannya dengan teliti, karena hal ini berdampak langsung pada akurasi laporan keuangan perusahaan.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2zM9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -53,8 +54,8 @@ export default function ManufakturPage() {
       )
     },
     {
-      title: 'Pengelolaan biaya overhead yang kompleks.',
-      description: 'Biaya overhead pabrik dalam industri manufaktur memiliki dampak signifikan terhadap keputusan bisnis yang diambil pemilik perusahaan. Oleh karena itu, pencatatan biaya ini sangat krusial untuk memastikan keakuratan analisis dan pengambilan keputusan yang tepat.',
+      title: problemsList[2]?.title || 'Pengelolaan biaya overhead yang kompleks.',
+      description: problemsList[2]?.description || 'Biaya overhead pabrik dalam industri manufaktur memiliki dampak signifikan terhadap keputusan bisnis yang diambil pemilik perusahaan. Oleh karena itu, pencatatan biaya ini sangat krusial untuk memastikan keakuratan analisis dan pengambilan keputusan yang tepat.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -62,6 +63,7 @@ export default function ManufakturPage() {
       )
     }
   ]
+  const solutionsList = t.industryPages?.manufacturing?.solutions || []
 
   return (
     <main className="min-h-screen bg-white">
@@ -95,7 +97,7 @@ export default function ManufakturPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Hubungi Kami</span>
+                    <span>{t.hero.ctaText}</span>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -160,7 +162,7 @@ export default function ManufakturPage() {
                   <div className="bg-white rounded-xl border-2 border-gray-200 hover:border-primary-500 p-6 transition-all duration-300 hover:shadow-xl overflow-hidden flex flex-col h-full group relative">
                     {/* Gradient Accent */}
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
+
                     {/* Icon */}
                     <div className="mb-4 text-primary-600 flex-shrink-0">
                       {problem.icon}
@@ -172,7 +174,7 @@ export default function ManufakturPage() {
                       <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
                         {problem.title}
                       </h3>
-                      
+
                       {/* Description */}
                       <p className="text-sm text-gray-600 leading-relaxed">
                         {problem.description}
@@ -198,7 +200,7 @@ export default function ManufakturPage() {
             <ScrollAnimation direction="fade" delay={0} duration={500}>
               <div className="text-center mb-12 lg:mb-16">
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4">
-                  Bagaimana KelolaAja Mendukung Bisnis Manufaktur Anda?
+                  {t.industryPages?.manufacturing?.solutionsTitle || 'Bagaimana KelolaAja Mendukung Bisnis Manufaktur Anda?'}
                 </h2>
               </div>
             </ScrollAnimation>
@@ -207,33 +209,33 @@ export default function ManufakturPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
               {[
                 {
-                  title: 'KelolaAja aja multi proyek dengan satu Klik',
-                  description: 'Bisnis kontraktor membutuhkan pengelolaan proyek yang efisien. Dengan KelolaAja, Anda dapat dengan mudah mengelola banyak proyek sekaligus, memantau anggaran, dan menjadikan manajemen proyek Anda lebih terstruktur dan terorganisir.',
+                  title: solutionsList[0]?.title || 'KelolaAja aja multi proyek dengan satu Klik',
+                  description: solutionsList[0]?.description || 'Bisnis manufaktur membutuhkan pengelolaan proyek yang efisien. Dengan KelolaAja, Anda dapat dengan mudah mengelola banyak proyek sekaligus, memantau anggaran, dan menjadikan manajemen proyek Anda lebih terstruktur dan terorganisir.',
                   image: '/images/manufacturing/manufacturing-multi-project.jpg',
                 },
                 {
-                  title: 'Perhitungan aset tetap otomatis dan akurat',
-                  description: 'Berhenti menghitung nilai aset tetap secara manual. Dengan KelolaAja, penyusutan setiap aset dihitung otomatis dan jurnal penyesuaian tersedia setiap bulan tanpa perlu usaha tambahan.',
+                  title: solutionsList[1]?.title || 'Perhitungan aset tetap otomatis dan akurat',
+                  description: solutionsList[1]?.description || 'Berhenti menghitung nilai aset tetap secara manual. Dengan KelolaAja, penyusutan setiap aset dihitung otomatis dan jurnal penyesuaian tersedia setiap bulan tanpa perlu usaha tambahan.',
                   image: '/images/manufacturing/manufacturing-fixed-asset.jpg',
                 },
                 {
-                  title: 'Catat seluruh biaya operasional dengan mudah',
-                  description: 'Dengan KelolaAja, Anda dapat dengan mudah mencatat dan mengelola biaya kapan saja dan di mana saja, memastikan efisiensi yang lebih baik, mengurangi pemborosan, dan meningkatkan profitabilitas proyek Anda.',
+                  title: solutionsList[2]?.title || 'Catat seluruh biaya operasional dengan mudah',
+                  description: solutionsList[2]?.description || 'Dengan KelolaAja, Anda dapat dengan mudah mencatat dan mengelola biaya kapan saja dan di mana saja, memastikan efisiensi yang lebih baik, mengurangi pemborosan, dan meningkatkan profitabilitas proyek Anda.',
                   image: '/images/manufacturing/manufacturing-operational-cost.jpg',
                 },
                 {
-                  title: 'Real-time, di mana saja dan kapan saja',
-                  description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha restoran Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan dengan detail.',
+                  title: solutionsList[3]?.title || 'Real-time, di mana saja dan kapan saja',
+                  description: solutionsList[3]?.description || 'Tidak ada lagi pemborosan yang terjadi dalam usaha manufaktur Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan dengan detail.',
                   image: '/images/manufacturing/manufacturing-realtime.jpg',
                 },
                 {
-                  title: 'KelolaAja Purchasing Anti Ribet',
-                  description: 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
+                  title: solutionsList[4]?.title || 'KelolaAja Purchasing Anti Ribet',
+                  description: solutionsList[4]?.description || 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
                   image: '/images/manufacturing/manufacturing-purchasing.jpg',
                 },
                 {
-                  title: 'Laporan diakses hitungan detik',
-                  description: 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
+                  title: solutionsList[5]?.title || 'Laporan diakses hitungan detik',
+                  description: solutionsList[5]?.description || 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
                   image: '/images/manufacturing/manufacturing-reports.jpg',
                 }
               ].map((benefit, index) => (
@@ -293,10 +295,10 @@ export default function ManufakturPage() {
               <div className="text-center">
                 <div className="inline-block bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 lg:p-10 border-2 border-primary-200">
                   <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-                    Siap Mengatasi Masalah Bisnis Manufaktur Anda?
+                    {t.industryPages?.manufacturing?.cta.title || 'Siap Mengatasi Masalah Bisnis Manufaktur Anda?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                    KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional bisnis manufaktur Anda secara otomatis dan efisien.
+                    {t.industryPages?.manufacturing?.cta.description || 'KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional bisnis manufaktur Anda secara otomatis dan efisien.'}
                   </p>
                   <a
                     href={whatsappLink}
@@ -313,7 +315,7 @@ export default function ManufakturPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Konsultasi Gratis Sekarang</span>
+                    <span>{t.industryPages?.manufacturing?.cta.buttonText || 'Konsultasi Gratis Sekarang'}</span>
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -334,14 +336,14 @@ export default function ManufakturPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-4">
-                    Apa Itu KelolaAja?
+                    {t.industryPages?.manufacturing?.about.title || 'Apa Itu KelolaAja?'}
                   </h2>
                   <div className="space-y-3 text-sm lg:text-base text-gray-700 leading-relaxed text-justify">
                     <p>
-                      KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.
+                      {t.industryPages?.manufacturing?.about.description1 || 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.'}
                     </p>
                     <p>
-                      Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.
+                      {t.industryPages?.manufacturing?.about.description2 || 'Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.'}
                     </p>
                   </div>
 
@@ -362,7 +364,7 @@ export default function ManufakturPage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.industryPages?.manufacturing?.about.buttonText || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>

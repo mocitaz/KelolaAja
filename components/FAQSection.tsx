@@ -13,6 +13,20 @@ interface FAQ {
   categoryId?: number
   displayOrder: number
   isActive: boolean
+  translations?: {
+    id?: {
+      question: string
+      answer: string
+    }
+    en?: {
+      question: string
+      answer: string
+    }
+  } | Array<{
+    locale: string
+    question: string
+    answer: string
+  }>
 }
 
 export default function FAQSection() {
@@ -51,7 +65,7 @@ export default function FAQSection() {
   }
 
   // Fallback FAQs - Updated with new FAQ content
-  const fallbackFaqItems = t.faq?.items || [
+  const fallbackFaqItems: FAQ[] = (t.faq?.items || [
     {
       question: 'Apa yang membedakan KelolaAja dari software ERP lain di pasaran?',
       answer: 'KelolaAja menghadirkan keseimbangan antara kualitas sistem, kedalaman fitur, dan keterjangkauan biaya. Dibanding ERP lokal maupun global, KelolaAja menawarkan solusi yang komprehensif dan efisien secara biaya, tanpa mengorbankan fungsionalitas inti.',
@@ -84,7 +98,13 @@ export default function FAQSection() {
       question: 'Apakah Aman Menggunakan KelolaAja?',
       answer: 'KelolaAja bertanggung jawab secara serius atas keamanan yang diperoleh pelanggan. Selain itu, keunggulan dari software, sistem, dan data menjadi prioritas utama kami. Keamanan juga menjadi kunci dari penawaran yang kami berikan. Untuk itu semua informasi yang Anda berikan telah ter-encrypt dan terjaga dengan teknologi dan keamanan yang terkemuka.',
     },
-  ]
+  ]).map((item, index) => ({
+    ...item,
+    faqId: index,
+    displayOrder: index,
+    isActive: true,
+    translations: undefined
+  }))
 
   const displayFaqs = faqs.length > 0 ? faqs : fallbackFaqItems
   const initialDisplayCount = 5
@@ -108,33 +128,56 @@ export default function FAQSection() {
             {t.faq?.subtitle || 'Temukan jawaban atas pertanyaan umum tentang KelolaAja'}
           </p>
           <div className="space-y-2">
-            {visibleFaqs.map((item, index) => (
-              <div
-                key={index}
-                className="border border-gray-200 rounded-lg overflow-hidden"
-              >
-                <details className="group">
-                  <summary className="px-3 py-2.5 cursor-pointer list-none flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200">
-                    <span className="font-semibold text-xs sm:text-sm text-gray-900 pr-3 leading-snug">
-                      {item.question}
-                    </span>
-                    <svg
-                      className="w-4 h-4 text-gray-500 flex-shrink-0 transform transition-transform duration-200 group-open:rotate-180"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </summary>
-                  <div className="px-3 py-2.5 bg-gray-50 border-t border-gray-200">
-                    <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-line">
-                      {item.answer}
-                    </p>
-                  </div>
-                </details>
-              </div>
-            ))}
+            {visibleFaqs.map((item, index) => {
+              // Helper to get localized text
+              const getLocalizedContent = () => {
+                // If item has translations
+                if (item.translations) {
+                  // Handle array format (like AboutCard)
+                  if (Array.isArray(item.translations)) {
+                    const trans = item.translations.find((t: any) => t.locale === locale)
+                    if (trans) return { question: trans.question, answer: trans.answer }
+                  }
+                  // Handle object format (like ContentSection)
+                  else if (typeof item.translations === 'object') {
+                    const trans = (item.translations as any)[locale]
+                    if (trans) return { question: trans.question, answer: trans.answer }
+                  }
+                }
+                // Fallback to root properties
+                return { question: item.question, answer: item.answer }
+              }
+
+              const content = getLocalizedContent()
+
+              return (
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-lg overflow-hidden"
+                >
+                  <details className="group">
+                    <summary className="px-3 py-2.5 cursor-pointer list-none flex items-center justify-between bg-white hover:bg-gray-50 transition-colors duration-200">
+                      <span className="font-semibold text-xs sm:text-sm text-gray-900 pr-3 leading-snug">
+                        {content.question}
+                      </span>
+                      <svg
+                        className="w-4 h-4 text-gray-500 flex-shrink-0 transform transition-transform duration-200 group-open:rotate-180"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </summary>
+                    <div className="px-3 py-2.5 bg-gray-50 border-t border-gray-200">
+                      <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-line">
+                        {content.answer}
+                      </p>
+                    </div>
+                  </details>
+                </div>
+              )
+            })}
           </div>
 
           {/* Show More / Show Less Button */}

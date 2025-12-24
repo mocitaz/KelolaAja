@@ -28,29 +28,29 @@ export default function FinancePage() {
   }, [locale])
 
   // Fallback data
-  const introText = pageData?.heroDescription || 'Sistem keuangan lengkap untuk arus kas, pembukuan, dan laporan. KelolaAja menyediakan solusi terintegrasi untuk mengelola seluruh aspek keuangan bisnis Anda dengan mudah dan efisien.'
-  const title = pageData?.heroTitle || 'Keuangan dan Akuntansi'
-  const description = pageData?.description || 'Dapatkan kontrol penuh atas keuangan bisnis Anda dengan sistem akuntansi yang lengkap dan terintegrasi. Dari pencatatan transaksi hingga laporan keuangan real-time, semua tersedia dalam satu platform.'
+  const introText = pageData?.heroDescription || t.financePage?.hero.description || 'Sistem keuangan lengkap untuk arus kas, pembukuan, dan laporan. KelolaAja menyediakan solusi terintegrasi untuk mengelola seluruh aspek keuangan bisnis Anda dengan mudah dan efisien.'
+  const title = pageData?.heroTitle || t.financePage?.mainTitle || 'Keuangan dan Akuntansi'
+  const description = pageData?.description || t.financePage?.mainDescription || 'Dapatkan kontrol penuh atas keuangan bisnis Anda dengan sistem akuntansi yang lengkap dan terintegrasi. Dari pencatatan transaksi hingga laporan keuangan real-time, semua tersedia dalam satu platform.'
 
   const features = [
     {
-      title: 'Mudah Untuk Pemula',
-      description: 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim KelolaAja akan selalu membantu sampai Anda bisa.',
+      title: t.financePage?.features[0].title || 'Mudah Untuk Pemula',
+      description: t.financePage?.features[0].description || 'KelolaAja dirancang untuk semua jenis & skala bisnis. Sekalipun Anda tidak memahami secara mendalam, Anda akan dengan mudah beradaptasi dengan KelolaAja. Selain itu, tim KelolaAja akan selalu membantu sampai Anda bisa.',
       image: '/images/finance/keuangan-mudah-pemula.png',
     },
     {
-      title: 'Pencatatan Data Lebih Mudah',
-      description: 'Semua alur bisnis menjadi lebih mudah dipantau. Mulai dari proses pembelian, Penjualan, utang dan piutang, sampai dengan penghitungan penyusutan aset bisa Anda lakukan dengan mudah di KelolaAja.',
+      title: t.financePage?.features[1].title || 'Pencatatan Data Lebih Mudah',
+      description: t.financePage?.features[1].description || 'Semua alur bisnis menjadi lebih mudah dipantau. Mulai dari proses pembelian, Penjualan, utang dan piutang, sampai dengan penghitungan penyusutan aset bisa Anda lakukan dengan mudah di KelolaAja.',
       image: '/images/finance/keuangan-pencatatan-data.png',
     },
     {
-      title: 'Pelaporan Konsolidasi',
-      description: 'Punya banyak bisnis tapi ingin data keuangan dalam 1 database terpusat? Dengan KelolaAja bisa! Fitur konsolidasi akan secara otomatis mengkompilasi laporan dari masing-masing perusahaan ke dalam satu laporan konsolidasi.',
+      title: t.financePage?.features[2].title || 'Pelaporan Konsolidasi',
+      description: t.financePage?.features[2].description || 'Punya banyak bisnis tapi ingin data keuangan dalam 1 database terpusat? Dengan KelolaAja bisa! Fitur konsolidasi akan secara otomatis mengkompilasi laporan dari masing-masing perusahaan ke dalam satu laporan konsolidasi.',
       image: '/images/finance/keuangan-pelaporan-konsolidasi.png',
     },
     {
-      title: 'Laporan Realtime',
-      description: 'KelolaAja Anda akan mendapatkan lebih dari 35 laporan keuangan yang bisa Anda hasilkan secara instan dalam 1 klik. Kini tidak ada lagi informasi keuangan yang Anda lewatkan dan memudahkan Anda mengambil keputusan yang lebih baik.',
+      title: t.financePage?.features[3].title || 'Laporan Realtime',
+      description: t.financePage?.features[3].description || 'KelolaAja Anda akan mendapatkan lebih dari 35 laporan keuangan yang bisa Anda hasilkan secara instan dalam 1 klik. Kini tidak ada lagi informasi keuangan yang Anda lewatkan dan memudahkan Anda mengambil keputusan yang lebih baik.',
       image: '/images/finance/keuangan-laporan-realtime.png',
     }
   ]
@@ -106,7 +106,7 @@ export default function FinancePage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-gray-900 mb-6">
-                    Keuangan dan Akuntansi
+                    {t.financePage?.hero.title || 'Keuangan dan Akuntansi'}
                   </h1>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify mb-6">
                     {introText}
@@ -126,7 +126,7 @@ export default function FinancePage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Hubungi Kami</span>
+                    <span>{t.financePage?.hero.ctaButton || 'Hubungi Kami'}</span>
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -197,13 +197,13 @@ export default function FinancePage() {
               <ScrollAnimation direction="left" delay={200} duration={600}>
                 <div>
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4">
-                    Software dengan Fitur
+                    {t.financePage?.softwareFeatures.title || 'Software dengan Fitur'}
                   </h2>
                   <h3 className="text-2xl sm:text-3xl lg:text-4xl font-display font-semibold text-primary-600 mb-6">
-                    Pembukuan dan Mudah Digunakan
+                    {t.financePage?.softwareFeatures.subtitle || 'Pembukuan dan Mudah Digunakan'}
                   </h3>
                   <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-justify">
-                    KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang akuntansi. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola pembukuan bisnis dengan mudah dan efisien.
+                    {t.financePage?.softwareFeatures.description || 'KelolaAja dirancang khusus untuk kemudahan penggunaan, bahkan bagi mereka yang tidak memiliki latar belakang akuntansi. Interface yang intuitif dan user-friendly memastikan Anda dapat mengelola pembukuan bisnis dengan mudah dan efisien.'}
                   </p>
                 </div>
               </ScrollAnimation>
@@ -281,10 +281,10 @@ export default function FinancePage() {
                 <div className="p-8 lg:p-12">
                   <div className="space-y-6 mb-8">
                     <p className="text-lg lg:text-xl font-bold text-gray-900 leading-relaxed text-center">
-                      Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.
+                      {t.financePage?.cta.mainText1 || 'Lupakan pencatatan manual yang rumit. Dengan KelolaAja, laporan keuangan real-time, mulai dari transaksi hingga inventori, semuanya terpusat dalam satu platform yang praktis.'}
                     </p>
                     <p className="text-base lg:text-lg text-gray-700 leading-relaxed text-center">
-                      Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.
+                      {t.financePage?.cta.mainText2 || 'Pantau arus kas, kirim invoice, dan KelolaAja pembelian dengan mudah, sehingga saat ini Anda bisa lebih fokus mengembangkan bisnis daripada mengurusi administrasi.'}
                     </p>
                   </div>
 
@@ -297,7 +297,7 @@ export default function FinancePage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         ),
-                        text: 'Laporan Real-Time'
+                        text: t.financePage?.cta.highlights[0] || 'Laporan Real-Time'
                       },
                       {
                         icon: (
@@ -305,7 +305,7 @@ export default function FinancePage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         ),
-                        text: 'Pantau Arus Kas'
+                        text: t.financePage?.cta.highlights[1] || 'Pantau Arus Kas'
                       },
                       {
                         icon: (
@@ -313,7 +313,7 @@ export default function FinancePage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                         ),
-                        text: 'Invoice Otomatis'
+                        text: t.financePage?.cta.highlights[2] || 'Invoice Otomatis'
                       },
                       {
                         icon: (
@@ -321,7 +321,7 @@ export default function FinancePage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                           </svg>
                         ),
-                        text: 'Platform Terpusat'
+                        text: t.financePage?.cta.highlights[3] || 'Platform Terpusat'
                       }
                     ].map((feature, index) => (
                       <div
@@ -355,7 +355,7 @@ export default function FinancePage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.financePage?.cta.tryFreeButton || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -372,7 +372,7 @@ export default function FinancePage() {
       </section>
 
       {/* Other Features Carousel */}
-      <FeaturesCarousel 
+      <FeaturesCarousel
         features={otherFeatures}
       />
 
@@ -384,10 +384,10 @@ export default function FinancePage() {
               <div className="text-center">
                 <div className="inline-block bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 lg:p-10 border-2 border-primary-200">
                   <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-                    Siap Mengoptimalkan Keuangan Bisnis Anda?
+                    {t.financePage?.cta.optimizeTitle || 'Siap Mengoptimalkan Keuangan Bisnis Anda?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                    KelolaAja menyediakan sistem keuangan lengkap untuk mengelola arus kas, pembukuan, dan laporan dengan mudah dan efisien.
+                    {t.financePage?.cta.optimizeDescription || 'KelolaAja menyediakan sistem keuangan lengkap untuk mengelola arus kas, pembukuan, dan laporan dengan mudah dan efisien.'}
                   </p>
                   <a
                     href={whatsappLink}
@@ -404,7 +404,7 @@ export default function FinancePage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Konsultasi Gratis Sekarang</span>
+                    <span>{t.financePage?.cta.consultButton || 'Konsultasi Gratis Sekarang'}</span>
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -425,17 +425,17 @@ export default function FinancePage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-2">
-                    Apa Itu KelolaAja?
+                    {t.financePage?.about.title || 'Apa Itu KelolaAja?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-4">
-                    Software ERP Akuntansi Terdepan untuk Bisnis Indonesia
+                    {t.financePage?.about.subtitle || 'Software ERP Akuntansi Terdepan untuk Bisnis Indonesia'}
                   </p>
                   <div className="space-y-3 text-sm lg:text-base text-gray-700 leading-relaxed text-justify">
                     <p>
-                      KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.
+                      {t.financePage?.about.description1 || 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri. Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia.'}
                     </p>
                     <p>
-                      KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.
+                      {t.financePage?.about.description2 || 'KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.'}
                     </p>
                   </div>
 
@@ -456,7 +456,7 @@ export default function FinancePage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.financePage?.cta.tryFreeButton || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
@@ -465,7 +465,7 @@ export default function FinancePage() {
                 </div>
               </ScrollAnimation>
             </div>
-            
+
             {/* Right: FAQ Section */}
             <div>
               <FAQSection />

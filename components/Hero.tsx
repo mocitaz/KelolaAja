@@ -46,7 +46,7 @@ export default function Hero({ content }: HeroProps) {
                 <div className="inline-block">
                   <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary-100 text-primary-700 rounded-full text-xs lg:text-sm font-semibold mb-4 animate-fade-in">
                     <span className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></span>
-                    Software ERP Terpercaya
+                    Software ERP Termudah
                   </span>
                 </div>
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-extrabold leading-tight">

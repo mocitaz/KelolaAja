@@ -28,15 +28,15 @@ export default function RetailPage() {
   }, [locale])
 
   // Fallback data
-  const introText = industryData?.heroDescription || 'Setiap tahapan mulai dari perencanaan hingga penyelesaian produksi dapat dilakukan secara lebih efisien. Proses pengambilan keputusan menjadi lebih cepat, memungkinkan Anda untuk merespons tantangan dengan lebih sigap, sekaligus meningkatkan produktivitas dan kualitas di setiap langkah produksi bisnis Anda.'
-  const pageTitle = industryData?.heroTitle || 'Retail'
-  const title = 'Masalah Bisnis Retail Anda Kewalahan?'
-  const description = 'Akuntansi merupakan bagian yang vital bagi kelangsungan bisnis ritel Anda. Tanpa pencatatan yang tepat, Anda akan kesulitan untuk mengevaluasi kemajuan dan mengambil keputusan yang mendukung pertumbuhan bisnis secara maksimal.'
+  const introText = industryData?.heroDescription || t.industryPages?.retail?.introText || 'Optimalkan setiap aspek operasional ritel Anda. Dari manajemen stok hingga laporan penjualan, ambil keputusan lebih cepat dan tingkatkan keuntungan bisnis Anda.'
+  const pageTitle = industryData?.heroTitle || t.industryPages?.retail?.heroTitle || 'Retail'
+  const title = t.industryPages?.retail?.title || 'Masalah Bisnis Retail Anda Kewalahan?'
+  const description = t.industryPages?.retail?.description || 'Akuntansi merupakan bagian yang vital bagi kelangsungan bisnis ritel Anda. Tanpa pencatatan yang tepat, Anda akan kesulitan untuk mengevaluasi kemajuan dan mengambil keputusan yang mendukung pertumbuhan bisnis secara maksimal.'
 
   const problems = [
     {
-      title: 'Manajemen stok berantakan',
-      description: 'Banyak bisnis ritel yang belum memiliki sistem pengelolaan stok yang terstandarisasi, sehingga berisiko menghadapi masalah seperti produk yang tidak terjual, menumpuk di gudang, atau bahkan kedaluwarsa. Tanpa sistem yang tepat, stok bisa tidak terkontrol, merugikan bisnis, dan mengurangi keuntungan yang seharusnya dapat diperoleh.',
+      title: t.industryPages?.retail?.problems[0]?.title || 'Manajemen stok berantakan',
+      description: t.industryPages?.retail?.problems[0]?.description || 'Banyak bisnis ritel yang belum memiliki sistem pengelolaan stok yang terstandarisasi, sehingga berisiko menghadapi masalah seperti produk yang tidak terjual, menumpuk di gudang, atau bahkan kedaluwarsa. Tanpa sistem yang tepat, stok bisa tidak terkontrol, merugikan bisnis, dan mengurangi keuntungan yang seharusnya dapat diperoleh.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -44,8 +44,8 @@ export default function RetailPage() {
       )
     },
     {
-      title: 'Pencatatan manual yang memakan waktu',
-      description: 'Pencatatan manual yang kompleks memakan banyak waktu berharga tim keuangan, dan kesalahan dalam pencatatan dapat berisiko menyebabkan kerugian yang tidak diinginkan bagi perusahaan.',
+      title: t.industryPages?.retail?.problems[1]?.title || 'Pencatatan manual yang memakan waktu',
+      description: t.industryPages?.retail?.problems[1]?.description || 'Pencatatan manual yang kompleks memakan banyak waktu berharga tim keuangan, dan kesalahan dalam pencatatan dapat berisiko menyebabkan kerugian yang tidak diinginkan bagi perusahaan.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -53,8 +53,8 @@ export default function RetailPage() {
       )
     },
     {
-      title: 'Informasi keuangan tidak transparan',
-      description: 'Banyak pemilik bisnis ritel menghadapi kesulitan dalam membuat keputusan strategis karena kurangnya akses ke data keuangan yang akurat dan mendetail.',
+      title: t.industryPages?.retail?.problems[2]?.title || 'Informasi keuangan tidak transparan',
+      description: t.industryPages?.retail?.problems[2]?.description || 'Banyak pemilik bisnis ritel menghadapi kesulitan dalam membuat keputusan strategis karena kurangnya akses ke data keuangan yang akurat dan mendetail.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -160,7 +160,7 @@ export default function RetailPage() {
                   <div className="bg-white rounded-xl border-2 border-gray-200 hover:border-primary-500 p-6 transition-all duration-300 hover:shadow-xl overflow-hidden flex flex-col h-full group relative">
                     {/* Gradient Accent */}
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
+
                     {/* Icon */}
                     <div className="mb-4 text-primary-600 flex-shrink-0">
                       {problem.icon}
@@ -172,7 +172,7 @@ export default function RetailPage() {
                       <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
                         {problem.title}
                       </h3>
-                      
+
                       {/* Description */}
                       <p className="text-sm text-gray-600 leading-relaxed">
                         {problem.description}
@@ -198,7 +198,7 @@ export default function RetailPage() {
             <ScrollAnimation direction="fade" delay={0} duration={500}>
               <div className="text-center mb-12 lg:mb-16">
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-gray-900 mb-4">
-                  Bagaimana KelolaAja Membuat Bisnis Retail Anda Menjadi Lebih Baik?
+                  {t.industryPages?.retail?.solutionsTitle || 'Bagaimana KelolaAja Membuat Bisnis Retail Anda Menjadi Lebih Baik?'}
                 </h2>
               </div>
             </ScrollAnimation>
@@ -207,33 +207,33 @@ export default function RetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
               {[
                 {
-                  title: 'Mudah digunakan',
-                  description: 'Sekalipun Anda awam akuntansi, Anda akan mudah menggunakan KelolaAja. Jika merasa tetap kesulitan, kami menjanjikan training gratis.',
+                  title: t.industryPages?.retail?.solutions[0]?.title || 'Mudah digunakan',
+                  description: t.industryPages?.retail?.solutions[0]?.description || 'Sekalipun Anda awam akuntansi, Anda akan mudah menggunakan KelolaAja. Jika merasa tetap kesulitan, kami menjanjikan training gratis.',
                   image: '/images/common/feature-easy-to-use.jpg',
                 },
                 {
-                  title: 'Laporan diakses hitungan detik',
-                  description: 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
+                  title: t.industryPages?.retail?.solutions[1]?.title || 'Laporan diakses hitungan detik',
+                  description: t.industryPages?.retail?.solutions[1]?.description || 'Pantau dan buat laporan keuangan dengan mudah, hanya dalam satu klik, untuk mengambil keputusan bisnis lebih cepat. Dapatkan juga grafik operasional bisnis yang jelas dan mudah dipahami, membantu Anda menganalisis kinerja secara efektif.',
                   image: '/images/common/feature-reports.jpg',
                 },
                 {
-                  title: 'Real-time, di mana saja dan kapan saja',
-                  description: 'Tidak ada lagi pemborosan yang terjadi dalam usaha restoran Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan pengeluaran dengan detail.',
+                  title: t.industryPages?.retail?.solutions[2]?.title || 'Real-time, di mana saja dan kapan saja',
+                  description: t.industryPages?.retail?.solutions[2]?.description || 'Tidak ada lagi pemborosan yang terjadi dalam usaha retail Anda, karena Anda bisa dengan mudah memantau setiap pos pengeluaran dan mendapatkan laporan pengeluaran dengan detail.',
                   image: '/images/common/feature-realtime.jpg',
                 },
                 {
-                  title: 'Multi cabang & multi gudang',
-                  description: 'Pantau dan buat laporan keuangan dengan praktis dan buat keputusan bisnis lebih cepat dalam satu klik. Anda juga akan mendapatkan grafik dari operasional dalam bisnis dengan tampilan yang mudah dipahami.',
+                  title: t.industryPages?.retail?.solutions[3]?.title || 'Multi cabang & multi gudang',
+                  description: t.industryPages?.retail?.solutions[3]?.description || 'Pantau dan buat laporan keuangan dengan praktis dan buat keputusan bisnis lebih cepat dalam satu klik. Anda juga akan mendapatkan grafik dari operasional dalam bisnis dengan tampilan yang mudah dipahami.',
                   image: '/images/inventory/feature-multi-warehouse.jpg',
                 },
                 {
-                  title: 'Support Barcode Scanner',
-                  description: 'Tingkatkan kecepatan dalam proses pencatatan penjualan dan stok opname pada bisnis dengan bantuan barcode scanner yang juga didukung di sistem KelolaAja.',
+                  title: t.industryPages?.retail?.solutions[4]?.title || 'Support Barcode Scanner',
+                  description: t.industryPages?.retail?.solutions[4]?.description || 'Tingkatkan kecepatan dalam proses pencatatan penjualan dan stok opname pada bisnis dengan bantuan barcode scanner yang juga didukung di sistem KelolaAja.',
                   image: '/images/common/feature-barcode.jpg',
                 },
                 {
-                  title: 'KelolaAja Purchasing Anti Ribet',
-                  description: 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
+                  title: t.industryPages?.retail?.solutions[5]?.title || 'KelolaAja Purchasing Anti Ribet',
+                  description: t.industryPages?.retail?.solutions[5]?.description || 'Dari pencatatan detail pembelian hingga pembuatan faktur otomatis, ditambah dengan akses mudah ke informasi dan statistik pembelian, KelolaAja menyederhanakan seluruh proses purchasing Anda dengan lebih efisien.',
                   image: '/images/common/feature-purchasing.jpg',
                 }
               ].map((benefit, index) => (
@@ -293,10 +293,10 @@ export default function RetailPage() {
               <div className="text-center">
                 <div className="inline-block bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 lg:p-10 border-2 border-primary-200">
                   <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">
-                    Siap Mengatasi Masalah Bisnis Retail Anda?
+                    {t.industryPages?.retail?.cta?.title || 'Siap Mengatasi Masalah Bisnis Retail Anda?'}
                   </h2>
                   <p className="text-base lg:text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-                    KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional bisnis retail Anda secara otomatis dan efisien.
+                    {t.industryPages?.retail?.cta?.description || 'KelolaAja hadir dengan solusi lengkap untuk mengelola keuangan, inventory, dan operasional bisnis retail Anda secara otomatis dan efisien.'}
                   </p>
                   <a
                     href={whatsappLink}
@@ -313,7 +313,7 @@ export default function RetailPage() {
                       e.currentTarget.style.backgroundColor = '#0498da'
                     }}
                   >
-                    <span>Konsultasi Gratis Sekarang</span>
+                    <span>{t.industryPages?.retail?.cta?.buttonText || 'Konsultasi Gratis Sekarang'}</span>
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -334,14 +334,14 @@ export default function RetailPage() {
               <ScrollAnimation direction="right" delay={0} duration={600}>
                 <div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-4">
-                    Apa Itu KelolaAja?
+                    {t.industryPages?.retail?.about?.title || 'Apa Itu KelolaAja?'}
                   </h2>
                   <div className="space-y-3 text-sm lg:text-base text-gray-700 leading-relaxed text-justify">
                     <p>
-                      KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.
+                      {t.industryPages?.retail?.about?.description1 || 'KelolaAja software ERP Akuntansi, didirikan pada 2024 untuk menjawab tantangan perusahaan dalam mengelola sistem manajemen secara efisien. Dengan solusi software bisnis KelolaAja hadir untuk memenuhi kebutuhan berbagai industri.'}
                     </p>
                     <p>
-                      Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.
+                      {t.industryPages?.retail?.about?.description2 || 'Dirancang khusus untuk kemudahan penggunaannya dan disesuaikan dengan kebutuhan perusahaan Indonesia. KelolaAja merupakan software ERP pertama yang menawarkan keunggulan pendampingan laporan keuangan sampai dengan laporan perpajakan.'}
                     </p>
                   </div>
 
@@ -362,7 +362,7 @@ export default function RetailPage() {
                         e.currentTarget.style.backgroundColor = '#0498da'
                       }}
                     >
-                      <span>Coba Gratis Sekarang</span>
+                      <span>{t.industryPages?.retail?.about?.buttonText || 'Coba Gratis Sekarang'}</span>
                       <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </svg>
