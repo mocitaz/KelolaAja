@@ -24,6 +24,11 @@ interface Testimonial {
   isActive: boolean;
   displayOrder: number;
   createdAt: string;
+  translations?: {           // Backend field (for multi-language)
+    id?: { quote: string };
+    en?: { quote: string };
+    [key: string]: any;
+  };
 }
 
 export default function TestimonialsPage() {
@@ -46,7 +51,8 @@ export default function TestimonialsPage() {
         const mapped = data.data.map((t: any) => ({
           ...t,
           quote: t.translations?.id?.quote || t.translations?.en?.quote || '',
-          photo: t.photo || null
+          photo: t.photo || null,
+          translations: t.translations // Explicitly preserve translations
         }));
         setTestimonials(mapped);
       }
@@ -260,8 +266,8 @@ function TestimonialModal({
     isActive: testimonial?.isActive ?? true,
     displayOrder: testimonial?.displayOrder || 0,
     translations: [
-      { locale: 'id', quote: testimonial?.quote || '' },
-      { locale: 'en', quote: '' },
+      { locale: 'id', quote: testimonial?.translations?.id?.quote || testimonial?.quote || '' },
+      { locale: 'en', quote: testimonial?.translations?.en?.quote || '' },
     ],
   });
   const [loading, setLoading] = useState(false);
@@ -278,8 +284,8 @@ function TestimonialModal({
         isActive: testimonial.isActive,
         displayOrder: testimonial.displayOrder,
         translations: [
-          { locale: 'id', quote: testimonial.quote || '' },
-          { locale: 'en', quote: '' }
+          { locale: 'id', quote: testimonial.translations?.id?.quote || testimonial.quote || '' },
+          { locale: 'en', quote: testimonial.translations?.en?.quote || '' }
         ]
       });
     }

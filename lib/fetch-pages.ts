@@ -199,30 +199,38 @@ export async function fetchAllFeaturePages(
 /**
  * Fetch all testimonials
  */
-export async function fetchTestimonials(): Promise<any[]> {
+export async function fetchTestimonials(locale: string = 'id'): Promise<any[]> {
   try {
     console.log('[Server fetchTestimonials] Fetching from:', `${API_BASE_URL}/api/v1/testimonials`);
     const response = await fetch(`${API_BASE_URL}/api/v1/testimonials`, { cache: 'no-store' });
     const result = await response.json();
-    console.log('[Server fetchTestimonials] Response:', result);
-    
+    console.log('[Server fetchTestimonials] Response success:', result.success);
+
     if (result.success && Array.isArray(result.data)) {
       // Map API field names to component field names
-      const mapped = result.data.map((t: any) => ({
-        testimonialId: t.testimonialId,
-        personName: t.name,           // API: name -> Component: personName
-        position: t.title,             // API: title -> Component: position
-        company: t.company,
-        testimonialText: t.quote,      // API: quote -> Component: testimonialText
-        rating: t.rating,
-        imageUrl: t.photo,             // API: photo -> Component: imageUrl
-        isActive: t.isFeatured !== false, // Use isFeatured as isActive
-        displayOrder: t.displayOrder
-      }));
+      const mapped = result.data.map((t: any) => {
+        // Extract localized content
+        const translations = t.translations || {};
+        const localizedData = translations[locale] || translations['id'] || {};
+        const quote = localizedData.quote || t.quote || "";
+
+        return {
+          testimonialId: t.testimonialId,
+          personName: t.name,           // API: name -> Component: personName
+          position: t.title,             // API: title -> Component: position
+          company: t.company,
+          testimonialText: quote,        // Default resolved text (fallback)
+          translations: t.translations,  // Pass full translations to client
+          rating: t.rating,
+          imageUrl: t.photo,             // API: photo -> Component: imageUrl
+          isActive: t.isFeatured !== false, // Use isFeatured as isActive
+          displayOrder: t.displayOrder
+        };
+      });
       console.log('[Server fetchTestimonials] Mapped testimonials:', mapped.length);
       return mapped;
     }
-    
+
     console.log('[Server fetchTestimonials] No data, returning empty array');
     return [];
   } catch (error) {

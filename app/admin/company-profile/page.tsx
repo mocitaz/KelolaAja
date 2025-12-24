@@ -196,6 +196,9 @@ export default function CompanyProfilePage() {
         }
       };
 
+      console.log('[CompanyProfile] Saving payload:', JSON.stringify(payload, null, 2));
+      console.log('[CompanyProfile] Sending request to:', sectionId ? (API_ENDPOINTS.ADMIN.CONTENT_SECTIONS.UPDATE(sectionId)) : API_ENDPOINTS.ADMIN.CONTENT_SECTIONS.CREATE);
+
       let response;
       if (sectionId) {
         // Update existing - only send fields that can be updated
@@ -205,6 +208,8 @@ export default function CompanyProfilePage() {
           isActive: payload.isActive,
           translations: payload.translations
         };
+        console.log('[CompanyProfile] Update payload:', JSON.stringify(updatePayload, null, 2));
+
         response = await apiFetch(API_ENDPOINTS.ADMIN.CONTENT_SECTIONS.UPDATE(sectionId), {
           method: 'PUT',
           body: JSON.stringify(updatePayload)
@@ -217,12 +222,16 @@ export default function CompanyProfilePage() {
         });
       }
 
+      console.log('[CompanyProfile] Response status:', response.status);
       const result = await response.json();
+      console.log('[CompanyProfile] Response data:', result);
+
       if (result.success) {
         setShowModal(false);
         setEditingValue(null);
         fetchValues();
       } else {
+        console.error('[CompanyProfile] Save failed:', result.message);
         alert(result.message || 'Error saving value. Please try again.');
       }
     } catch (error) {

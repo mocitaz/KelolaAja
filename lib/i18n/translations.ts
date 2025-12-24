@@ -14,6 +14,11 @@ export interface Translations {
     help: string
     search: string
   }
+  comingSoon: {
+    title: string
+    message: string
+    close: string
+  }
   navDropdown: {
     features: {
       finance: string
@@ -723,6 +728,11 @@ export const translations: Record<Locale, Translations> = {
       register: 'Daftar',
       help: 'Bantuan',
       search: 'Cari',
+    },
+    comingSoon: {
+      title: 'Segera Hadir',
+      message: 'Modul HR & Payroll sedang dalam tahap pengembangan. Nantikan pembaruan selanjutnya untuk fitur manajemen SDM yang lebih lengkap.',
+      close: 'Tutup'
     },
     navDropdown: {
       features: {
@@ -1913,6 +1923,11 @@ export const translations: Record<Locale, Translations> = {
       register: 'Register',
       help: 'Help',
       search: 'Search',
+    },
+    comingSoon: {
+      title: 'Coming Soon',
+      message: 'The HR & Payroll module is currently under development. Stay tuned for future updates on our comprehensive HR management features.',
+      close: 'Close'
     },
     navDropdown: {
       features: {

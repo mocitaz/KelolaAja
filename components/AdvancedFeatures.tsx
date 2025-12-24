@@ -29,6 +29,7 @@ export default function AdvancedFeatures({ data }: AdvancedFeaturesProps) {
   const [features, setFeatures] = useState<AdvancedFeature[]>([])
   const [loading, setLoading] = useState(true)
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [showComingSoon, setShowComingSoon] = useState(false)
 
   useEffect(() => {
     if (data && data.length > 0) {
@@ -325,6 +326,9 @@ export default function AdvancedFeatures({ data }: AdvancedFeaturesProps) {
                             if (feature.link === '#') {
                               e.preventDefault()
                               e.stopPropagation()
+                              if (feature.title.includes('HR') || feature.title.includes('Payroll') || index === 5) {
+                                setShowComingSoon(true)
+                              }
                             }
                           }}
                           className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-primary-300 group flex flex-col w-full h-full"
@@ -407,6 +411,51 @@ export default function AdvancedFeatures({ data }: AdvancedFeaturesProps) {
           </div>
         </div>
       </div>
+
+      {/* Coming Soon Modal */}
+      {showComingSoon && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            {/* Background overlay */}
+            <div
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+              aria-hidden="true"
+              onClick={() => setShowComingSoon(false)}
+            ></div>
+
+            {/* Modal panel */}
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+              <div>
+                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
+                  <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="mt-3 text-center sm:mt-5">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                    {t.comingSoon?.title || 'Coming Soon'}
+                  </h3>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500">
+                      {t.comingSoon?.message || 'Modul HR & Payroll sedang dalam tahap pengembangan.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-5 sm:mt-6">
+                <button
+                  type="button"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
+                  onClick={() => setShowComingSoon(false)}
+                >
+                  {t.comingSoon?.close || 'Close'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

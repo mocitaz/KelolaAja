@@ -394,6 +394,10 @@ export const FRONTEND_API = {
  * @returns Proxied URL for frontend to call
  */
 export function getProxyUrl(endpoint: string): string {
+  // Prevent double proxying
+  if (endpoint.startsWith(FRONTEND_API.PROXY)) {
+    return endpoint;
+  }
   return `${FRONTEND_API.PROXY}?endpoint=${encodeURIComponent(endpoint)}`;
 }
 

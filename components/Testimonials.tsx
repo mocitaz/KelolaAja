@@ -12,6 +12,11 @@ interface Testimonial {
   position: string
   company: string
   testimonialText: string
+  translations?: {
+    id?: { quote: string }
+    en?: { quote: string }
+    [key: string]: any
+  }
   rating: number
   imageUrl?: string
   isActive: boolean
@@ -23,7 +28,7 @@ interface TestimonialsProps {
 }
 
 export default function Testimonials({ data }: TestimonialsProps) {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
@@ -43,14 +48,30 @@ export default function Testimonials({ data }: TestimonialsProps) {
     if (data && data.length > 0) return
 
     console.log('[Testimonials] Fetching from API...');
-    const result = await fetchPublicData<Testimonial[]>(
+    const result = await fetchPublicData<any[]>(
       API_ENDPOINTS.PUBLIC.TESTIMONIALS.LIST
     )
 
     console.log('[Testimonials] API Response:', result);
     if (result.success && Array.isArray(result.data)) {
       console.log('[Testimonials] Raw data count:', result.data.length);
-      const activeTestimonials = result.data.filter((t: Testimonial) => t.isActive);
+
+      // Map API response to Component Interface with fallback for field names
+      const activeTestimonials = result.data
+        .filter((t: any) => t.isActive)
+        .map((t: any) => ({
+          testimonialId: t.testimonialId,
+          personName: t.personName || t.name,
+          position: t.position || t.title,
+          company: t.company,
+          // Handle various possible field names for the content
+          testimonialText: t.testimonialText || t.quote || t.content || t.message || "",
+          rating: t.rating || 5,
+          imageUrl: t.imageUrl || t.image,
+          isActive: t.isActive,
+          displayOrder: t.displayOrder || 0
+        }));
+
       console.log('[Testimonials] Active testimonials count:', activeTestimonials.length);
       setTestimonials(activeTestimonials)
     } else {
@@ -179,8 +200,9 @@ export default function Testimonials({ data }: TestimonialsProps) {
                     </div>
 
                     {/* Quote Text */}
+                    {/* Quote Text */}
                     <p className="text-gray-700 leading-relaxed text-sm lg:text-base mb-5">
-                      {testimonial.testimonialText}
+                      {testimonial.translations?.[locale as 'id' | 'en']?.quote || testimonial.testimonialText}
                     </p>
 
                     {/* Author Info */}
@@ -252,8 +274,8 @@ export default function Testimonials({ data }: TestimonialsProps) {
                   onClick={() => goToTestimonial(index)}
                   disabled={isAnimating}
                   className={`rounded-full transition-all duration-300 ${isActive
-                      ? 'bg-primary-600 w-8 h-2'
-                      : 'bg-gray-300 hover:bg-gray-400 w-2 h-2'
+                    ? 'bg-primary-600 w-8 h-2'
+                    : 'bg-gray-300 hover:bg-gray-400 w-2 h-2'
                     }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
