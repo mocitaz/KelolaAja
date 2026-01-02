@@ -38,6 +38,7 @@ interface JobApplication {
     fileName: string;
     filePath: string;
     storageUrl?: string;
+    fileUrl?: string;
   };
   job?: {
     jobId: number;
@@ -83,7 +84,7 @@ export default function JobApplicationsPage() {
 
       const response = await apiFetch(`${API_ENDPOINTS.ADMIN.JOB_APPLICATIONS.LIST}?${params}`);
       const data = await response.json();
-      
+
       if (data.success) {
         setApplications(data.data || []);
         setTotalPages(data.meta?.totalPages || 1);
@@ -201,11 +202,10 @@ export default function JobApplicationsPage() {
                   <div
                     key={application.applicationId}
                     onClick={() => handleSelectApplication(application)}
-                    className={`px-4 py-3 cursor-pointer transition-colors ${
-                      selectedApplication?.applicationId === application.applicationId
-                        ? 'bg-gradient-to-r from-[#039edb]/5 to-[#71bf44]/5 border-l-4 border-[#039edb]'
-                        : 'hover:bg-gray-50'
-                    }`}
+                    className={`px-4 py-3 cursor-pointer transition-colors ${selectedApplication?.applicationId === application.applicationId
+                      ? 'bg-gradient-to-r from-[#039edb]/5 to-[#71bf44]/5 border-l-4 border-[#039edb]'
+                      : 'hover:bg-gray-50'
+                      }`}
                   >
                     <div className="flex justify-between items-start gap-2 mb-1">
                       <div className="text-sm font-medium text-gray-900 truncate flex-1">
@@ -522,7 +522,7 @@ function ApplicationDetails({
           <div>
             <h3 className="text-sm font-semibold text-gray-900 mb-2">CV</h3>
             <a
-              href={application.cvFile.storageUrl || `/api/files/${application.cvFile.filePath}`}
+              href={application.cvFile.fileUrl || application.cvFile.storageUrl || `/api/files/${application.cvFile.filePath}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-[#039edb] bg-[#039edb]/10 rounded-lg hover:bg-[#039edb]/20 transition-colors"
