@@ -414,22 +414,17 @@ function JobPostingModal({
     setLoading(true);
     setError('');
 
-    // Transform translations array to object map
-    const translationsMap: Record<string, any> = {};
-    formData.translations.forEach((t: JobPostingTranslation) => {
-      translationsMap[t.locale] = {
-        title: t.title,
-        shortDescription: t.shortDescription,
-        description: t.description,
-        qualifications: t.qualifications,
-        additionalInfo: t.additionalInfo
-      };
-    });
-
     try {
       const submitData = {
         ...formData,
-        translations: translationsMap,
+        translations: formData.translations.map((t: JobPostingTranslation) => ({
+          locale: t.locale,
+          title: t.title,
+          shortDescription: t.shortDescription,
+          description: t.description,
+          qualifications: t.qualifications,
+          additionalInfo: t.additionalInfo
+        })),
         applicationDeadline: formData.applicationDeadline ? new Date(formData.applicationDeadline).toISOString() : undefined,
         publishedAt: formData.publishedAt ? new Date(formData.publishedAt).toISOString() : undefined,
       };
