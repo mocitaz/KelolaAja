@@ -1,13 +1,18 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
-import { apiFetch } from '@/lib/api-config';
-import PageHeader from '@/components/admin/PageHeader';
-import AdminCard from '@/components/admin/AdminCard';
-import AdminTable from '@/components/admin/AdminTable';
-import AdminModal from '@/components/admin/AdminModal';
-import SearchBar from '@/components/admin/SearchBar';
+import { useEffect, useState } from "react";
+import {
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  InformationCircleIcon,
+} from "@heroicons/react/24/outline";
+import { apiFetch } from "@/lib/api-config";
+import PageHeader from "@/components/admin/PageHeader";
+import AdminCard from "@/components/admin/AdminCard";
+import AdminTable from "@/components/admin/AdminTable";
+import AdminModal from "@/components/admin/AdminModal";
+import SearchBar from "@/components/admin/SearchBar";
 
 interface Translation {
   locale: string;
@@ -27,7 +32,7 @@ interface AboutCard {
 export default function AboutCardsPage() {
   const [cards, setCards] = useState<AboutCard[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingCard, setEditingCard] = useState<AboutCard | null>(null);
 
@@ -37,57 +42,59 @@ export default function AboutCardsPage() {
 
   const fetchCards = async () => {
     try {
-      console.log('[AboutCards] Fetching cards from admin API...');
-      const response = await apiFetch('/api/v1/about-cards/admin');
+      console.log("[AboutCards] Fetching cards from admin API...");
+      const response = await apiFetch("/api/v1/about-cards/admin");
       const data = await response.json();
-      console.log('[AboutCards] Admin API response:', data);
+      console.log("[AboutCards] Admin API response:", data);
 
       if (data.success && Array.isArray(data.data)) {
-        console.log('[AboutCards] Raw cards data:', data.data);
+        console.log("[AboutCards] Raw cards data:", data.data);
         // Map backend response - translations might be object {id: {...}, en: {...}}
         const mapped = data.data.map((card: any) => {
           // Convert translations object to array if needed
           let translations = card.translations;
           if (translations && !Array.isArray(translations)) {
             // Backend returns {id: {...}, en: {...}}, convert to array
-            translations = Object.entries(translations).map(([locale, trans]: [string, any]) => ({
-              locale,
-              title: trans.title || '',
-              description: trans.description || ''
-            }));
+            translations = Object.entries(translations).map(
+              ([locale, trans]: [string, any]) => ({
+                locale,
+                title: trans.title || "",
+                description: trans.description || "",
+              })
+            );
           }
           return {
             ...card,
-            translations: translations || []
+            translations: translations || [],
           };
         });
-        console.log('[AboutCards] Mapped cards:', mapped);
+        console.log("[AboutCards] Mapped cards:", mapped);
         setCards(mapped);
       }
     } catch (error) {
-      console.error('Error fetching cards:', error);
+      console.error("Error fetching cards:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (cardId: number) => {
-    if (!confirm('Are you sure you want to delete this card?')) return;
+    if (!confirm("Are you sure you want to delete this card?")) return;
     try {
       await apiFetch(`/api/v1/about-cards/admin/${cardId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       fetchCards();
     } catch (error) {
-      console.error('Error deleting card:', error);
+      console.error("Error deleting card:", error);
     }
   };
 
   const getCardContent = (card: AboutCard, locale: string) => {
-    const translation = card.translations?.find(t => t.locale === locale);
+    const translation = card.translations?.find((t) => t.locale === locale);
     return {
-      title: translation?.title || '',
-      description: translation?.description || '',
+      title: translation?.title || "",
+      description: translation?.description || "",
     };
   };
 
@@ -95,53 +102,59 @@ export default function AboutCardsPage() {
     if (!search) return true;
     const searchLower = search.toLowerCase();
 
-    const idContent = getCardContent(card, 'id');
-    const enContent = getCardContent(card, 'en');
-    const matchesTrans = idContent.title.toLowerCase().includes(searchLower) ||
+    const idContent = getCardContent(card, "id");
+    const enContent = getCardContent(card, "en");
+    const matchesTrans =
+      idContent.title.toLowerCase().includes(searchLower) ||
       enContent.title.toLowerCase().includes(searchLower);
 
     return matchesTrans;
   });
 
-  const activeCount = cards.filter(c => c.isActive).length;
-  const inactiveCount = cards.filter(c => !c.isActive).length;
+  const activeCount = cards.filter((c) => c.isActive).length;
+  const inactiveCount = cards.filter((c) => !c.isActive).length;
 
   const columns = [
     {
-      header: 'Title',
+      header: "Title",
       render: (card: AboutCard) => {
-        const idTrans = card.translations?.find(t => t.locale === 'id');
+        const idTrans = card.translations?.find((t) => t.locale === "id");
         return (
-          <span className="text-sm font-medium text-gray-900">{idTrans?.title || '-'}</span>
+          <span className="text-sm font-medium text-gray-900">
+            {idTrans?.title || "-"}
+          </span>
         );
       },
     },
     {
-      header: 'Icon',
+      header: "Icon",
       render: (card: AboutCard) => (
-        <span className="text-xs text-gray-600">{card.iconName || '-'}</span>
+        <span className="text-xs text-gray-600">{card.iconName || "-"}</span>
       ),
     },
     {
-      header: 'Order',
+      header: "Order",
       render: (card: AboutCard) => (
         <span className="text-xs text-gray-600">{card.displayOrder}</span>
       ),
     },
     {
-      header: 'Status',
+      header: "Status",
       render: (card: AboutCard) => (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${card.isActive
-          ? 'bg-green-50 text-green-700 border border-green-200'
-          : 'bg-red-50 text-red-700 border border-red-200'
-          }`}>
-          {card.isActive ? 'Active' : 'Inactive'}
+        <span
+          className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
+            card.isActive
+              ? "bg-green-50 text-green-700 border border-green-200"
+              : "bg-red-50 text-red-700 border border-red-200"
+          }`}
+        >
+          {card.isActive ? "Active" : "Inactive"}
         </span>
       ),
     },
     {
-      header: 'Actions',
-      className: 'text-right',
+      header: "Actions",
+      className: "text-right",
       render: (card: AboutCard) => (
         <div className="flex items-center justify-end gap-1.5">
           <button
@@ -172,7 +185,7 @@ export default function AboutCardsPage() {
         title="About Cards"
         description="Manage about cards displayed on about page"
         action={{
-          label: 'Add Card',
+          label: "Add Card",
           onClick: () => {
             setEditingCard(null);
             setShowModal(true);
@@ -184,19 +197,25 @@ export default function AboutCardsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <AdminCard compact>
           <div className="text-center">
-            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Total</p>
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
+              Total
+            </p>
             <p className="text-xl font-bold text-gray-900">{cards.length}</p>
           </div>
         </AdminCard>
         <AdminCard compact>
           <div className="text-center">
-            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Active</p>
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
+              Active
+            </p>
             <p className="text-xl font-bold text-green-600">{activeCount}</p>
           </div>
         </AdminCard>
         <AdminCard compact>
           <div className="text-center">
-            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Inactive</p>
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
+              Inactive
+            </p>
             <p className="text-xl font-bold text-red-600">{inactiveCount}</p>
           </div>
         </AdminCard>
@@ -247,28 +266,28 @@ function AboutCardModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
-    cardCode: card?.cardCode || '',
-    iconName: card?.iconName || '',
+    cardCode: card?.cardCode || "",
+    iconName: card?.iconName || "",
     displayOrder: card?.displayOrder || 0,
     isActive: card?.isActive ?? true,
     translations: card?.translations || [
-      { locale: 'id', title: '', description: '' },
-      { locale: 'en', title: '', description: '' },
+      { locale: "id", title: "", description: "" },
+      { locale: "en", title: "", description: "" },
     ],
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (card) {
       setFormData({
-        cardCode: card.cardCode || '',
+        cardCode: card.cardCode || "",
         iconName: card.iconName,
         displayOrder: card.displayOrder,
         isActive: card.isActive,
         translations: card.translations || [
-          { locale: 'id', title: '', description: '' },
-          { locale: 'en', title: '', description: '' },
+          { locale: "id", title: "", description: "" },
+          { locale: "en", title: "", description: "" },
         ],
       });
     }
@@ -277,55 +296,51 @@ function AboutCardModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       const endpoint = card
         ? `/api/v1/about-cards/admin/${card.cardId}`
-        : '/api/v1/about-cards/admin';
-
-      // Transform translations array to object map
-      const translationsMap: Record<string, any> = {};
-      formData.translations.forEach((t) => {
-        translationsMap[t.locale] = {
-          title: t.title,
-          description: t.description
-        };
-      });
+        : "/api/v1/about-cards/admin";
 
       const submitData = {
-        cardCode: formData.cardCode || formData.translations[0].title.toUpperCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_'),
+        cardCode:
+          formData.cardCode ||
+          formData.translations[0].title
+            .toUpperCase()
+            .replace(/[^\w\s]/g, "")
+            .replace(/\s+/g, "_"),
         iconName: formData.iconName,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
-        translations: translationsMap,
+        translations: formData.translations,
       };
 
-      console.log('[AboutCards] Save endpoint:', endpoint);
-      console.log('[AboutCards] Save method:', card ? 'PUT' : 'POST');
-      console.log('[AboutCards] Submit data:', submitData);
+      console.log("[AboutCards] Save endpoint:", endpoint);
+      console.log("[AboutCards] Save method:", card ? "PUT" : "POST");
+      console.log("[AboutCards] Submit data:", submitData);
 
       const response = await apiFetch(endpoint, {
-        method: card ? 'PUT' : 'POST',
+        method: card ? "PUT" : "POST",
         body: JSON.stringify(submitData),
       });
 
-      console.log('[AboutCards] Response status:', response.status);
-      console.log('[AboutCards] Response ok:', response.ok);
+      console.log("[AboutCards] Response status:", response.status);
+      console.log("[AboutCards] Response ok:", response.ok);
 
       const data = await response.json();
-      console.log('[AboutCards] Response data:', data);
+      console.log("[AboutCards] Response data:", data);
 
       if (response.ok && data.success) {
-        console.log('[AboutCards] Save successful!');
+        console.log("[AboutCards] Save successful!");
         onSave();
       } else {
-        console.error('[AboutCards] Save failed:', data.message);
-        setError(data.message || 'Failed to save card');
+        console.error("[AboutCards] Save failed:", data.message);
+        setError(data.message || "Failed to save card");
       }
     } catch (error) {
-      console.error('[AboutCards] Network error:', error);
-      setError('Network error. Please try again.');
+      console.error("[AboutCards] Network error:", error);
+      setError("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -335,7 +350,7 @@ function AboutCardModal({
     <AdminModal
       isOpen={true}
       onClose={onClose}
-      title={card ? 'Edit About Card' : 'Add New About Card'}
+      title={card ? "Edit About Card" : "Add New About Card"}
       size="lg"
       footer={
         <div className="flex justify-end gap-2">
@@ -352,7 +367,7 @@ function AboutCardModal({
             disabled={loading}
             className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 disabled:opacity-50 transition shadow-sm"
           >
-            {loading ? 'Saving...' : 'Save'}
+            {loading ? "Saving..." : "Save"}
           </button>
         </div>
       }
@@ -366,34 +381,54 @@ function AboutCardModal({
 
         <div className="grid grid-cols-1 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Card Code</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">
+              Card Code
+            </label>
             <input
               type="text"
               required
               value={formData.cardCode}
-              onChange={(e) => setFormData({ ...formData, cardCode: e.target.value.toUpperCase() })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  cardCode: e.target.value.toUpperCase(),
+                })
+              }
               placeholder="e.g., VISION, MISSION"
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
             />
-            <p className="text-xs text-gray-500 mt-1">Unique code (auto-generated from title if empty)</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Unique code (auto-generated from title if empty)
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Icon Name</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Icon Name
+              </label>
               <input
                 type="text"
                 value={formData.iconName}
-                onChange={(e) => setFormData({ ...formData, iconName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, iconName: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Display Order</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Display Order
+              </label>
               <input
                 type="number"
                 required
                 value={formData.displayOrder}
-                onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    displayOrder: parseInt(e.target.value),
+                  })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
@@ -401,11 +436,20 @@ function AboutCardModal({
 
           {/* Translations */}
           <div className="space-y-2 pt-2 border-t border-gray-200">
-            <label className="block text-xs font-semibold text-gray-700 mb-2">Translations</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-2">
+              Translations
+            </label>
             {formData.translations.map((trans, idx) => (
-              <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div
+                key={idx}
+                className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+              >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
+                  <span
+                    className={`px-2 py-0.5 text-xs font-bold rounded text-white ${
+                      trans.locale === "id" ? "bg-red-500" : "bg-blue-500"
+                    }`}
+                  >
                     {trans.locale.toUpperCase()}
                   </span>
                 </div>
@@ -416,8 +460,14 @@ function AboutCardModal({
                     value={trans.title}
                     onChange={(e) => {
                       const newTranslations = [...formData.translations];
-                      newTranslations[idx] = { ...trans, title: e.target.value };
-                      setFormData({ ...formData, translations: newTranslations });
+                      newTranslations[idx] = {
+                        ...trans,
+                        title: e.target.value,
+                      };
+                      setFormData({
+                        ...formData,
+                        translations: newTranslations,
+                      });
                     }}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
                   />
@@ -426,8 +476,14 @@ function AboutCardModal({
                     value={trans.description}
                     onChange={(e) => {
                       const newTranslations = [...formData.translations];
-                      newTranslations[idx] = { ...trans, description: e.target.value };
-                      setFormData({ ...formData, translations: newTranslations });
+                      newTranslations[idx] = {
+                        ...trans,
+                        description: e.target.value,
+                      };
+                      setFormData({
+                        ...formData,
+                        translations: newTranslations,
+                      });
                     }}
                     rows={2}
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
@@ -442,10 +498,14 @@ function AboutCardModal({
               type="checkbox"
               id="isActive"
               checked={formData.isActive}
-              onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+              onChange={(e) =>
+                setFormData({ ...formData, isActive: e.target.checked })
+              }
               className="h-4 w-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
             />
-            <label htmlFor="isActive" className="text-xs text-gray-700">Active</label>
+            <label htmlFor="isActive" className="text-xs text-gray-700">
+              Active
+            </label>
           </div>
         </div>
       </form>

@@ -1,12 +1,18 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon, EyeIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
-import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
-import PageHeader from '@/components/admin/PageHeader';
-import AdminCard from '@/components/admin/AdminCard';
-import AdminModal from '@/components/admin/AdminModal';
-import SearchBar from '@/components/admin/SearchBar';
+import { useEffect, useState } from "react";
+import {
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  EyeIcon,
+  BriefcaseIcon,
+} from "@heroicons/react/24/outline";
+import { apiFetch, API_ENDPOINTS } from "@/lib/api-config";
+import PageHeader from "@/components/admin/PageHeader";
+import AdminCard from "@/components/admin/AdminCard";
+import AdminModal from "@/components/admin/AdminModal";
+import SearchBar from "@/components/admin/SearchBar";
 
 interface JobPostingTranslation {
   locale: string;
@@ -72,7 +78,7 @@ interface JobPosting {
 export default function JobPostingsPage() {
   const [jobPostings, setJobPostings] = useState<JobPosting[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingJob, setEditingJob] = useState<JobPosting | null>(null);
   const [stats, setStats] = useState({ total: 0, active: 0, pending: 0 });
@@ -90,7 +96,7 @@ export default function JobPostingsPage() {
         setJobPostings(data.data || []);
       }
     } catch (error) {
-      console.error('Error fetching job postings:', error);
+      console.error("Error fetching job postings:", error);
     } finally {
       setLoading(false);
     }
@@ -108,42 +114,43 @@ export default function JobPostingsPage() {
         });
       }
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error("Error fetching stats:", error);
     }
   };
 
   const handleDelete = async (jobId: number) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus lowongan ini?')) return;
+    if (!confirm("Apakah Anda yakin ingin menghapus lowongan ini?")) return;
 
     try {
       await apiFetch(API_ENDPOINTS.ADMIN.JOB_POSTINGS.DELETE(jobId), {
-        method: 'DELETE',
+        method: "DELETE",
       });
       fetchJobPostings();
       fetchStats();
     } catch (error) {
-      console.error('Error deleting job posting:', error);
-      alert('Gagal menghapus lowongan. Silakan coba lagi.');
+      console.error("Error deleting job posting:", error);
+      alert("Gagal menghapus lowongan. Silakan coba lagi.");
     }
   };
 
-  const getJobContent = (job: JobPosting, locale: string = 'id') => {
+  const getJobContent = (job: JobPosting, locale: string = "id") => {
     let content: JobPostingTranslation | undefined;
 
     if (Array.isArray(job.translations)) {
-      content = job.translations.find(t => t.locale === locale);
-      if (!content && job.translations.length > 0) content = job.translations[0];
-    } else if (job.translations && typeof job.translations === 'object') {
+      content = job.translations.find((t) => t.locale === locale);
+      if (!content && job.translations.length > 0)
+        content = job.translations[0];
+    } else if (job.translations && typeof job.translations === "object") {
       // @ts-ignore
       const trans = job.translations[locale];
       if (trans) {
         content = {
           locale,
-          title: trans.title || '',
-          shortDescription: trans.shortDescription || '',
-          description: trans.description || '',
+          title: trans.title || "",
+          shortDescription: trans.shortDescription || "",
+          description: trans.description || "",
           qualifications: trans.qualifications,
-          additionalInfo: trans.additionalInfo
+          additionalInfo: trans.additionalInfo,
         };
       } else {
         // Fallback to first key if specific locale not found
@@ -153,11 +160,11 @@ export default function JobPostingsPage() {
           const first = job.translations[keys[0]];
           content = {
             locale: keys[0],
-            title: first.title || '',
-            shortDescription: first.shortDescription || '',
-            description: first.description || '',
+            title: first.title || "",
+            shortDescription: first.shortDescription || "",
+            description: first.description || "",
             qualifications: first.qualifications,
-            additionalInfo: first.additionalInfo
+            additionalInfo: first.additionalInfo,
           };
         }
       }
@@ -166,10 +173,10 @@ export default function JobPostingsPage() {
     return content;
   };
 
-  const filteredJobs = jobPostings.filter(job => {
+  const filteredJobs = jobPostings.filter((job) => {
     const searchLower = search.toLowerCase();
-    const idContent = getJobContent(job, 'id');
-    const enContent = getJobContent(job, 'en');
+    const idContent = getJobContent(job, "id");
+    const enContent = getJobContent(job, "en");
 
     return (
       job.jobCode?.toLowerCase().includes(searchLower) ||
@@ -185,7 +192,7 @@ export default function JobPostingsPage() {
         title="Job Postings Management"
         description="Kelola lowongan pekerjaan dan postingan karir"
         action={{
-          label: 'Tambah Lowongan',
+          label: "Tambah Lowongan",
           onClick: () => {
             setEditingJob(null);
             setShowModal(true);
@@ -197,19 +204,25 @@ export default function JobPostingsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <AdminCard compact>
           <div className="text-center">
-            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Total Lowongan</p>
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
+              Total Lowongan
+            </p>
             <p className="text-xl font-bold text-gray-900">{stats.total}</p>
           </div>
         </AdminCard>
         <AdminCard compact>
           <div className="text-center">
-            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Aktif</p>
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
+              Aktif
+            </p>
             <p className="text-xl font-bold text-green-600">{stats.active}</p>
           </div>
         </AdminCard>
         <AdminCard compact>
           <div className="text-center">
-            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Aplikasi Pending</p>
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
+              Aplikasi Pending
+            </p>
             <p className="text-xl font-bold text-orange-600">{stats.pending}</p>
           </div>
         </AdminCard>
@@ -234,13 +247,15 @@ export default function JobPostingsPage() {
         <AdminCard compact>
           <div className="p-6 text-center">
             <BriefcaseIcon className="mx-auto h-8 w-8 text-gray-400" />
-            <p className="mt-2 text-xs text-gray-500">Tidak ada lowongan pekerjaan</p>
+            <p className="mt-2 text-xs text-gray-500">
+              Tidak ada lowongan pekerjaan
+            </p>
           </div>
         </AdminCard>
       ) : (
         <div className="grid grid-cols-1 gap-3">
           {filteredJobs.map((job) => {
-            const translation = getJobContent(job, 'id');
+            const translation = getJobContent(job, "id");
             return (
               <AdminCard key={job.jobId} compact>
                 <div className="flex items-start justify-between gap-3">
@@ -264,11 +279,21 @@ export default function JobPostingsPage() {
                       {translation?.shortDescription || job.department}
                     </p>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                      <span className="bg-gray-100 px-2 py-0.5 rounded">{job.department}</span>
-                      <span className="bg-gray-100 px-2 py-0.5 rounded">{job.jobType}</span>
-                      <span className="bg-gray-100 px-2 py-0.5 rounded">{job.jobLevel}</span>
-                      <span className="bg-gray-100 px-2 py-0.5 rounded">{job.workLocation}</span>
-                      <span className="bg-gray-100 px-2 py-0.5 rounded">{job.city}</span>
+                      <span className="bg-gray-100 px-2 py-0.5 rounded">
+                        {job.department}
+                      </span>
+                      <span className="bg-gray-100 px-2 py-0.5 rounded">
+                        {job.jobType}
+                      </span>
+                      <span className="bg-gray-100 px-2 py-0.5 rounded">
+                        {job.jobLevel}
+                      </span>
+                      <span className="bg-gray-100 px-2 py-0.5 rounded">
+                        {job.workLocation}
+                      </span>
+                      <span className="bg-gray-100 px-2 py-0.5 rounded">
+                        {job.city}
+                      </span>
                     </div>
                     <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
                       <span>👁️ {job.viewCount || 0} views</span>
@@ -334,85 +359,103 @@ function JobPostingModal({
   function routerTranslations(j: JobPosting | null) {
     if (!j) {
       return [
-        { locale: 'id', title: '', shortDescription: '', description: '', qualifications: '', additionalInfo: '' },
-        { locale: 'en', title: '', shortDescription: '', description: '', qualifications: '', additionalInfo: '' },
+        {
+          locale: "id",
+          title: "",
+          shortDescription: "",
+          description: "",
+          qualifications: "",
+          additionalInfo: "",
+        },
+        {
+          locale: "en",
+          title: "",
+          shortDescription: "",
+          description: "",
+          qualifications: "",
+          additionalInfo: "",
+        },
       ];
     }
 
     const getTrans = (locale: string) => {
       if (Array.isArray(j.translations)) {
-        const found = j.translations.find(t => t.locale === locale);
+        const found = j.translations.find((t) => t.locale === locale);
         return found ? { ...found } : null;
-      } else if (j.translations && typeof j.translations === 'object') {
+      } else if (j.translations && typeof j.translations === "object") {
         // @ts-ignore
         const trans = j.translations[locale];
         if (trans) {
           return {
-            title: trans.title || '',
-            shortDescription: trans.shortDescription || '',
-            description: trans.description || '',
-            qualifications: trans.qualifications || '',
-            additionalInfo: trans.additionalInfo || ''
+            title: trans.title || "",
+            shortDescription: trans.shortDescription || "",
+            description: trans.description || "",
+            qualifications: trans.qualifications || "",
+            additionalInfo: trans.additionalInfo || "",
           };
         }
       }
       return null;
     };
 
-    const idTrans = getTrans('id');
-    const enTrans = getTrans('en');
+    const idTrans = getTrans("id");
+    const enTrans = getTrans("en");
 
     return [
       {
-        locale: 'id',
-        title: idTrans?.title || '',
-        shortDescription: idTrans?.shortDescription || '',
-        description: idTrans?.description || '',
-        qualifications: idTrans?.qualifications || '',
-        additionalInfo: idTrans?.additionalInfo || ''
+        locale: "id",
+        title: idTrans?.title || "",
+        shortDescription: idTrans?.shortDescription || "",
+        description: idTrans?.description || "",
+        qualifications: idTrans?.qualifications || "",
+        additionalInfo: idTrans?.additionalInfo || "",
       },
       {
-        locale: 'en',
-        title: enTrans?.title || '',
-        shortDescription: enTrans?.shortDescription || '',
-        description: enTrans?.description || '',
-        qualifications: enTrans?.qualifications || '',
-        additionalInfo: enTrans?.additionalInfo || ''
+        locale: "en",
+        title: enTrans?.title || "",
+        shortDescription: enTrans?.shortDescription || "",
+        description: enTrans?.description || "",
+        qualifications: enTrans?.qualifications || "",
+        additionalInfo: enTrans?.additionalInfo || "",
       },
     ];
   }
   const [formData, setFormData] = useState({
-    jobCode: job?.jobCode || '',
-    slug: job?.slug || '',
-    department: job?.department || '',
-    jobType: job?.jobType || 'FullTime',
-    jobLevel: job?.jobLevel || 'MidLevel',
-    workLocation: job?.workLocation || 'OnSite',
-    city: job?.city || '',
-    country: job?.country || 'Indonesia',
+    jobCode: job?.jobCode || "",
+    slug: job?.slug || "",
+    department: job?.department || "",
+    jobType: job?.jobType || "FullTime",
+    jobLevel: job?.jobLevel || "MidLevel",
+    workLocation: job?.workLocation || "OnSite",
+    city: job?.city || "",
+    country: job?.country || "Indonesia",
     salaryMin: job?.salaryMin || undefined,
     salaryMax: job?.salaryMax || undefined,
-    salaryCurrency: job?.salaryCurrency || 'IDR',
-    salaryPeriod: job?.salaryPeriod || 'monthly',
+    salaryCurrency: job?.salaryCurrency || "IDR",
+    salaryPeriod: job?.salaryPeriod || "monthly",
     showSalary: job?.showSalary ?? false,
     positions: job?.positions || 1,
     experienceYears: job?.experienceYears || undefined,
-    applicationDeadline: job?.applicationDeadline ? new Date(job.applicationDeadline).toISOString().slice(0, 16) : '',
+    applicationDeadline: job?.applicationDeadline
+      ? new Date(job.applicationDeadline).toISOString().slice(0, 16)
+      : "",
     isActive: job?.isActive ?? true,
     isFeatured: job?.isFeatured ?? false,
-    publishedAt: job?.publishedAt ? new Date(job.publishedAt).toISOString().slice(0, 16) : '',
+    publishedAt: job?.publishedAt
+      ? new Date(job.publishedAt).toISOString().slice(0, 16)
+      : "",
     translations: routerTranslations(job) as JobPostingTranslation[],
     requirements: job?.requirements || [],
     responsibilities: job?.responsibilities || [],
     benefits: job?.benefits || [],
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       const submitData = {
@@ -423,10 +466,14 @@ function JobPostingModal({
           shortDescription: t.shortDescription,
           description: t.description,
           qualifications: t.qualifications,
-          additionalInfo: t.additionalInfo
+          additionalInfo: t.additionalInfo,
         })),
-        applicationDeadline: formData.applicationDeadline ? new Date(formData.applicationDeadline).toISOString() : undefined,
-        publishedAt: formData.publishedAt ? new Date(formData.publishedAt).toISOString() : undefined,
+        applicationDeadline: formData.applicationDeadline
+          ? new Date(formData.applicationDeadline).toISOString()
+          : undefined,
+        publishedAt: formData.publishedAt
+          ? new Date(formData.publishedAt).toISOString()
+          : undefined,
       };
 
       const endpoint = job
@@ -434,7 +481,7 @@ function JobPostingModal({
         : API_ENDPOINTS.ADMIN.JOB_POSTINGS.CREATE;
 
       const response = await apiFetch(endpoint, {
-        method: job ? 'PUT' : 'POST',
+        method: job ? "PUT" : "POST",
         body: JSON.stringify(submitData),
       });
 
@@ -443,42 +490,70 @@ function JobPostingModal({
       if (response.ok && data.success) {
         onSave();
       } else {
-        setError(data.message || 'Gagal menyimpan lowongan');
+        setError(data.message || "Gagal menyimpan lowongan");
       }
     } catch (error) {
-      console.error('Error saving job posting:', error);
-      setError('Network error. Silakan coba lagi.');
+      console.error("Error saving job posting:", error);
+      setError("Network error. Silakan coba lagi.");
     } finally {
       setLoading(false);
     }
   };
 
   const addRequirement = () => {
+    const nextOrder = Math.floor(formData.requirements.length / 2);
     setFormData({
       ...formData,
       requirements: [
         ...formData.requirements,
-        { locale: 'id', requirement: '', isRequired: true, displayOrder: formData.requirements.length + 1 },
+        {
+          locale: "id",
+          requirement: "",
+          isRequired: true,
+          displayOrder: nextOrder,
+        },
+        {
+          locale: "en",
+          requirement: "",
+          isRequired: true,
+          displayOrder: nextOrder,
+        },
       ],
     });
   };
 
   const addResponsibility = () => {
+    const nextOrder = Math.floor(formData.responsibilities.length / 2);
     setFormData({
       ...formData,
       responsibilities: [
         ...formData.responsibilities,
-        { locale: 'id', responsibility: '', displayOrder: formData.responsibilities.length + 1 },
+        { locale: "id", responsibility: "", displayOrder: nextOrder },
+        { locale: "en", responsibility: "", displayOrder: nextOrder },
       ],
     });
   };
 
   const addBenefit = () => {
+    const nextOrder = Math.floor(formData.benefits.length / 2);
     setFormData({
       ...formData,
       benefits: [
         ...formData.benefits,
-        { locale: 'id', benefit: '', description: '', iconName: '', displayOrder: formData.benefits.length + 1 },
+        {
+          locale: "id",
+          benefit: "",
+          description: "",
+          iconName: "",
+          displayOrder: nextOrder,
+        },
+        {
+          locale: "en",
+          benefit: "",
+          description: "",
+          iconName: "",
+          displayOrder: nextOrder,
+        },
       ],
     });
   };
@@ -487,7 +562,7 @@ function JobPostingModal({
     <AdminModal
       isOpen={true}
       onClose={onClose}
-      title={job ? 'Edit Job Posting' : 'Tambah Job Posting'}
+      title={job ? "Edit Job Posting" : "Tambah Job Posting"}
       size="xl"
       footer={
         <div className="flex justify-end gap-2">
@@ -504,12 +579,15 @@ function JobPostingModal({
             disabled={loading}
             className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 disabled:opacity-50 transition shadow-sm"
           >
-            {loading ? 'Menyimpan...' : 'Simpan'}
+            {loading ? "Menyimpan..." : "Simpan"}
           </button>
         </div>
       }
     >
-      <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-4 max-h-[70vh] overflow-y-auto pr-2"
+      >
         {error && (
           <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-xs text-red-600">{error}</p>
@@ -518,47 +596,65 @@ function JobPostingModal({
 
         {/* Basic Info */}
         <div className="space-y-3 border-b border-gray-200 pb-3">
-          <h3 className="text-sm font-semibold text-gray-900">Informasi Dasar</h3>
+          <h3 className="text-sm font-semibold text-gray-900">
+            Informasi Dasar
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Job Code *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Job Code *
+              </label>
               <input
                 type="text"
                 required
                 value={formData.jobCode}
-                onChange={(e) => setFormData({ ...formData, jobCode: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, jobCode: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
                 placeholder="DEV-001"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Slug *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Slug *
+              </label>
               <input
                 type="text"
                 required
                 value={formData.slug}
-                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, slug: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
                 placeholder="senior-backend-developer"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Department *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Department *
+              </label>
               <input
                 type="text"
                 required
                 value={formData.department}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, department: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
                 placeholder="Engineering"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Job Type *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Job Type *
+              </label>
               <select
                 required
                 value={formData.jobType}
-                onChange={(e) => setFormData({ ...formData, jobType: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, jobType: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               >
                 <option value="FullTime">Full Time</option>
@@ -568,11 +664,15 @@ function JobPostingModal({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Job Level *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Job Level *
+              </label>
               <select
                 required
                 value={formData.jobLevel}
-                onChange={(e) => setFormData({ ...formData, jobLevel: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, jobLevel: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               >
                 <option value="Junior">Junior</option>
@@ -585,11 +685,15 @@ function JobPostingModal({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Work Location *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Work Location *
+              </label>
               <select
                 required
                 value={formData.workLocation}
-                onChange={(e) => setFormData({ ...formData, workLocation: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, workLocation: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               >
                 <option value="OnSite">On Site</option>
@@ -598,45 +702,69 @@ function JobPostingModal({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">City *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                City *
+              </label>
               <input
                 type="text"
                 required
                 value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, city: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
                 placeholder="Jakarta"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Country *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Country *
+              </label>
               <input
                 type="text"
                 required
                 value={formData.country}
-                onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, country: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
                 placeholder="Indonesia"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Positions *</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Positions *
+              </label>
               <input
                 type="number"
                 required
                 min="1"
                 value={formData.positions}
-                onChange={(e) => setFormData({ ...formData, positions: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    positions: parseInt(e.target.value),
+                  })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Experience Years</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Experience Years
+              </label>
               <input
                 type="number"
                 min="0"
-                value={formData.experienceYears || ''}
-                onChange={(e) => setFormData({ ...formData, experienceYears: e.target.value ? parseInt(e.target.value) : undefined })}
+                value={formData.experienceYears || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    experienceYears: e.target.value
+                      ? parseInt(e.target.value)
+                      : undefined,
+                  })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
@@ -645,31 +773,55 @@ function JobPostingModal({
 
         {/* Salary */}
         <div className="space-y-3 border-b border-gray-200 pb-3">
-          <h3 className="text-sm font-semibold text-gray-900">Informasi Gaji</h3>
+          <h3 className="text-sm font-semibold text-gray-900">
+            Informasi Gaji
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Min Salary</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Min Salary
+              </label>
               <input
                 type="number"
-                value={formData.salaryMin || ''}
-                onChange={(e) => setFormData({ ...formData, salaryMin: e.target.value ? parseInt(e.target.value) : undefined })}
+                value={formData.salaryMin || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    salaryMin: e.target.value
+                      ? parseInt(e.target.value)
+                      : undefined,
+                  })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Max Salary</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Max Salary
+              </label>
               <input
                 type="number"
-                value={formData.salaryMax || ''}
-                onChange={(e) => setFormData({ ...formData, salaryMax: e.target.value ? parseInt(e.target.value) : undefined })}
+                value={formData.salaryMax || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    salaryMax: e.target.value
+                      ? parseInt(e.target.value)
+                      : undefined,
+                  })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Currency</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Currency
+              </label>
               <select
                 value={formData.salaryCurrency}
-                onChange={(e) => setFormData({ ...formData, salaryCurrency: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, salaryCurrency: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               >
                 <option value="IDR">IDR</option>
@@ -677,10 +829,14 @@ function JobPostingModal({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Period</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Period
+              </label>
               <select
                 value={formData.salaryPeriod}
-                onChange={(e) => setFormData({ ...formData, salaryPeriod: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, salaryPeriod: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               >
                 <option value="monthly">Monthly</option>
@@ -693,32 +849,49 @@ function JobPostingModal({
               type="checkbox"
               id="showSalary"
               checked={formData.showSalary}
-              onChange={(e) => setFormData({ ...formData, showSalary: e.target.checked })}
+              onChange={(e) =>
+                setFormData({ ...formData, showSalary: e.target.checked })
+              }
               className="h-4 w-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
             />
-            <label htmlFor="showSalary" className="text-xs text-gray-700">Tampilkan Gaji</label>
+            <label htmlFor="showSalary" className="text-xs text-gray-700">
+              Tampilkan Gaji
+            </label>
           </div>
         </div>
 
         {/* Status & Dates */}
         <div className="space-y-3 border-b border-gray-200 pb-3">
-          <h3 className="text-sm font-semibold text-gray-900">Status & Tanggal</h3>
+          <h3 className="text-sm font-semibold text-gray-900">
+            Status & Tanggal
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Application Deadline</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Application Deadline
+              </label>
               <input
                 type="datetime-local"
                 value={formData.applicationDeadline}
-                onChange={(e) => setFormData({ ...formData, applicationDeadline: e.target.value })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    applicationDeadline: e.target.value,
+                  })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Published At</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Published At
+              </label>
               <input
                 type="datetime-local"
                 value={formData.publishedAt}
-                onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, publishedAt: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
@@ -729,20 +902,28 @@ function JobPostingModal({
                 type="checkbox"
                 id="isActive"
                 checked={formData.isActive}
-                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, isActive: e.target.checked })
+                }
                 className="h-4 w-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
               />
-              <label htmlFor="isActive" className="text-xs text-gray-700">Aktif</label>
+              <label htmlFor="isActive" className="text-xs text-gray-700">
+                Aktif
+              </label>
             </div>
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 id="isFeatured"
                 checked={formData.isFeatured}
-                onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, isFeatured: e.target.checked })
+                }
                 className="h-4 w-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
               />
-              <label htmlFor="isFeatured" className="text-xs text-gray-700">Featured</label>
+              <label htmlFor="isFeatured" className="text-xs text-gray-700">
+                Featured
+              </label>
             </div>
           </div>
         </div>
@@ -750,81 +931,132 @@ function JobPostingModal({
         {/* Translations */}
         <div className="space-y-3 border-b border-gray-200 pb-3">
           <h3 className="text-sm font-semibold text-gray-900">Translations</h3>
-          {(formData.translations as JobPostingTranslation[]).map((trans, idx) => (
-            <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-              <div className="flex items-center gap-2 mb-2">
-                <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
-                  {trans.locale.toUpperCase()}
-                </span>
+          {(formData.translations as JobPostingTranslation[]).map(
+            (trans, idx) => (
+              <div
+                key={idx}
+                className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span
+                    className={`px-2 py-0.5 text-xs font-bold rounded text-white ${
+                      trans.locale === "id" ? "bg-red-500" : "bg-blue-500"
+                    }`}
+                  >
+                    {trans.locale.toUpperCase()}
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    placeholder="Title *"
+                    required
+                    value={trans.title}
+                    onChange={(e) => {
+                      const newTranslations = [
+                        ...(formData.translations as JobPostingTranslation[]),
+                      ];
+                      newTranslations[idx] = {
+                        ...trans,
+                        title: e.target.value,
+                      };
+                      setFormData({
+                        ...formData,
+                        translations: newTranslations,
+                      });
+                    }}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                  <textarea
+                    placeholder="Short Description *"
+                    required
+                    value={trans.shortDescription}
+                    onChange={(e) => {
+                      const newTranslations = [
+                        ...(formData.translations as JobPostingTranslation[]),
+                      ];
+                      newTranslations[idx] = {
+                        ...trans,
+                        shortDescription: e.target.value,
+                      };
+                      setFormData({
+                        ...formData,
+                        translations: newTranslations,
+                      });
+                    }}
+                    rows={2}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                  <textarea
+                    placeholder="Description *"
+                    required
+                    value={trans.description}
+                    onChange={(e) => {
+                      const newTranslations = [
+                        ...(formData.translations as JobPostingTranslation[]),
+                      ];
+                      newTranslations[idx] = {
+                        ...trans,
+                        description: e.target.value,
+                      };
+                      setFormData({
+                        ...formData,
+                        translations: newTranslations,
+                      });
+                    }}
+                    rows={4}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                  <textarea
+                    placeholder="Qualifications"
+                    value={trans.qualifications || ""}
+                    onChange={(e) => {
+                      const newTranslations = [
+                        ...(formData.translations as JobPostingTranslation[]),
+                      ];
+                      newTranslations[idx] = {
+                        ...trans,
+                        qualifications: e.target.value,
+                      };
+                      setFormData({
+                        ...formData,
+                        translations: newTranslations,
+                      });
+                    }}
+                    rows={3}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                  <textarea
+                    placeholder="Additional Info"
+                    value={trans.additionalInfo || ""}
+                    onChange={(e) => {
+                      const newTranslations = [
+                        ...(formData.translations as JobPostingTranslation[]),
+                      ];
+                      newTranslations[idx] = {
+                        ...trans,
+                        additionalInfo: e.target.value,
+                      };
+                      setFormData({
+                        ...formData,
+                        translations: newTranslations,
+                      });
+                    }}
+                    rows={2}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  placeholder="Title *"
-                  required
-                  value={trans.title}
-                  onChange={(e) => {
-                    const newTranslations = [...(formData.translations as JobPostingTranslation[])];
-                    newTranslations[idx] = { ...trans, title: e.target.value };
-                    setFormData({ ...formData, translations: newTranslations });
-                  }}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                />
-                <textarea
-                  placeholder="Short Description *"
-                  required
-                  value={trans.shortDescription}
-                  onChange={(e) => {
-                    const newTranslations = [...(formData.translations as JobPostingTranslation[])];
-                    newTranslations[idx] = { ...trans, shortDescription: e.target.value };
-                    setFormData({ ...formData, translations: newTranslations });
-                  }}
-                  rows={2}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                />
-                <textarea
-                  placeholder="Description *"
-                  required
-                  value={trans.description}
-                  onChange={(e) => {
-                    const newTranslations = [...(formData.translations as JobPostingTranslation[])];
-                    newTranslations[idx] = { ...trans, description: e.target.value };
-                    setFormData({ ...formData, translations: newTranslations });
-                  }}
-                  rows={4}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                />
-                <textarea
-                  placeholder="Qualifications"
-                  value={trans.qualifications || ''}
-                  onChange={(e) => {
-                    const newTranslations = [...(formData.translations as JobPostingTranslation[])];
-                    newTranslations[idx] = { ...trans, qualifications: e.target.value };
-                    setFormData({ ...formData, translations: newTranslations });
-                  }}
-                  rows={3}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                />
-                <textarea
-                  placeholder="Additional Info"
-                  value={trans.additionalInfo || ''}
-                  onChange={(e) => {
-                    const newTranslations = [...(formData.translations as JobPostingTranslation[])];
-                    newTranslations[idx] = { ...trans, additionalInfo: e.target.value };
-                    setFormData({ ...formData, translations: newTranslations });
-                  }}
-                  rows={2}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                />
-              </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
 
         {/* Requirements */}
         <div className="space-y-3 border-b border-gray-200 pb-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900">Requirements</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Requirements
+            </h3>
             <button
               type="button"
               onClick={addRequirement}
@@ -833,39 +1065,73 @@ function JobPostingModal({
               + Tambah
             </button>
           </div>
-          {formData.requirements.map((req, idx) => (
-            <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-              <div className="flex items-start gap-2">
-                <input
-                  type="text"
-                  placeholder="Requirement"
-                  value={req.requirement}
-                  onChange={(e) => {
-                    const newRequirements = [...formData.requirements];
-                    newRequirements[idx] = { ...req, requirement: e.target.value };
-                    setFormData({ ...formData, requirements: newRequirements });
-                  }}
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                />
+          {(() => {
+            const grouped: { [key: number]: JobRequirement[] } = {};
+            formData.requirements.forEach((req) => {
+              if (!grouped[req.displayOrder]) grouped[req.displayOrder] = [];
+              grouped[req.displayOrder].push(req);
+            });
+            return Object.entries(grouped).map(([order, items]) => (
+              <div
+                key={order}
+                className="bg-gray-50 rounded-lg p-3 border border-gray-200 space-y-2"
+              >
+                {items.map((req, idx) => {
+                  const globalIdx = formData.requirements.indexOf(req);
+                  return (
+                    <div key={globalIdx}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span
+                          className={`px-2 py-0.5 text-xs font-bold rounded text-white ${
+                            req.locale === "id" ? "bg-red-500" : "bg-blue-500"
+                          }`}
+                        >
+                          {req.locale.toUpperCase()}
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder={`Requirement (${req.locale})`}
+                        value={req.requirement}
+                        onChange={(e) => {
+                          const newRequirements = [...formData.requirements];
+                          newRequirements[globalIdx] = {
+                            ...req,
+                            requirement: e.target.value,
+                          };
+                          setFormData({
+                            ...formData,
+                            requirements: newRequirements,
+                          });
+                        }}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                      />
+                    </div>
+                  );
+                })}
                 <button
                   type="button"
                   onClick={() => {
-                    const newRequirements = formData.requirements.filter((_, i) => i !== idx);
+                    const newRequirements = formData.requirements.filter(
+                      (r) => r.displayOrder !== parseInt(order)
+                    );
                     setFormData({ ...formData, requirements: newRequirements });
                   }}
-                  className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg"
+                  className="w-full px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg border border-red-200"
                 >
-                  Hapus
+                  Hapus Item
                 </button>
               </div>
-            </div>
-          ))}
+            ));
+          })()}
         </div>
 
         {/* Responsibilities */}
         <div className="space-y-3 border-b border-gray-200 pb-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900">Responsibilities</h3>
+            <h3 className="text-sm font-semibold text-gray-900">
+              Responsibilities
+            </h3>
             <button
               type="button"
               onClick={addResponsibility}
@@ -874,33 +1140,71 @@ function JobPostingModal({
               + Tambah
             </button>
           </div>
-          {formData.responsibilities.map((resp, idx) => (
-            <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-              <div className="flex items-start gap-2">
-                <input
-                  type="text"
-                  placeholder="Responsibility"
-                  value={resp.responsibility}
-                  onChange={(e) => {
-                    const newResponsibilities = [...formData.responsibilities];
-                    newResponsibilities[idx] = { ...resp, responsibility: e.target.value };
-                    setFormData({ ...formData, responsibilities: newResponsibilities });
-                  }}
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                />
+          {(() => {
+            const grouped: { [key: number]: JobResponsibility[] } = {};
+            formData.responsibilities.forEach((resp) => {
+              if (!grouped[resp.displayOrder]) grouped[resp.displayOrder] = [];
+              grouped[resp.displayOrder].push(resp);
+            });
+            return Object.entries(grouped).map(([order, items]) => (
+              <div
+                key={order}
+                className="bg-gray-50 rounded-lg p-3 border border-gray-200 space-y-2"
+              >
+                {items.map((resp, idx) => {
+                  const globalIdx = formData.responsibilities.indexOf(resp);
+                  return (
+                    <div key={globalIdx}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span
+                          className={`px-2 py-0.5 text-xs font-bold rounded text-white ${
+                            resp.locale === "id" ? "bg-red-500" : "bg-blue-500"
+                          }`}
+                        >
+                          {resp.locale.toUpperCase()}
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder={`Responsibility (${resp.locale})`}
+                        value={resp.responsibility}
+                        onChange={(e) => {
+                          const newResponsibilities = [
+                            ...formData.responsibilities,
+                          ];
+                          newResponsibilities[globalIdx] = {
+                            ...resp,
+                            responsibility: e.target.value,
+                          };
+                          setFormData({
+                            ...formData,
+                            responsibilities: newResponsibilities,
+                          });
+                        }}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                      />
+                    </div>
+                  );
+                })}
                 <button
                   type="button"
                   onClick={() => {
-                    const newResponsibilities = formData.responsibilities.filter((_, i) => i !== idx);
-                    setFormData({ ...formData, responsibilities: newResponsibilities });
+                    const newResponsibilities =
+                      formData.responsibilities.filter(
+                        (r) => r.displayOrder !== parseInt(order)
+                      );
+                    setFormData({
+                      ...formData,
+                      responsibilities: newResponsibilities,
+                    });
                   }}
-                  className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg"
+                  className="w-full px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg border border-red-200"
                 >
-                  Hapus
+                  Hapus Item
                 </button>
               </div>
-            </div>
-          ))}
+            ));
+          })()}
         </div>
 
         {/* Benefits */}
@@ -915,62 +1219,101 @@ function JobPostingModal({
               + Tambah
             </button>
           </div>
-          {formData.benefits.map((benefit, idx) => (
-            <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  placeholder="Benefit"
-                  value={benefit.benefit}
-                  onChange={(e) => {
-                    const newBenefits = [...formData.benefits];
-                    newBenefits[idx] = { ...benefit, benefit: e.target.value };
+          {(() => {
+            const grouped: { [key: number]: JobBenefit[] } = {};
+            formData.benefits.forEach((benefit) => {
+              if (!grouped[benefit.displayOrder])
+                grouped[benefit.displayOrder] = [];
+              grouped[benefit.displayOrder].push(benefit);
+            });
+            return Object.entries(grouped).map(([order, items]) => (
+              <div
+                key={order}
+                className="bg-gray-50 rounded-lg p-3 border border-gray-200 space-y-3"
+              >
+                {items.map((benefit, idx) => {
+                  const globalIdx = formData.benefits.indexOf(benefit);
+                  return (
+                    <div key={globalIdx} className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`px-2 py-0.5 text-xs font-bold rounded text-white ${
+                            benefit.locale === "id"
+                              ? "bg-red-500"
+                              : "bg-blue-500"
+                          }`}
+                        >
+                          {benefit.locale.toUpperCase()}
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder={`Benefit (${benefit.locale})`}
+                        value={benefit.benefit}
+                        onChange={(e) => {
+                          const newBenefits = [...formData.benefits];
+                          newBenefits[globalIdx] = {
+                            ...benefit,
+                            benefit: e.target.value,
+                          };
+                          setFormData({ ...formData, benefits: newBenefits });
+                        }}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                      />
+                      <input
+                        type="text"
+                        placeholder={`Description (${benefit.locale})`}
+                        value={benefit.description || ""}
+                        onChange={(e) => {
+                          const newBenefits = [...formData.benefits];
+                          newBenefits[globalIdx] = {
+                            ...benefit,
+                            description: e.target.value,
+                          };
+                          setFormData({ ...formData, benefits: newBenefits });
+                        }}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                      />
+                      {benefit.locale === "id" && (
+                        <input
+                          type="text"
+                          placeholder="Icon Name (shared)"
+                          value={benefit.iconName || ""}
+                          onChange={(e) => {
+                            const newBenefits = [...formData.benefits];
+                            // Update iconName for both locales in this group
+                            items.forEach((b) => {
+                              const idx = formData.benefits.indexOf(b);
+                              newBenefits[idx] = {
+                                ...newBenefits[idx],
+                                iconName: e.target.value,
+                              };
+                            });
+                            setFormData({ ...formData, benefits: newBenefits });
+                          }}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newBenefits = formData.benefits.filter(
+                      (b) => b.displayOrder !== parseInt(order)
+                    );
                     setFormData({ ...formData, benefits: newBenefits });
                   }}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                />
-                <input
-                  type="text"
-                  placeholder="Description"
-                  value={benefit.description || ''}
-                  onChange={(e) => {
-                    const newBenefits = [...formData.benefits];
-                    newBenefits[idx] = { ...benefit, description: e.target.value };
-                    setFormData({ ...formData, benefits: newBenefits });
-                  }}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                />
-                <div className="flex items-start gap-2">
-                  <input
-                    type="text"
-                    placeholder="Icon Name"
-                    value={benefit.iconName || ''}
-                    onChange={(e) => {
-                      const newBenefits = [...formData.benefits];
-                      newBenefits[idx] = { ...benefit, iconName: e.target.value };
-                      setFormData({ ...formData, benefits: newBenefits });
-                    }}
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newBenefits = formData.benefits.filter((_, i) => i !== idx);
-                      setFormData({ ...formData, benefits: newBenefits });
-                    }}
-                    className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg"
-                  >
-                    Hapus
-                  </button>
-                </div>
+                  className="w-full px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded-lg border border-red-200"
+                >
+                  Hapus Item
+                </button>
               </div>
-            </div>
-          ))}
+            ));
+          })()}
         </div>
       </form>
     </AdminModal>
   );
 }
-
-
-

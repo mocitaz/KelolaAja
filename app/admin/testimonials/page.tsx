@@ -1,22 +1,28 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { PlusIcon, PencilIcon, TrashIcon, StarIcon } from '@heroicons/react/24/outline';
-import { apiFetch, API_ENDPOINTS } from '@/lib/api-config';
-import PageHeader from '@/components/admin/PageHeader';
-import AdminCard from '@/components/admin/AdminCard';
-import AdminModal from '@/components/admin/AdminModal';
-import SearchBar from '@/components/admin/SearchBar';
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import {
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  StarIcon,
+} from "@heroicons/react/24/outline";
+import { apiFetch, API_ENDPOINTS } from "@/lib/api-config";
+import PageHeader from "@/components/admin/PageHeader";
+import AdminCard from "@/components/admin/AdminCard";
+import AdminModal from "@/components/admin/AdminModal";
+import SearchBar from "@/components/admin/SearchBar";
 
 interface Testimonial {
   testimonialId: number;
-  name: string;              // Backend field
-  title: string;             // Backend field
+  name: string; // Backend field
+  title: string; // Backend field
   company: string;
-  quote: string;             // Backend field (from translations)
+  quote: string; // Backend field (from translations)
   rating: number;
-  photo?: {                  // Backend field (nested object)
+  photo?: {
+    // Backend field (nested object)
     fileId: number;
     filePath: string;
     altText: string | null;
@@ -24,7 +30,8 @@ interface Testimonial {
   isActive: boolean;
   displayOrder: number;
   createdAt: string;
-  translations?: {           // Backend field (for multi-language)
+  translations?: {
+    // Backend field (for multi-language)
     id?: { quote: string };
     en?: { quote: string };
     [key: string]: any;
@@ -34,9 +41,10 @@ interface Testimonial {
 export default function TestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
+  const [editingTestimonial, setEditingTestimonial] =
+    useState<Testimonial | null>(null);
 
   useEffect(() => {
     fetchTestimonials();
@@ -44,45 +52,46 @@ export default function TestimonialsPage() {
 
   const fetchTestimonials = async () => {
     try {
-      const response = await apiFetch('/api/v1/admin/testimonials');
+      const response = await apiFetch("/api/v1/admin/testimonials");
       const data = await response.json();
       if (data.success) {
         // Map backend response to match interface
         const mapped = data.data.map((t: any) => ({
           ...t,
-          quote: t.translations?.id?.quote || t.translations?.en?.quote || '',
+          quote: t.translations?.id?.quote || t.translations?.en?.quote || "",
           photo: t.photo || null,
-          translations: t.translations // Explicitly preserve translations
+          translations: t.translations, // Explicitly preserve translations
         }));
         setTestimonials(mapped);
       }
     } catch (error) {
-      console.error('Error fetching testimonials:', error);
+      console.error("Error fetching testimonials:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this testimonial?')) return;
+    if (!confirm("Are you sure you want to delete this testimonial?")) return;
 
     try {
       await apiFetch(`/api/v1/admin/testimonials/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       fetchTestimonials();
     } catch (error) {
-      console.error('Error deleting testimonial:', error);
+      console.error("Error deleting testimonial:", error);
     }
   };
 
-  const filteredTestimonials = testimonials.filter(t =>
-    t.name?.toLowerCase().includes(search.toLowerCase()) ||
-    t.company?.toLowerCase().includes(search.toLowerCase())
+  const filteredTestimonials = testimonials.filter(
+    (t) =>
+      t.name?.toLowerCase().includes(search.toLowerCase()) ||
+      t.company?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const activeCount = testimonials.filter(t => t.isActive).length;
-  const inactiveCount = testimonials.filter(t => !t.isActive).length;
+  const activeCount = testimonials.filter((t) => t.isActive).length;
+  const inactiveCount = testimonials.filter((t) => !t.isActive).length;
 
   return (
     <div className="space-y-4">
@@ -90,7 +99,7 @@ export default function TestimonialsPage() {
         title="Testimonials"
         description="Manage customer testimonials and reviews"
         action={{
-          label: 'Add Testimonial',
+          label: "Add Testimonial",
           onClick: () => {
             setEditingTestimonial(null);
             setShowModal(true);
@@ -102,19 +111,27 @@ export default function TestimonialsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <AdminCard compact>
           <div className="text-center">
-            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Total</p>
-            <p className="text-xl font-bold text-gray-900">{testimonials.length}</p>
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
+              Total
+            </p>
+            <p className="text-xl font-bold text-gray-900">
+              {testimonials.length}
+            </p>
           </div>
         </AdminCard>
         <AdminCard compact>
           <div className="text-center">
-            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Active</p>
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
+              Active
+            </p>
             <p className="text-xl font-bold text-green-600">{activeCount}</p>
           </div>
         </AdminCard>
         <AdminCard compact>
           <div className="text-center">
-            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">Inactive</p>
+            <p className="text-xs font-medium text-gray-600 uppercase tracking-wide mb-1">
+              Inactive
+            </p>
             <p className="text-xl font-bold text-red-600">{inactiveCount}</p>
           </div>
         </AdminCard>
@@ -162,15 +179,21 @@ export default function TestimonialsPage() {
                     ) : (
                       <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-[#039edb] to-[#71bf44]">
                         <span className="text-white text-sm font-bold">
-                          {testimonial.name?.charAt(0)?.toUpperCase() || '?'}
+                          {testimonial.name?.charAt(0)?.toUpperCase() || "?"}
                         </span>
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-bold text-gray-900 truncate">{testimonial.name}</h3>
-                    <p className="text-xs text-gray-600 truncate">{testimonial.title}</p>
-                    <p className="text-xs text-gray-500 truncate">{testimonial.company}</p>
+                    <h3 className="text-sm font-bold text-gray-900 truncate">
+                      {testimonial.name}
+                    </h3>
+                    <p className="text-xs text-gray-600 truncate">
+                      {testimonial.title}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {testimonial.company}
+                    </p>
                   </div>
                 </div>
 
@@ -179,13 +202,16 @@ export default function TestimonialsPage() {
                   {[...Array(5)].map((_, i) => (
                     <StarIcon
                       key={i}
-                      className={`h-4 w-4 ${i < testimonial.rating
-                        ? 'text-yellow-400 fill-current'
-                        : 'text-gray-300'
-                        }`}
+                      className={`h-4 w-4 ${
+                        i < testimonial.rating
+                          ? "text-yellow-400 fill-current"
+                          : "text-gray-300"
+                      }`}
                     />
                   ))}
-                  <span className="text-xs text-gray-500 ml-1">({testimonial.rating})</span>
+                  <span className="text-xs text-gray-500 ml-1">
+                    ({testimonial.rating})
+                  </span>
                 </div>
 
                 {/* Testimonial Text */}
@@ -196,11 +222,14 @@ export default function TestimonialsPage() {
                 {/* Meta */}
                 <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
                   <span>Order: {testimonial.displayOrder}</span>
-                  <span className={`px-2 py-0.5 rounded-md font-semibold ${testimonial.isActive
-                    ? 'bg-green-50 text-green-700 border border-green-200'
-                    : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}>
-                    {testimonial.isActive ? 'Active' : 'Inactive'}
+                  <span
+                    className={`px-2 py-0.5 rounded-md font-semibold ${
+                      testimonial.isActive
+                        ? "bg-green-50 text-green-700 border border-green-200"
+                        : "bg-red-50 text-red-700 border border-red-200"
+                    }`}
+                  >
+                    {testimonial.isActive ? "Active" : "Inactive"}
                   </span>
                 </div>
 
@@ -258,20 +287,23 @@ function TestimonialModal({
   onSave: () => void;
 }) {
   const [formData, setFormData] = useState({
-    name: testimonial?.name || '',
-    title: testimonial?.title || '',
-    company: testimonial?.company || '',
+    name: testimonial?.name || "",
+    title: testimonial?.title || "",
+    company: testimonial?.company || "",
     rating: testimonial?.rating || 5,
-    photoFilePath: testimonial?.photo?.filePath || '',
+    photoFilePath: testimonial?.photo?.filePath || "",
     isActive: testimonial?.isActive ?? true,
     displayOrder: testimonial?.displayOrder || 0,
     translations: [
-      { locale: 'id', quote: testimonial?.translations?.id?.quote || testimonial?.quote || '' },
-      { locale: 'en', quote: testimonial?.translations?.en?.quote || '' },
+      {
+        locale: "id",
+        quote: testimonial?.translations?.id?.quote || testimonial?.quote || "",
+      },
+      { locale: "en", quote: testimonial?.translations?.en?.quote || "" },
     ],
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (testimonial) {
@@ -280,13 +312,17 @@ function TestimonialModal({
         title: testimonial.title,
         company: testimonial.company,
         rating: testimonial.rating,
-        photoFilePath: testimonial.photo?.filePath || '',
+        photoFilePath: testimonial.photo?.filePath || "",
         isActive: testimonial.isActive,
         displayOrder: testimonial.displayOrder,
         translations: [
-          { locale: 'id', quote: testimonial.translations?.id?.quote || testimonial.quote || '' },
-          { locale: 'en', quote: testimonial.translations?.en?.quote || '' }
-        ]
+          {
+            locale: "id",
+            quote:
+              testimonial.translations?.id?.quote || testimonial.quote || "",
+          },
+          { locale: "en", quote: testimonial.translations?.en?.quote || "" },
+        ],
       });
     }
   }, [testimonial]);
@@ -294,18 +330,12 @@ function TestimonialModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       const endpoint = testimonial
         ? `/api/v1/admin/testimonials/${testimonial.testimonialId}`
-        : '/api/v1/admin/testimonials';
-
-      // Transform translations map
-      const translationsMap: Record<string, any> = {};
-      formData.translations.forEach((t) => {
-        translationsMap[t.locale] = { quote: t.quote };
-      });
+        : "/api/v1/admin/testimonials";
 
       const submitData = {
         name: formData.name,
@@ -314,12 +344,12 @@ function TestimonialModal({
         rating: formData.rating,
         displayOrder: formData.displayOrder,
         isActive: formData.isActive,
-        translations: translationsMap,
+        translations: formData.translations,
         // photoFileId: null // We don't support image upload yet, and URL string is not accepted by backend
       };
 
       const response = await apiFetch(endpoint, {
-        method: testimonial ? 'PUT' : 'POST',
+        method: testimonial ? "PUT" : "POST",
         body: JSON.stringify(submitData),
       });
 
@@ -328,10 +358,10 @@ function TestimonialModal({
       if (response.ok && data.success) {
         onSave();
       } else {
-        setError(data.message || 'Failed to save testimonial');
+        setError(data.message || "Failed to save testimonial");
       }
     } catch (error) {
-      setError('Network error. Please try again.');
+      setError("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -341,7 +371,7 @@ function TestimonialModal({
     <AdminModal
       isOpen={true}
       onClose={onClose}
-      title={testimonial ? 'Edit Testimonial' : 'Add New Testimonial'}
+      title={testimonial ? "Edit Testimonial" : "Add New Testimonial"}
       size="lg"
       footer={
         <div className="flex justify-end gap-2">
@@ -358,7 +388,7 @@ function TestimonialModal({
             disabled={loading}
             className="px-4 py-1.5 text-sm font-semibold text-white bg-gradient-to-r from-[#039edb] to-[#71bf44] rounded-lg hover:opacity-90 disabled:opacity-50 transition shadow-sm"
           >
-            {loading ? 'Saving...' : 'Save'}
+            {loading ? "Saving..." : "Save"}
           </button>
         </div>
       }
@@ -373,69 +403,92 @@ function TestimonialModal({
         <div className="grid grid-cols-1 gap-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Person Name</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Person Name
+              </label>
               <input
                 type="text"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Title (Position)</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Title (Position)
+              </label>
               <input
                 type="text"
                 required
                 value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Company</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">
+              Company
+            </label>
             <input
               type="text"
               required
               value={formData.company}
-              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, company: e.target.value })
+              }
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Rating</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">
+              Rating
+            </label>
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4, 5].map((rating) => (
                 <button
                   key={rating}
                   type="button"
                   onClick={() => setFormData({ ...formData, rating })}
-                  className={`p-1 rounded transition-colors ${rating <= formData.rating
-                    ? 'text-yellow-400'
-                    : 'text-gray-300'
-                    }`}
+                  className={`p-1 rounded transition-colors ${
+                    rating <= formData.rating
+                      ? "text-yellow-400"
+                      : "text-gray-300"
+                  }`}
                 >
                   <StarIcon className="h-5 w-5 fill-current" />
                 </button>
               ))}
-              <span className="text-xs text-gray-500 ml-2">({formData.rating}/5)</span>
+              <span className="text-xs text-gray-500 ml-2">
+                ({formData.rating}/5)
+              </span>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Photo URL (Display Only)</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-1">
+              Photo URL (Display Only)
+            </label>
             <input
               type="url"
               value={formData.photoFilePath}
-              onChange={(e) => setFormData({ ...formData, photoFilePath: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, photoFilePath: e.target.value })
+              }
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               placeholder="https://example.com/photo.jpg"
               disabled
             />
-            <p className="mt-1 text-xs text-gray-500">Note: Photo upload via Media Files is not yet implemented</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Note: Photo upload via Media Files is not yet implemented
+            </p>
             {formData.photoFilePath && (
               <div className="mt-2 relative h-20 w-20 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
                 <Image
@@ -444,7 +497,7 @@ function TestimonialModal({
                   fill
                   className="object-cover"
                   onError={(e) => {
-                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.style.display = "none";
                   }}
                 />
               </div>
@@ -453,16 +506,25 @@ function TestimonialModal({
 
           {/* Translations */}
           <div className="space-y-2 pt-2 border-t border-gray-200">
-            <label className="block text-xs font-semibold text-gray-700 mb-2">Quote (Translatable)</label>
+            <label className="block text-xs font-semibold text-gray-700 mb-2">
+              Quote (Translatable)
+            </label>
             {formData.translations.map((trans, idx) => (
-              <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <div
+                key={idx}
+                className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+              >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={`px-2 py-0.5 text-xs font-bold rounded text-white ${trans.locale === 'id' ? 'bg-red-500' : 'bg-blue-500'}`}>
+                  <span
+                    className={`px-2 py-0.5 text-xs font-bold rounded text-white ${
+                      trans.locale === "id" ? "bg-red-500" : "bg-blue-500"
+                    }`}
+                  >
                     {trans.locale.toUpperCase()}
                   </span>
                 </div>
                 <textarea
-                  required={trans.locale === 'id'}
+                  required={trans.locale === "id"}
                   value={trans.quote}
                   onChange={(e) => {
                     const newTranslations = [...formData.translations];
@@ -479,12 +541,19 @@ function TestimonialModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Display Order</label>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Display Order
+              </label>
               <input
                 type="number"
                 required
                 value={formData.displayOrder}
-                onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    displayOrder: parseInt(e.target.value),
+                  })
+                }
                 className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#039edb] focus:border-[#039edb]"
               />
             </div>
@@ -494,10 +563,14 @@ function TestimonialModal({
                   type="checkbox"
                   id="isActive"
                   checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isActive: e.target.checked })
+                  }
                   className="h-4 w-4 text-[#039edb] focus:ring-[#039edb] border-gray-300 rounded"
                 />
-                <label htmlFor="isActive" className="text-xs text-gray-700">Active</label>
+                <label htmlFor="isActive" className="text-xs text-gray-700">
+                  Active
+                </label>
               </div>
             </div>
           </div>
