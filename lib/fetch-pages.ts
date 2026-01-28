@@ -87,7 +87,7 @@ export async function fetchFeaturePage(
           'Accept-Language': locale,
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Always fetch fresh data
+        next: { revalidate: 60 }, // Always fetch fresh data
       }
     )
 
@@ -128,7 +128,7 @@ export async function fetchIndustry(
           'Accept-Language': locale,
           'Content-Type': 'application/json',
         },
-        cache: 'no-store', // Always fetch fresh data
+        next: { revalidate: 60 }, // Always fetch fresh data
       }
     )
 
@@ -167,7 +167,7 @@ export async function fetchAllFeaturePages(
           'Accept-Language': locale,
           'Content-Type': 'application/json',
         },
-        cache: 'no-store',
+        next: { revalidate: 60 },
       }
     )
 
@@ -202,7 +202,7 @@ export async function fetchAllFeaturePages(
 export async function fetchTestimonials(locale: string = 'id'): Promise<any[]> {
   try {
     console.log('[Server fetchTestimonials] Fetching from:', `${API_BASE_URL}/api/v1/testimonials`);
-    const response = await fetch(`${API_BASE_URL}/api/v1/testimonials`, { cache: 'no-store' });
+    const response = await fetch(`${API_BASE_URL}/api/v1/testimonials`, { next: { revalidate: 60 } });
     const result = await response.json();
     console.log('[Server fetchTestimonials] Response success:', result.success);
 
@@ -244,7 +244,7 @@ export async function fetchTestimonials(locale: string = 'id'): Promise<any[]> {
  */
 export async function fetchPartners(): Promise<any[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/partners`, { cache: 'no-store' });
+    const response = await fetch(`${API_BASE_URL}/api/v1/partners`, { next: { revalidate: 60 } });
     const result = await response.json();
     return result.success && Array.isArray(result.data) ? result.data : [];
   } catch (error) {
@@ -258,7 +258,7 @@ export async function fetchPartners(): Promise<any[]> {
  */
 export async function fetchKelolaAjaFeatures(): Promise<any[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/kelolaaja-features`, { cache: 'no-store' });
+    const response = await fetch(`${API_BASE_URL}/api/v1/kelolaaja-features`, { next: { revalidate: 60 } });
     const result = await response.json();
     return result.success && Array.isArray(result.data) ? result.data : [];
   } catch (error) {
@@ -272,7 +272,7 @@ export async function fetchKelolaAjaFeatures(): Promise<any[]> {
  */
 export async function fetchProcessSteps(): Promise<any[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/process-steps`, { cache: 'no-store' });
+    const response = await fetch(`${API_BASE_URL}/api/v1/process-steps`, { next: { revalidate: 60 } });
     const result = await response.json();
     return result.success && Array.isArray(result.data) ? result.data : [];
   } catch (error) {
@@ -286,7 +286,7 @@ export async function fetchProcessSteps(): Promise<any[]> {
  */
 export async function fetchERPBenefits(): Promise<any[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/erp-benefits`, { cache: 'no-store' });
+    const response = await fetch(`${API_BASE_URL}/api/v1/erp-benefits`, { next: { revalidate: 60 } });
     const result = await response.json();
     return result.success && Array.isArray(result.data) ? result.data : [];
   } catch (error) {
@@ -300,7 +300,7 @@ export async function fetchERPBenefits(): Promise<any[]> {
  */
 export async function fetchBenefitStats(): Promise<any[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/benefit-stats`, { cache: 'no-store' });
+    const response = await fetch(`${API_BASE_URL}/api/v1/benefit-stats`, { next: { revalidate: 60 } });
     const result = await response.json();
     return result.success && Array.isArray(result.data) ? result.data : [];
   } catch (error) {
@@ -314,7 +314,7 @@ export async function fetchBenefitStats(): Promise<any[]> {
  */
 export async function fetchAdvancedFeatures(): Promise<any[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/advanced-features`, { cache: 'no-store' });
+    const response = await fetch(`${API_BASE_URL}/api/v1/advanced-features`, { next: { revalidate: 60 } });
     const result = await response.json();
     return result.success && Array.isArray(result.data) ? result.data : [];
   } catch (error) {
@@ -328,7 +328,7 @@ export async function fetchAdvancedFeatures(): Promise<any[]> {
  */
 export async function fetchIndustriesList(): Promise<any[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/industries`, { cache: 'no-store' });
+    const response = await fetch(`${API_BASE_URL}/api/v1/industries`, { next: { revalidate: 60 } });
     const result = await response.json();
     return result.success && Array.isArray(result.data) ? result.data : [];
   } catch (error) {
@@ -351,7 +351,7 @@ export async function fetchAllIndustries(
           'Accept-Language': locale,
           'Content-Type': 'application/json',
         },
-        cache: 'no-store',
+        next: { revalidate: 60 },
       }
     )
 

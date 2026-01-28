@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
+import { Suspense } from 'react'
 import './globals.css'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import AnalyticsTracker from '@/components/AnalyticsTracker'
@@ -37,7 +38,9 @@ export default function RootLayout({
     <html lang="id" className={`${inter.variable} ${poppins.variable}`}>
       <body className="font-sans antialiased">
         <LanguageProvider>
-          <AnalyticsTracker />
+          <Suspense fallback={null}>
+            <AnalyticsTracker />
+          </Suspense>
           {children}
         </LanguageProvider>
       </body>
