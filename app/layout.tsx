@@ -2,14 +2,15 @@ import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
 import { LanguageProvider } from '@/contexts/LanguageContext'
+import AnalyticsTracker from '@/components/AnalyticsTracker'
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
 })
 
-const poppins = Poppins({ 
+const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800'],
   variable: '--font-poppins',
@@ -36,6 +37,7 @@ export default function RootLayout({
     <html lang="id" className={`${inter.variable} ${poppins.variable}`}>
       <body className="font-sans antialiased">
         <LanguageProvider>
+          <AnalyticsTracker />
           {children}
         </LanguageProvider>
       </body>

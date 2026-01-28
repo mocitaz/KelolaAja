@@ -440,6 +440,21 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
     headers
   });
 
+  // Handle 401 Unauthorized globally
+  if (response.status === 401) {
+    if (typeof window !== "undefined") {
+      // Clear all auth data
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken"); // If used
+      localStorage.removeItem("user");
+
+      // Redirect to login if not already there
+      if (!window.location.pathname.includes("/login")) {
+        window.location.href = "/login?expired=true";
+      }
+    }
+  }
+
   return response;
 }
 
